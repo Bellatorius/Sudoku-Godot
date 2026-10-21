@@ -120,7 +120,8 @@ list); "Continue" always resumes the latest. The generator is only used after th
      even_odd, little_killer, palindrome, between, universal (unchanged Expert design)
    - 39678078328 expert for the other 31 originals (new fewest-digit design where it applies)
    - 39678083580 hard, 39678090168 medium, 39678095765 easy, 39678101160 beginner for the 25 newer variants
-   - Still to run for the 25 newer variants: grades (tools/build_grades.gd on their hard parts → puzzles/grades.json,
+   - 39679079469 hard, 39679085684 medium, 39679091100 easy, 39679096399 beginner for the 16 newest variants
+   - Still to run for the 25 newer AND the 16 newest variants: grades (tools/build_grades.gd on their hard parts → puzzles/grades.json,
      commit), then expert + master.
    Collect: `gh run download <id> -D puzzles/_parts` (flatten the per-artifact folders), then
    `godot --headless -s tools/build_packs.gd -- merge`, check old easy/medium/hard are unchanged.
