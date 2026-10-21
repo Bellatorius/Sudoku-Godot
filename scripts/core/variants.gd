@@ -3,7 +3,6 @@ extends RefCounted
 ## Catalog of every variant shown on logic-wiz.com/variants.
 ## `playable` variants have a generator + board renderer; the rest show as "Coming soon".
 
-## The 16 newest variants (ratio_dots … roman) are in LIST/CATEGORIES but not CORE yet: board drawing is unfinished.
 const CORE := ["classic", "killer", "thermo", "arrow", "jigsaw", "diagonal", "kropki", "xv",
 	"non_consecutive", "king", "knight", "even_odd", "german_whispers", "renban",
 	"sandwich", "skyscraper", "little_killer", "palindrome", "between", "consecutive", "greater_than",
@@ -12,7 +11,9 @@ const CORE := ["classic", "killer", "thermo", "arrow", "jigsaw", "diagonal", "kr
 	"index", "pulse", "reflection", "running", "slingshot", "vertex",
 	"region_sum", "entropic", "modular", "parity_lines", "nabner", "ten_lines", "double_arrow", "pill_arrow", "fortress", "min_max",
 	"clone", "frame", "numbered_rooms", "rossini", "battlefield", "sum_product_dots", "anti_diagonal", "center_dot", "asterisk", "girandola",
-	"argyle", "queen", "miracle", "magic_square", "toroidal"]
+	"argyle", "queen", "miracle", "magic_square", "toroidal",
+	"ratio_dots", "difference_dots", "product_lines", "difference_lines", "ratio_lines", "prime_composite", "parity_regions", "missing_digit",
+	"forbidden_digit", "divisibility", "kenken", "alphabet", "wordoku", "symbol", "color", "roman"]
 
 const LIST := [
 	{"id": "classic", "name": "Classic Sudoku", "short": "Each row, column, and 3x3 box must have all the digits 1 to 9 only once.",
@@ -250,11 +251,11 @@ const LIST := [
 		"rules": "Each row and column contains 1 to 9 once (there are no 3\u00d73 boxes). The digits in each cage combine to the number shown with its operation: + sum, \u00d7 product, \u2212 difference and \u00f7 quotient (the last two only in 2-cell cages). Digits don't repeat within a cage.",
 		"tip": "A 2-cell \u00f74 cage can only be 1-4 or 2-8."},
 	{"id": "alphabet", "name": "Alphabet Sudoku", "short": "Letters A to I instead of digits.",
-		"rules": "Fill the grid so every row, column and 3x3 box contains the letters A to I once. Type 1-9 or the letters A-I.",
+		"rules": "Fill the grid so every row, column and 3x3 box contains the letters A to I once. Type 1-9 (or use the pad): 1 places A, 2 places B, and so on.",
 		"tip": "Works exactly like Classic Sudoku: the letters are just labels."},
 	{"id": "wordoku", "name": "Wordoku", "short": "The nine letters of a word instead of digits.",
 		"rules": "Each puzzle uses the nine different letters of a word. Every row, column and 3x3 box contains each of those letters once. Type 1-9 for the letters in word order.",
-		"tip": "The word is shown above the pad: the first letter is 1, the second is 2, and so on."},
+		"tip": "The pad shows the letters in word order: key 1 places the first letter, 2 the second, and so on."},
 	{"id": "symbol", "name": "Symbol Sudoku", "short": "Nine symbols instead of digits.",
 		"rules": "Every row, column and 3x3 box contains each of the nine symbols once. Type 1-9: the pad shows which symbol each number places.",
 		"tip": "Works exactly like Classic Sudoku: the symbols are just labels."},

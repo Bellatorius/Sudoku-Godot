@@ -719,7 +719,11 @@ func _make_outer(pz: Puzzle, t: String, sides: Array, n: int) -> void:
 		var a := PackedInt32Array()
 		for c in Solver.outer_cells(sd, i):
 			a.append(pz.solution[c])
-		pz.outer.append({"t": t, "s": sd, "i": i, "v": Solver.outer_value(t, a)})
+		var v := Solver.outer_value(t, a)
+		if t == "md":   # Missing Digit: a digit that isn't among the first three cells
+			var opts: Array = range(1, 10).filter(func(x): return x != a[0] and x != a[1] and x != a[2])
+			v = opts[rng.randi_range(0, opts.size() - 1)]
+		pz.outer.append({"t": t, "s": sd, "i": i, "v": v})
 
 
 ## Little (unique) killer: diagonal sums from a clue just outside the grid; digits on a sum differ.

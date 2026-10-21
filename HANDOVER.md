@@ -22,6 +22,7 @@ anything is unclear.
 | Scope v1 | Started with 8 playable variants (classic, killer, thermo, arrow, jigsaw, diagonal, kropki, xv); all 42 site variants are playable now (see "New variants"). |
 | New variants (2026-10-18 →) | Adding the other 34 in tested batches of ~6, most popular first; logic-wiz.com originals last, rules read from the site. Packs were first 50 per difficulty; topped up to 500 on 2026-10-18 (all 42 packs now 1500 puzzles). Batch 1: non_consecutive, king (Anti-King), knight (Anti-Knight), even_odd, german_whispers, renban. Then the remaining 28 (all 42 now playable). Design choices not fixed by the site's text: Slingshot = source cell next to the arrow cell, the arrow bends 90° and the arrow digit N is the distance to the repeat; Vertex arms are 8-neighbours of the tip; Axia = diagonal corner ticks, Pulse = rings, Index Lookup = double arrows (↔ row / ↕ column), Reflection groups = shapes at the line start; Little Killer sums use no "?" clues; Ascending/Running clues only on the left/top. |
 | More variants (2026-10-21) | 25 more (67 in total): region_sum, entropic, modular, parity_lines, nabner, ten_lines, double_arrow, pill_arrow, fortress, min_max, clone, frame, numbered_rooms, rossini, battlefield, sum_product_dots, anti_diagonal, center_dot, asterisk, girandola, argyle, queen, miracle, magic_square, toroidal. Their expert/master grade bars live in puzzles/grades.json (tools/build_grades.gd, measured from their Hard puzzles). Chaos Construction and "Killer with negative constraints" were not added (see chat). Dailies (puzzles/daily.json) only use the first 42. |
+| Even more variants (2026-10-22) | 16 more (83 in total): ratio_dots, difference_dots, product_lines, difference_lines, ratio_lines, prime_composite, parity_regions, missing_digit, forbidden_digit, divisibility, kenken (Mathdoku: no box units, cage "op"), alphabet, wordoku (puzzle "word"), symbol, color, roman (display only: `Board.glyph_for`). Expert = fewest given digits for `Generator.EXPERT_GOAL` variants (0 or ≤2 goal, adds clues via `_boost`), graded otherwise. Variants not built yet are listed in Claude memory "idea-logicwiz-more-variants". |
 | Puzzles | **Both**: verified JSON packs in `puzzles/*.json` (500 per difficulty per variant, 42 × 1500 = 63,000 total) **and** an in-game generator that checks each puzzle has a unique solution. |
 | Features | Pencil marks + undo/redo, timer/hints/save-resume, daily puzzle + stats/streaks, Steam achievements. |
 | Levels (2026-10-21) | Six levels for every variant: **beginner, easy, medium, hard, expert, master** (`GameState.DIFFICULTIES`, `Generator.LEVELS`), 500 pack puzzles each. Beginner = easy clues + 8 more givens. Expert/master = minimal givens, fewer variant clues (`Generator.CLUE_TIER` → medium amounts) and only puzzles whose `Generator.grade()` (solver nodes to prove uniqueness ÷ empty cells) reaches `Generator.GRADE[variant]` = median / top-quarter grade of that variant's Hard pack. |
@@ -112,6 +113,17 @@ list); "Continue" always resumes the latest. The generator is only used after th
 - **Not yet verified by the user on Windows** after the latest update (Shift/Ctrl/colour). Ask them how it went.
 
 ## Open items / suggested next steps
+0. **GitHub pack builds in flight (2026-10-22)**, repo Bellatorius/Sudoku-Godot (made PUBLIC temporarily for free
+   Actions minutes: make it PRIVATE again when done). Each run uploads one artifact per variant × 5 shards.
+   - 39657891070 master (42 originals), 39657905828 beginner (42 originals)
+   - 39657898722 expert, CANCELLED: keep its artifacts for classic, jigsaw, diagonal, non_consecutive, king, knight,
+     even_odd, little_killer, palindrome, between, universal (unchanged Expert design)
+   - 39678078328 expert for the other 31 originals (new fewest-digit design where it applies)
+   - 39678083580 hard, 39678090168 medium, 39678095765 easy, 39678101160 beginner for the 25 newer variants
+   - Still to run for the 25 newer variants: grades (tools/build_grades.gd on their hard parts → puzzles/grades.json,
+     commit), then expert + master.
+   Collect: `gh run download <id> -D puzzles/_parts` (flatten the per-artifact folders), then
+   `godot --headless -s tools/build_packs.gd -- merge`, check old easy/medium/hard are unchanged.
 1. Ask the user to confirm the Shift/Ctrl/colour behaviour matches their reference app. They wanted Claude to
    inspect their Chrome tab, but the Claude in Chrome extension wasn't connected, so it was copied from screenshots.
 2. Unanswered questions to the user: final Steam title (keep "Logic Wiz"?), real Steam App ID (currently 480 in

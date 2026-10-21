@@ -16,7 +16,11 @@ static func explain(pz: Puzzle) -> Array:
 		return s
 
 	for cg in pz.cages.slice(0, 3):
-		out.append({"cells": cg.cells, "text": "This cage: %s = %d, with no digit repeated." % [plus.call(cg.cells), cg.sum]})
+		match str(cg.get("op", "+")):
+			"*": out.append({"cells": cg.cells, "text": "This cage: %s = %d." % [j.call(cg.cells, " × "), cg.sum]})
+			"-": out.append({"cells": cg.cells, "text": "This cage: %d − %d = %d." % [maxi(sol[cg.cells[0]], sol[cg.cells[1]]), mini(sol[cg.cells[0]], sol[cg.cells[1]]), cg.sum]})
+			"/": out.append({"cells": cg.cells, "text": "This cage: %d ÷ %d = %d." % [maxi(sol[cg.cells[0]], sol[cg.cells[1]]), mini(sol[cg.cells[0]], sol[cg.cells[1]]), cg.sum]})
+			_: out.append({"cells": cg.cells, "text": "This cage: %s = %d, with no digit repeated." % [plus.call(cg.cells), cg.sum]})
 	for t in pz.thermos.slice(0, 3):
 		out.append({"cells": t, "text": "From the bulb the digits rise: %s." % j.call(t, " < ")})
 	for a in pz.arrows.slice(0, 3):
@@ -72,6 +76,15 @@ static func explain(pz: Puzzle) -> Array:
 			"pl":
 				var arrow: Array = cells.slice(2)
 				out.append({"cells": cells, "text": "The pill reads %d%d = %s along the arrow." % [sol[cells[0]], sol[cells[1]], plus.call(arrow)]})
+			"pr":
+				var pieces: Array = [[]]
+				for i in cells.size():
+					if i > 0 and pz.regions[cells[i]] != pz.regions[cells[i - 1]]:
+						pieces.append([])
+					pieces[-1].append(cells[i])
+				out.append({"cells": cells, "text": "Every box piece has the same product: %s." % " | ".join(PackedStringArray(pieces.map(func(pc): return j.call(pc, " × "))))})
+			"df": out.append({"cells": cells, "text": "Neighbours all differ by %d: %s." % [absi(sol[cells[1]] - sol[cells[0]]), j.call(cells, " ")]})
+			"rt": out.append({"cells": cells, "text": "Every neighbour pair is 2:1: %s." % j.call(cells, " ")})
 			"rf":
 				var g := int(ln.get("g", 0))
 				if not groups.has(g): groups[g] = []
@@ -114,6 +127,8 @@ static func explain(pz: Puzzle) -> Array:
 					if (k > 0 and absi(a[k] - a[k - 1]) == 1) or (k < 8 and absi(a[k] - a[k + 1]) == 1):
 						run.append(cells[k])
 				out.append({"cells": run, "text": "%d cells of %s sit in a ±1 run: %s." % [o.v, where, j.call(run, ", ")]})
+			"md":
+				out.append({"cells": cells.slice(0, 3), "text": "The first three from %s are %s: no %d among them." % [side_name, j.call(cells.slice(0, 3), ", "), o.v]})
 			"bf":
 				var x := a[0]; var y := a[8]
 				var lo := 9 - y if x + y > 9 else x
@@ -147,6 +162,8 @@ static func explain(pz: Puzzle) -> Array:
 			"d": text = "Crossed tilde: %d and %d have different parity." % [x, y]
 			_:
 				if t.begins_with("+"): text = "+%s: %d + %d." % [t.substr(1), x, y]
+				elif t.begins_with("/"): text = "1:%s dot: %d is %s times %d." % [t.substr(1), maxi(x, y), t.substr(1), mini(x, y)]
+				elif t.begins_with("-"): text = "Difference %s: %d and %d." % [t.substr(1), x, y]
 				elif t.begins_with("*"): text = "×%s: %d × %d." % [t.substr(1), x, y]
 		if text != "":
 			out.append({"cells": [a, b], "text": text})
@@ -184,6 +201,10 @@ static func explain(pz: Puzzle) -> Array:
 			"fr":
 				var why := "its row number" if sol[m] == r + 1 else ("its column number" if sol[m] == c + 1 else "its box number")
 				out.append({"cells": [m], "text": "The heart holds %d: %s." % [sol[m], why]})
+			"pm": out.append({"cells": [m], "text": "P: %d is prime." % sol[m]})
+			"cm": out.append({"cells": [m], "text": "C: %d is composite." % sol[m]})
+			"d2", "d3", "d4": out.append({"cells": [m], "text": "÷%s: %d divides by %s." % [str(pz.marks[k])[1], sol[m], str(pz.marks[k])[1]]})
+			_ when str(pz.marks[k]).begins_with("x"): out.append({"cells": [m], "text": "The crossed-out %s can't go here; the cell is %d." % [str(pz.marks[k])[1], sol[m]]})
 			"pu": out.append({"cells": [m] + nb, "text": "Pulse %d: its neighbours %s are ±1, a divisor or a multiple." % [sol[m], j.call(nb, ", ")]})
 			"fo": out.append({"cells": [m] + nb, "text": "The grey %d is bigger than its white neighbours." % sol[m]})
 			"mn": out.append({"cells": [m] + nb, "text": "MIN %d is smaller than all its neighbours %s." % [sol[m], j.call(nb, ", ")]})
@@ -192,6 +213,8 @@ static func explain(pz: Puzzle) -> Array:
 			"iv" when sol[m] != r + 1: out.append({"cells": [m, (sol[m] - 1) * 9 + c], "text": "Arrow %d in row %d: row %d of this column holds %d." % [sol[m], r + 1, sol[m], r + 1]})
 		marks += 1
 
+	for ar in pz.areas.slice(0, 2):
+		out.append({"cells": ar.cells, "text": "%s area: %s, all %s." % ["Even" if ar.t == "e" else "Odd", j.call(ar.cells, " "), "even" if ar.t == "e" else "odd"]})
 	for q in pz.quads.slice(0, 2):
 		var t: int = q.c
 		out.append({"cells": [t, t + 1, t + 9, t + 10], "text": "Circle %s: those digits appear around it (%s)." % [" ".join(PackedStringArray(q.d.map(func(x): return str(x)))), j.call([t, t + 1, t + 9, t + 10], " ")]})
@@ -269,7 +292,12 @@ static func explain(pz: Puzzle) -> Array:
 
 	if out.is_empty() or pz.variant == "classic":
 		var box: Array = [0, 1, 2, 9, 10, 11, 18, 19, 20]
-		out.append({"cells": box, "text": "Every row, column and box holds 1 to 9 once: %s." % j.call(box, " ")})
+		var shown := " ".join(PackedStringArray(box.map(func(c): return Board.glyph_for(pz, sol[c]))))
+		match pz.variant:
+			"color": out.append({"cells": box, "text": "Every row, column and box holds each of the nine colours once."})
+			"alphabet", "wordoku", "symbol", "roman":
+				out.append({"cells": box, "text": "Every row, column and box holds each of the nine once: %s." % shown})
+			_: out.append({"cells": box, "text": "Every row, column and box holds 1 to 9 once: %s." % shown})
 	return out.slice(0, 6)
 
 

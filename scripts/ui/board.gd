@@ -26,10 +26,30 @@ const LINE_COLORS := {"gw": Color(0.18, 0.70, 0.42, 0.75), "rb": Color(0.76, 0.3
 	"rf": Color(0.96, 0.62, 0.40, 0.7), "zp": Color(0.56, 0.48, 0.88, 0.6),
 	"rs": Color(0.30, 0.72, 0.86, 0.6), "en": Color(0.85, 0.55, 0.25, 0.65), "mo": Color(0.20, 0.62, 0.58, 0.65),
 	"pa": Color(0.90, 0.36, 0.45, 0.6), "nb": Color(0.92, 0.80, 0.20, 0.7), "tn": Color(0.50, 0.56, 0.68, 0.65),
-	"da": Color(0.45, 0.47, 0.58, 0.75), "pl": Color(0.45, 0.47, 0.58, 0.85)}
+	"da": Color(0.45, 0.47, 0.58, 0.75), "pl": Color(0.45, 0.47, 0.58, 0.85),
+	"pr": Color(0.62, 0.42, 0.85, 0.6), "df": Color(0.95, 0.45, 0.30, 0.6), "rt": Color(0.30, 0.75, 0.55, 0.6)}
 const LINE_WIDTH := {"gw": 0.16, "dw": 0.16, "rb": 0.24, "pal": 0.22, "bt": 0.07, "lo": 0.09, "st": 0.26,
 	"bi": 0.14, "rf": 0.16, "zp": 0.18, "rs": 0.18, "en": 0.16, "mo": 0.16, "pa": 0.16, "nb": 0.16,
-	"tn": 0.16, "da": 0.07, "pl": 0.045}
+	"tn": 0.16, "da": 0.07, "pl": 0.045, "pr": 0.18, "df": 0.16, "rt": 0.16}
+const SYMBOLS := ["★", "●", "▲", "■", "♦", "♥", "♣", "♠", "✚"]
+const ROMAN := ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
+
+
+## How digit d is shown in this puzzle: letters, Roman numerals, symbols, the Wordoku word's letters, or the digit.
+## (Color Sudoku draws coloured discs instead, see _draw_digit.)
+static func glyph_for(pz: Puzzle, d: int) -> String:
+	if d < 1 or d > 9:
+		return ""
+	match pz.variant:
+		"alphabet": return "ABCDEFGHI"[d - 1]
+		"roman": return ROMAN[d - 1]
+		"symbol": return SYMBOLS[d - 1]
+		"wordoku":
+			if pz.word.length() == 9:
+				return pz.word[d - 1]
+	return str(d)
+
+
 ## Extra regions of the fixed-pattern variants, shaded like Windoku's windows.
 const SHADED := {"center_dot": [10, 13, 16, 37, 40, 43, 64, 67, 70], "asterisk": Solver.ASTERISK, "girandola": Solver.GIRANDOLA}
 ## Margin around the grid (in cells) when clues sit outside it.
@@ -245,6 +265,11 @@ func _draw() -> void:
 		draw_rect(cell_rect(c), Color(UI.ACCENT, 0.12 if not UI.dark else 0.22))
 	if pz.variant == "magic_square":
 		draw_rect(Rect2(cell_rect(30).position, Vector2(cell, cell) * 3.0), Color(UI.GOLD, 0.12))
+	# Even-Odd Regions: tinted areas (blue = even, orange = odd), labelled E / O in their first cell
+	for ar in pz.areas:
+		var acol := Color(0.3, 0.55, 1.0, 0.16) if ar.t == "e" else Color(1.0, 0.6, 0.2, 0.18)
+		for c in ar.cells:
+			draw_rect(cell_rect(c), acol)
 	# Clone pairs: one pastel per pair
 	for ci in pz.clones.size():
 		var ccol: Color = UI.CELL_COLORS[1 + ci % 9]
@@ -394,7 +419,7 @@ func _draw() -> void:
 
 	# Region borders
 	var thick := maxf(2.0, roundf(cell * 0.045))
-	for c in 81:
+	for c in (81 if pz.uses_boxes() or pz.variant != "kenken" else 0):
 		var r := cell_rect(c)
 		if c % 9 < 8 and pz.regions[c] != pz.regions[c + 1]:
 			draw_line(Vector2(r.end.x, r.position.y - thick / 2), Vector2(r.end.x, r.end.y + thick / 2), UI.INK, thick)
@@ -449,10 +474,10 @@ func _draw() -> void:
 				var k := cell * 0.08
 				draw_polyline(PackedVector2Array([mid - dv * k + pv * k * 1.7, mid + dv * k, mid - dv * k - pv * k * 1.7]),
 					UI.INK, maxf(2.0, cell * 0.04), true)
-			_ when t.begins_with("+") or t.begins_with("*"):
+			_ when t.length() > 1 and t[0] in ["+", "*", "/", "-"]:
 				var fs := int(cell * 0.25)
 				var f := UI.font_sans_bold
-				var txt := ("×" + t.substr(1)) if t[0] == "*" else t
+				var txt: String = {"*": "×" + t.substr(1), "/": "1:" + t.substr(1), "-": t.substr(1)}.get(t[0], t)
 				var sz := f.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 				var rr := Rect2(mid - Vector2(sz.x / 2 + 4, fs * 0.55), Vector2(sz.x + 8, fs * 1.1))
 				draw_style_box(UI.box(UI.SURFACE, UI.INK, int(fs * 0.55), 1), rr)
@@ -491,7 +516,7 @@ func _draw() -> void:
 				col = UI.HINT if session.hinted[c] else UI.ACCENT
 			if GameState.settings.highlight_conflicts and _marked_wrong(c) and not session.is_given(c):
 				col = UI.DANGER
-			_draw_centered(f, str(v), center + Vector2(0, cell * 0.02), big, col)
+			_draw_digit(f, v, center + Vector2(0, cell * 0.02), big, col, session.is_given(c))
 			continue
 		# Pencil marks. Corner marks sit in fixed keypad spots (1 2 3 / 4 5 6 / 7 8 9); under a cage sum
 		# the rows are squeezed down so the top row clears the label. Centre marks go in the middle.
@@ -532,7 +557,7 @@ func _draw() -> void:
 					var off := Vector2((d - 1) % 3 - 1, rows[(d - 1) / 3]) * cell * 0.31
 					if d == 5 and cm:
 						off = Vector2(-0.5, float(rows[0])) * cell * 0.31   # make room for the centre marks
-					_draw_centered(UI.font_sans, str(d), center + off, small, _note_color(c, d, UI.INK_MUTED))
+					_draw_digit(UI.font_sans, d, center + off, small, _note_color(c, d, UI.INK_MUTED), true)
 
 	if not emphasis.is_empty():
 		for c in 81:
@@ -561,12 +586,38 @@ func _note_color(c: int, d: int, normal: Color) -> Color:
 ## Centre marks drawn as one row, each digit coloured blue (possible) / red (blocked).
 func _draw_notes_row(c: int, s: String, center: Vector2, fs: int) -> void:
 	var f: Font = UI.font_sans
-	var total := f.get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+	var pz := session.puzzle
+	var gap := fs * 0.18 if pz.variant == "roman" else 0.0
+	var widths: Array = []
+	var total := 0.0
+	for ch in s:
+		var w := fs * 0.62 if pz.variant == "color" else f.get_string_size(glyph_for(pz, int(ch)), HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x + gap
+		widths.append(w)
+		total += w
 	var x := center.x - total / 2.0
 	var y := center.y + (f.get_ascent(fs) - f.get_descent(fs)) / 2.0 - fs * 0.04
-	for ch in s:
-		draw_string(f, Vector2(x, y), ch, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, _note_color(c, int(ch), UI.ACCENT))
-		x += f.get_string_size(ch, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+	for i in s.length():
+		var d := int(s[i])
+		if pz.variant == "color":
+			draw_circle(Vector2(x + widths[i] / 2.0, center.y), fs * 0.26, Color(UI.CELL_COLORS[d], 1.0), true, -1.0, true)
+		else:
+			draw_string(f, Vector2(x, y), glyph_for(pz, d), HORIZONTAL_ALIGNMENT_LEFT, -1, fs, _note_color(c, d, UI.ACCENT))
+		x += widths[i]
+
+
+## A digit as this variant shows it: the glyph, or for Color Sudoku a coloured disc (a ring marks the
+## player's own entries, a red ring a mistake).
+func _draw_digit(f: Font, d: int, center: Vector2, fs: int, col: Color, given: bool) -> void:
+	if session.puzzle.variant != "color":
+		var g := glyph_for(session.puzzle, d)
+		var fsz := fs if g.length() < 3 else int(fs * (0.7 if g.length() == 3 else 0.58))
+		_draw_centered(f, g, center, fsz, col)
+		return
+	var r := fs * 0.42
+	draw_circle(center, r, Color(UI.CELL_COLORS[d], 1.0), true, -1.0, true)
+	draw_arc(center, r, 0, TAU, 32, Color(UI.INK, 0.35), 1.0, true)
+	if not given:
+		draw_arc(center, r + 3.0, 0, TAU, 32, col, 2.0, true)
 
 
 func _draw_centered(f: Font, s: String, center: Vector2, fs: int, col: Color) -> void:
@@ -619,7 +670,7 @@ func _draw_cages(pz: Puzzle, cage_label: Dictionary) -> void:
 		var first: int = cg.cells.min()
 		cage_label[first] = true
 		var r := cell_rect(first)
-		var txt := str(cg.sum)
+		var txt: String = str(cg.sum) + str({"+": "+", "-": "−", "*": "×", "/": "÷"}.get(str(cg.get("op", "")), ""))
 		var sz := UI.font_sans_bold.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 		var pos := r.position + Vector2(m * 0.6, m * 0.4)
 		draw_rect(Rect2(pos, Vector2(sz.x + 3, fs * 1.05)), UI.SURFACE)
@@ -716,6 +767,18 @@ func _draw_extra_clues(pz: Puzzle) -> void:
 				int(cell * 0.14), Color(UI.INK, 0.55))
 			continue
 		if t == "fo":
+			continue
+		if t in ["pm", "cm", "d2", "d3", "d4"]:   # small label in the top-left corner
+			var lbl: String = {"pm": "P", "cm": "C", "d2": "÷2", "d3": "÷3", "d4": "÷4"}[t]
+			var lr := cell_rect(mc)
+			draw_rect(lr.grow(-1), Color(UI.ACCENT, 0.07))
+			_draw_centered(UI.font_sans_bold, lbl, lr.position + Vector2(cell * (0.2 if lbl.length() == 1 else 0.24), cell * 0.19), int(cell * 0.24), UI.ACCENT)
+			continue
+		if t.begins_with("x") and t.length() == 2:   # forbidden digit: small crossed-out digit, bottom right
+			var at := cell_rect(mc).position + Vector2(cell * 0.8, cell * 0.8)
+			var fcol := Color(UI.DANGER, 0.75)
+			_draw_centered(UI.font_sans_bold, glyph_for(pz, int(t[1])), at, int(cell * 0.2), fcol)
+			draw_line(at + Vector2(-cell * 0.1, cell * 0.08), at + Vector2(cell * 0.1, -cell * 0.08), fcol, 1.6, true)
 			continue
 		var r := cell_rect(mc)
 		var ctr := cell_center(mc)

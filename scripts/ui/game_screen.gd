@@ -300,7 +300,11 @@ func _refresh_pad() -> void:
 		cnt.visible = session != null and m != "color"
 		if cnt.visible:
 			cnt.text = str(maxi(0, 9 - session.digit_count(d)))
-		if m == "color":
+		var colour_digits := session != null and session.puzzle.variant == "color"   # Color Sudoku: the digits are colours
+		b.text = str(d) if session == null else Board.glyph_for(session.puzzle, d)
+		if colour_digits and m != "color":
+			b.text = ""
+		if m == "color" or colour_digits:
 			var sb := UI.box(UI.CELL_COLORS[d], Color(UI.INK, 0.25), 12, 1)
 			var sbh := UI.box(UI.CELL_COLORS[d].lightened(0.2), UI.INK, 12, 2)
 			b.add_theme_stylebox_override("normal", sb)
@@ -308,12 +312,13 @@ func _refresh_pad() -> void:
 			b.add_theme_stylebox_override("pressed", sbh)
 			b.add_theme_color_override("font_color", Color(UI.INK, 0.55))
 			b.add_theme_font_size_override("font_size", 16)
-			b.disabled = false
+			b.disabled = colour_digits and m == "normal" and session.digit_count(d) >= 9
 		else:
 			for k in ["normal", "hover", "pressed"]:
 				b.remove_theme_stylebox_override(k)
 			b.remove_theme_color_override("font_color")
-			b.add_theme_font_size_override("font_size", 26 if m == "normal" else 18)
+			var long := b.text.length() >= 3   # Roman numerals
+			b.add_theme_font_size_override("font_size", (26 if m == "normal" else 18) - (8 if long else 0))
 			b.disabled = session != null and m == "normal" and session.digit_count(d) >= 9
 
 
@@ -1050,6 +1055,7 @@ func _draw_opponent() -> void:
 		# the puzzle's own digits are known to both players, so they're never hidden
 		var digit := str(session.puzzle.givens[i]) if session.is_given(i) else (_opp_values[i] if revealed else "0")
 		if digit != "0":
+			digit = Board.glyph_for(session.puzzle, int(digit))
 			var col := UI.INK if session.is_given(i) else (UI.DANGER if bad else UI.ACCENT)
 			var f: Font = UI.font_sans_medium
 			var sz := f.get_string_size(digit, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
