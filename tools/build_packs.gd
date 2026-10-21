@@ -5,6 +5,8 @@ extends SceneTree
 ##
 ## Everything, one process:   godot --headless -s tools/build_packs.gd -- 500
 ## One variant/difficulty:    godot --headless -s tools/build_packs.gd -- part killer hard 500
+## One shard of it (CI):       godot --headless -s tools/build_packs.gd -- part killer master 100 3
+##                             (shard 3 of several: its own seeds and file killer_master_s3.json; merge joins them)
 ##                            (writes res://puzzles/_parts/killer_hard.json, so many can run in parallel)
 ## Merge parts into packs:    godot --headless -s tools/build_packs.gd -- merge
 ##                            (with no parts present this just rewrites the packs one puzzle per line)
@@ -17,8 +19,9 @@ const PARTS := "res://puzzles/_parts/"
 func _init() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.size() >= 4 and args[0] == "part":
-		var path := PARTS + "%s_%s.json" % [args[1], args[2]]
-		_write(path, _build(args[1], args[2], int(args[3]), path))
+		var shard := int(args[4]) if args.size() >= 5 else -1
+		var path := PARTS + ("%s_%s.json" % [args[1], args[2]] if shard < 0 else "%s_%s_s%d.json" % [args[1], args[2], shard])
+		_write(path, _build(args[1], args[2], int(args[3]), path, shard))
 	elif args.size() >= 1 and args[0] == "merge":
 		_merge()
 	else:
@@ -42,8 +45,8 @@ func _existing(v: String) -> Array:
 
 
 ## Saves progress to `part_path` every 25 puzzles and resumes from it if it already exists.
-func _build(v: String, d: String, count: int, part_path: String) -> Array:
-	var list: Array = _existing(v).filter(func(p): return p.get("difficulty", "") == d)
+func _build(v: String, d: String, count: int, part_path: String, shard := -1) -> Array:
+	var list: Array = [] if shard >= 0 else _existing(v).filter(func(p): return p.get("difficulty", "") == d)
 	if FileAccess.file_exists(part_path):
 		var saved = JSON.parse_string(FileAccess.get_file_as_string(part_path))
 		if saved is Array and saved.size() > list.size():
@@ -53,7 +56,7 @@ func _build(v: String, d: String, count: int, part_path: String) -> Array:
 	for p in list:
 		seen[str(p.get("givens", "")) + str(p.get("solution", ""))] = true
 		ids[p.get("id", "")] = true
-	var seed_value := (hash(v + d) & 0xFFFFFF) + 100000 + list.size() * 1000
+	var seed_value := (hash(v + d) & 0xFFFFFF) + 100000 + list.size() * 1000 + maxi(0, shard) * 50000000
 	var next_num := list.size() + 1
 	var t0 := Time.get_ticks_msec()
 	while list.size() < count:
@@ -67,9 +70,10 @@ func _build(v: String, d: String, count: int, part_path: String) -> Array:
 		if Solver.new(p).count_solutions(p.givens, 2, 0) != 1:
 			continue
 		seen[key] = true
-		while ids.has("pack-%s-%s-%03d" % [v, d, next_num]):
+		var tag := "" if shard < 0 else "s%d-" % shard
+		while ids.has("pack-%s-%s-%s%03d" % [v, d, tag, next_num]):
 			next_num += 1
-		p.id = "pack-%s-%s-%03d" % [v, d, next_num]
+		p.id = "pack-%s-%s-%s%03d" % [v, d, tag, next_num]
 		ids[p.id] = true
 		next_num += 1
 		list.append(p.to_dict())
@@ -85,11 +89,27 @@ func _merge() -> void:
 		var list: Array = _existing(v).filter(func(p): return not DIFFS.has(p.get("difficulty", "")))
 		for d in DIFFS:
 			var path := PARTS + "%s_%s.json" % [v, d]
+			var got: Array = []
 			if FileAccess.file_exists(path):
-				list.append_array(JSON.parse_string(FileAccess.get_file_as_string(path)))
+				got.append_array(JSON.parse_string(FileAccess.get_file_as_string(path)))
 				DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 			else:
-				list.append_array(_existing(v).filter(func(p): return p.get("difficulty", "") == d))
+				got.append_array(_existing(v).filter(func(p): return p.get("difficulty", "") == d))
+			# shards from CI: <v>_<d>_s<k>.json, added to what is already there (duplicates skipped)
+			var dir := DirAccess.open(PARTS)
+			if dir:
+				for fn in dir.get_files():
+					if fn.begins_with("%s_%s_s" % [v, d]) and fn.ends_with(".json"):
+						var seen := {}
+						for p in got:
+							seen[str(p.get("givens", "")) + str(p.get("solution", ""))] = true
+						for p in JSON.parse_string(FileAccess.get_file_as_string(PARTS + fn)):
+							var key := str(p.get("givens", "")) + str(p.get("solution", ""))
+							if not seen.has(key):
+								seen[key] = true
+								got.append(p)
+						DirAccess.remove_absolute(ProjectSettings.globalize_path(PARTS + fn))
+			list.append_array(got)
 		_write_pack(v, list)
 		print(v, ": ", list.size(), " puzzles")
 

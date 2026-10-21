@@ -1,0 +1,44 @@
+name: Build puzzle packs
+# Builds pack puzzles for one level of every variant in parallel shards.
+# Run it from Actions → "Build puzzle packs" → Run workflow, pick the level.
+# Each job uploads puzzles/_parts/<variant>_<level>_s<shard>.json as an artifact;
+# download them all into puzzles/_parts/ and run: godot --headless -s tools/build_packs.gd -- merge
+on:
+  workflow_dispatch:
+    inputs:
+      level:
+        description: "Level to build (beginner / expert / master / …)"
+        required: true
+        default: "master"
+      per_shard:
+        description: "Puzzles per shard (5 shards per variant)"
+        required: true
+        default: "100"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [classic, killer, thermo, arrow, jigsaw, diagonal, kropki, xv, non_consecutive, king, knight,
+          even_odd, german_whispers, renban, sandwich, skyscraper, little_killer, palindrome, between, consecutive,
+          greater_than, dutch_whispers, slow_thermo, quadruple, universal, windoku, xsum, zipper, lockout, twisted,
+          bishop, ascending, axia, couples, dutch_flatmates, friendly, index, pulse, reflection, running, slingshot, vertex]
+        shard: [0, 1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Godot 4.7.2
+        run: |
+          curl -sL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q godot.zip && mv Godot_v4.7.2-stable_linux.x86_64 godot && chmod +x godot
+      - name: Import project
+        run: timeout 300 ./godot --headless --path . --import || true
+      - name: Build shard
+        run: ./godot --headless --path . -s tools/build_packs.gd -- part ${{ matrix.variant }} ${{ inputs.level }} ${{ inputs.per_shard }} ${{ matrix.shard }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.variant }}_${{ inputs.level }}_s${{ matrix.shard }}
+          path: puzzles/_parts/${{ matrix.variant }}_${{ inputs.level }}_s${{ matrix.shard }}.json
+          if-no-files-found: error
