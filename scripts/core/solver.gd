@@ -14,7 +14,7 @@ const ALL := 0x3FE  # bits 1..9
 const EVEN := (1 << 2) | (1 << 4) | (1 << 6) | (1 << 8)
 const ODD := (1 << 1) | (1 << 3) | (1 << 5) | (1 << 7) | (1 << 9)
 
-enum Edge { NONE, WHITE, BLACK, X, V, GT, LT, SAME, DIFF, PULSE }
+enum Edge { NONE, WHITE, BLACK, X, V, GT, LT, SAME, DIFF, PULSE, SUMN, PRODN, RATION, DIFFN }
 
 var p: Puzzle
 var grid := PackedInt32Array()
@@ -43,6 +43,13 @@ var cell_index: Array = []            # per cell: [[marked cell, horizontal?], .
 var cell_vertex: Array = []           # per cell: vertex indices
 var cell_sling: Array = []            # per cell: slingshot indices
 var flatmates := false
+var anti_diag := false                # Anti-Diagonal: each main diagonal holds only 3 different digits
+var queen := false                    # Chess Queen: a 9 never sees another 9 on a diagonal
+## Extra 9-cell regions of the fixed-pattern variants (cells listed row by row, 0-based).
+const ASTERISK := [13, 20, 24, 37, 40, 43, 56, 60, 67]
+const GIRANDOLA := [0, 8, 13, 37, 40, 43, 67, 72, 80]
+## Argyle: eight diagonal lines (start cell, step) whose digits can't repeat.
+const ARGYLE := [[1, 10, 8], [9, 10, 8], [7, 8, 8], [17, 8, 8], [4, 10, 5], [36, 10, 5], [4, 8, 5], [44, 8, 5]]
 var twist_gen := false
 
 var _popc := PackedInt32Array()
@@ -95,7 +102,7 @@ func _build() -> void:
 	for i in 81:
 		regs[p.regions[i]].append(i)
 	for rg in regs:
-		_add_unit(rg)
+		_add_unit(rg if p.variant != "kenken" else PackedInt32Array())   # Mathdoku has no boxes (empty units keep the indices)
 	if p.diagonals:
 		var d1 := PackedInt32Array()
 		var d2 := PackedInt32Array()
@@ -158,6 +165,11 @@ func _build() -> void:
 				var key := Puzzle.edge_key(i, n)
 				var code: String = p.edges.get(key, "")
 				var tcode: int = codes.get(code, Edge.NONE)
+				if code.length() > 1 and code[0] in ["+", "*", "/", "-"]:   # dot with a number: sum / product / ratio / difference
+					var et: int = {"+": Edge.SUMN, "*": Edge.PRODN, "/": Edge.RATION, "-": Edge.DIFFN}[code[0]]
+					cell_edges[i].append([n, et, int(code.substr(1))])
+					has_extra[i] = 1
+					continue
 				if code == ">" or code == "<":   # stored for the lower-index cell
 					tcode = Edge.GT if (i < n) == (code == ">") else Edge.LT
 				if tcode == Edge.NONE and not p.negative:
@@ -183,10 +195,10 @@ func _build_new_rules() -> void:
 			if nb[0] >= 0 and nb[0] <= 8 and nb[1] >= 0 and nb[1] <= 8:
 				cell_orth[i].append(nb[0] * 9 + nb[1])
 	var moves: Array = []
-	if p.variant == "king":
+	if p.variant == "king" or p.variant == "miracle":
 		moves = [[-1, -1], [-1, 1], [1, -1], [1, 1]]   # orthogonal ones are already row/column
-	elif p.variant == "knight":
-		moves = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]
+	if p.variant == "knight" or p.variant == "miracle":
+		moves.append_array([[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]])
 	for i in 81:
 		for mv in moves:
 			var r: int = i / 9 + mv[0]
@@ -195,9 +207,29 @@ func _build_new_rules() -> void:
 				cell_diff[i].append(r * 9 + c)
 		if not moves.is_empty():
 			has_extra[i] = 1
-	non_consecutive = p.variant == "non_consecutive"
+	non_consecutive = p.variant == "non_consecutive" or p.variant == "miracle"
 	if non_consecutive:
 		has_extra.fill(1)
+	queen = p.variant == "queen"
+	anti_diag = p.variant == "anti_diagonal"
+	if queen or anti_diag:
+		has_extra.fill(1)
+	var extra_regions: Array = []
+	match p.variant:
+		"center_dot":
+			extra_regions = [[10, 13, 16, 37, 40, 43, 64, 67, 70]]
+		"asterisk":
+			extra_regions = [ASTERISK]
+		"girandola":
+			extra_regions = [GIRANDOLA]
+		"argyle":
+			for ln in ARGYLE:
+				var cells: Array = []
+				for k in ln[2]:
+					cells.append(ln[0] + ln[1] * k)
+				extra_regions.append(cells)
+	for rg in extra_regions:
+		_add_unit(PackedInt32Array(rg))
 	for k in p.parity:
 		cell_mask[int(k)] = EVEN if p.parity[k] == "e" else ODD
 		has_extra[int(k)] = 1
@@ -242,6 +274,13 @@ func _build_new_rules() -> void:
 			for b in range(a + 1, ls.size()):
 				for pos in mini(ls[a].size(), ls[b].size()):
 					_link_eq(ls[a][pos], ls[b][pos])
+	for cl in p.clones:
+		for k in mini(cl.a.size(), cl.b.size()):
+			_link_eq(cl.a[k], cl.b[k])
+	for ar in p.areas:
+		for c in ar.cells:
+			cell_mask[c] &= EVEN if ar.t == "e" else ODD
+			has_extra[c] = 1
 	for oi in p.outer.size():
 		var cells := outer_cells(p.outer[oi].s, p.outer[oi].i)
 		outer_lines.append(cells)
@@ -307,6 +346,26 @@ func _build_new_rules() -> void:
 			for n in cell_orth[m]:
 				cell_mask[n] &= ~2
 				_add_rel(m, n, Edge.PULSE)
+		elif t == "fo":   # Fortress: a grey cell is bigger than its white neighbours
+			for n in cell_orth[m]:
+				if not p.marks.has(n) or p.marks[n] != "fo":
+					_add_dir(m, n)
+		elif t == "pm":   # prime
+			cell_mask[m] &= (1 << 2) | (1 << 3) | (1 << 5) | (1 << 7)
+		elif t == "cm":   # composite
+			cell_mask[m] &= (1 << 4) | (1 << 6) | (1 << 8) | (1 << 9)
+		elif t.begins_with("x") and t.length() == 2:   # forbidden digit
+			cell_mask[m] &= ~(1 << int(t[1]))
+		elif t in ["d2", "d3", "d4"]:   # divisible by 2 / 3 / 4
+			var q := int(t[1])
+			var mask := 0
+			for dd in range(q, 10, q):
+				mask |= 1 << dd
+			cell_mask[m] &= mask
+		elif t == "mn" or t == "mx":   # smaller / bigger than every orthogonal neighbour
+			for n in cell_orth[m]:
+				if t == "mx": _add_dir(m, n)
+				else: _add_dir(n, m)
 		elif t.begins_with("i"):
 			if t.contains("h"):
 				for j in 9:
@@ -335,6 +394,14 @@ func _build_new_rules() -> void:
 func _link_eq(a: int, b: int) -> void:
 	cell_eq[a].append(b)
 	cell_eq[b].append(a)
+	has_extra[a] = 1
+	has_extra[b] = 1
+
+
+## a must be bigger than b.
+func _add_dir(a: int, b: int) -> void:
+	cell_edges[a].append([b, Edge.GT])
+	cell_edges[b].append([a, Edge.LT])
 	has_extra[a] = 1
 	has_extra[b] = 1
 
@@ -393,6 +460,23 @@ static func outer_value(t: String, a: PackedInt32Array) -> int:
 				if (i > 0 and absi(a[i] - a[i - 1]) == 1) or (i < 8 and absi(a[i] - a[i + 1]) == 1):
 					n += 1
 			return n
+		"fs":
+			return a[0] + a[1] + a[2]
+		"nr":
+			return a[a[0] - 1]
+		"ro":
+			if a[0] < a[1] and a[1] < a[2]: return 1
+			if a[0] > a[1] and a[1] > a[2]: return -1
+			return 0
+		"bf":
+			var x := a[0]
+			var y := a[8]
+			var s := 0
+			if x + y > 9:   # overlap of the first x and last y cells
+				for j in range(9 - y, x): s += a[j]
+			else:           # the gap between them
+				for j in range(x, 9 - y): s += a[j]
+			return s
 	return 0
 
 
@@ -466,6 +550,116 @@ func _line_ok(ln: Dictionary, pos: int, d: int) -> bool:
 					else: above = true
 			if ln.t == "bt" and below and above:
 				return false
+		"rs":   # Region Sum: every box-segment of the line has the same sum
+			var segs: Array = []   # [known sum, unknown count]
+			for j in cells.size():
+				if j == 0 or p.regions[cells[j]] != p.regions[cells[j - 1]]:
+					segs.append([0, 0])
+				var v: int = d if j == pos else grid[cells[j]]
+				if v == 0: segs[-1][1] += 1
+				else: segs[-1][0] += v
+			var lo := 0
+			var hi := 999
+			for sg in segs:
+				lo = maxi(lo, sg[0] + sg[1])
+				hi = mini(hi, sg[0] + 9 * sg[1])
+			if lo > hi:
+				return false
+		"en", "mo":   # Entropic (low/mid/high) / Modular (remainders): any 3 in a row all differ
+			var g := (d - 1) / 3 if ln.t == "en" else d % 3
+			for j in range(pos - 2, pos + 3):
+				if j == pos or j < 0 or j >= cells.size():
+					continue
+				var v: int = grid[cells[j]]
+				if v != 0 and ((v - 1) / 3 if ln.t == "en" else v % 3) == g:
+					return false
+		"pa":   # Parity: odd and even alternate
+			for j in [pos - 1, pos + 1]:
+				if j >= 0 and j < cells.size():
+					var v: int = grid[cells[j]]
+					if v != 0 and v % 2 == d % 2:
+						return false
+		"nb":   # Nabner: no two digits on the line are equal or consecutive
+			for j in cells.size():
+				var v: int = grid[cells[j]]
+				if j != pos and v != 0 and absi(v - d) <= 1:
+					return false
+		"tn":   # Ten Lines: the line splits into pieces that each sum to 10
+			var reach := {0: true}   # running sums of the open piece that are still possible
+			for j in cells.size():
+				var v: int = d if j == pos else grid[cells[j]]
+				var nxt := {}
+				for r in reach:
+					for x in ([v] if v != 0 else range(1, 10)):
+						var t: int = r + x
+						if t == 10: nxt[0] = true
+						elif t < 10: nxt[t] = true
+				reach = nxt
+				if reach.is_empty():
+					return false
+			if not reach.has(0):
+				return false
+		"da":   # Double Arrow: the two end circles sum to the digits between them
+			var n := cells.size()
+			var es := 0
+			var ek := 0
+			for j in [0, n - 1]:
+				var v: int = d if j == pos else grid[cells[j]]
+				if v == 0: ek += 1
+				else: es += v
+			var s := 0
+			var k := 0
+			for j in range(1, n - 1):
+				var v: int = d if j == pos else grid[cells[j]]
+				if v == 0: k += 1
+				else: s += v
+			if maxi(es + ek, s + k) > mini(es + 9 * ek, s + 9 * k):
+				return false
+		"pl":   # Pill Arrow: the arrow's digits sum to the 2-digit number in the pill (cells 0-1)
+			var a0: int = d if pos == 0 else grid[cells[0]]
+			var a1: int = d if pos == 1 else grid[cells[1]]
+			var plo := (a0 if a0 else 1) * 10 + (a1 if a1 else 1)
+			var phi := (a0 if a0 else 9) * 10 + (a1 if a1 else 9)
+			var s := 0
+			var k := 0
+			for j in range(2, cells.size()):
+				var v: int = d if j == pos else grid[cells[j]]
+				if v == 0: k += 1
+				else: s += v
+			if maxi(plo, s + k) > mini(phi, s + 9 * k):
+				return false
+		"pr":   # Product Lines: every box piece of the line has the same product
+			var pieces: Array = []   # [known product, unknown count]
+			for j in cells.size():
+				if j == 0 or p.regions[cells[j]] != p.regions[cells[j - 1]]:
+					pieces.append([1, 0])
+				var v: int = d if j == pos else grid[cells[j]]
+				if v == 0: pieces[-1][1] += 1
+				else: pieces[-1][0] *= v
+			var target := -1
+			for pc in pieces:
+				if pc[1] == 0:
+					if target == -1: target = pc[0]
+					elif target != pc[0]: return false
+			if target != -1:
+				for pc in pieces:
+					if pc[1] > 0 and (target % pc[0] != 0 or target / pc[0] > int(pow(9, pc[1]))):
+						return false
+		"df":   # Difference Lines: neighbours on the line all differ by the same amount
+			var gaps := {}
+			for j in cells.size() - 1:
+				var x: int = d if j == pos else grid[cells[j]]
+				var y: int = d if j + 1 == pos else grid[cells[j + 1]]
+				if x and y:
+					gaps[absi(x - y)] = true
+			if gaps.size() > 1 or gaps.has(0):
+				return false
+		"rt":   # Ratio Lines: neighbours on the line are always in a 2:1 ratio
+			for j in [pos - 1, pos + 1]:
+				if j >= 0 and j < cells.size():
+					var v: int = grid[cells[j]]
+					if v != 0 and v != d * 2 and d != v * 2:
+						return false
 		"zp":   # Zipper: digits the same distance from the centre sum to the centre digit
 			var n := cells.size()
 			var m := n / 2
@@ -577,7 +771,72 @@ func _outer_ok(oi: int, c: int, d: int) -> bool:
 				elif maybe:
 					ub += 1
 			return lb <= v and v <= ub
+		"md":   # the clue digit isn't among the first three cells
+			return a[0] != v and a[1] != v and a[2] != v
+		"fs":
+			var s := 0
+			var k := 0
+			for j in 3:
+				if a[j] == 0: k += 1
+				else: s += a[j]
+			return s + k <= v and v <= s + 9 * k
+		"nr":
+			if a[0] == 0:
+				return true
+			var t := a[0] - 1
+			if a[t] != 0 and a[t] != v:
+				return false
+			for j in 9:
+				if j != t and a[j] == v:
+					return false
+			return true
+		"ro":
+			if a[0] and a[1] and a[2]:
+				return outer_value("ro", a) == v
+			# two known cells already show the direction they go
+			for pr in [[0, 1], [1, 2], [0, 2]]:
+				var x := a[pr[0]]
+				var y := a[pr[1]]
+				if x and y:
+					if v == 1 and x > y: return false
+					if v == -1 and x < y: return false
+			return true
+		"bf":
+			var x := a[0]
+			var y := a[8]
+			if x == 0 or y == 0:
+				return true
+			var lo := 9 - y if x + y > 9 else x
+			var hi := x if x + y > 9 else 9 - y
+			var s := 0
+			var k := 0
+			for j in range(lo, hi):
+				if a[j] == 0: k += 1
+				else: s += a[j]
+			return s + k <= v and v <= s + 9 * k
 	return true
+
+
+## Mathdoku cages: product of all cells, or difference / quotient of a 2-cell cage.
+func _op_ok(cells: Array, op: String, target: int, c: int, d: int) -> bool:
+	if op == "*":
+		var prod := 1
+		var k := 0
+		for cc in cells:
+			var v := _v(cc, c, d)
+			if v == 0: k += 1
+			else: prod *= v
+		if target % prod != 0:
+			return false
+		return prod == target if k == 0 else target / prod <= int(pow(9, k))
+	var other: int = cells[0] if cells[1] == c else cells[1]
+	var o: int = grid[other]
+	if op == "-":
+		if o: return absi(d - o) == target
+		return d + target <= 9 or d - target >= 1
+	# "/"
+	if o: return d == o * target or o == d * target
+	return d * target <= 9 or d % target == 0
 
 
 ## Sum of distinct digits over `cells` (killer cages, little killer diagonals) with d placed in c.
@@ -733,7 +992,15 @@ static func edge_rel(t: int, a: int, b: int) -> bool:
 	return true
 
 
-func _edge_ok(t: int, a: int, b: int) -> bool:
+func _edge_ok(t: int, a: int, b: int, val := 0) -> bool:
+	if t == Edge.SUMN:
+		return a + b == val
+	if t == Edge.PRODN:
+		return a * b == val
+	if t == Edge.RATION:
+		return a == b * val or b == a * val
+	if t == Edge.DIFFN:
+		return absi(a - b) == val
 	if t != Edge.NONE:
 		return edge_rel(t, a, b)
 	for nt in neg_types:
@@ -788,6 +1055,24 @@ func extra_ok(c: int, d: int) -> bool:
 			return false
 	if twist_gen and not _twist_ok(c, d):
 		return false
+	if queen and d == 9:
+		for dir in [[1, 1], [1, -1], [-1, 1], [-1, -1]]:
+			var rr: int = c / 9 + dir[0]
+			var cc: int = c % 9 + dir[1]
+			while rr >= 0 and rr <= 8 and cc >= 0 and cc <= 8:
+				if grid[rr * 9 + cc] == 9:
+					return false
+				rr += dir[0]
+				cc += dir[1]
+	if anti_diag:
+		for diag in ([0] if c % 10 == 0 else []) + ([1] if c % 8 == 0 and c > 0 and c < 80 else []):
+			var seen := 1 << d
+			for k in 9:
+				var x := k * 10 if diag == 0 else 8 + k * 8
+				if x != c and grid[x] != 0:
+					seen |= 1 << grid[x]
+			if _popc[seen] > 3:
+				return false
 	for tp in cell_thermos[c]:
 		var t: Array = p.thermos[tp[0]]
 		var i: int = tp[1]
@@ -829,11 +1114,17 @@ func extra_ok(c: int, d: int) -> bool:
 			elif s + d + k > 9:
 				return false
 	var cg := cell_cage[c]
-	if cg >= 0 and not _sum_ok(p.cages[cg].cells, int(p.cages[cg].sum), c, d):
-		return false
+	if cg >= 0:
+		var cage: Dictionary = p.cages[cg]
+		var op: String = cage.get("op", "+")
+		if op == "+":
+			if not _sum_ok(cage.cells, int(cage.sum), c, d):
+				return false
+		elif not _op_ok(cage.cells, op, int(cage.sum), c, d):
+			return false
 	for e in cell_edges[c]:
 		var v: int = grid[e[0]]
-		if v != 0 and not _edge_ok(e[1], d, v):
+		if v != 0 and not _edge_ok(e[1], d, v, e[2] if e.size() > 2 else 0):
 			return false
 	return true
 

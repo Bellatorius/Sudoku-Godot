@@ -43,10 +43,10 @@ func _draw() -> void:
 			for e in [[r.position, Vector2(r.end.x, r.position.y)], [Vector2(r.end.x, r.position.y), r.end], [r.end, Vector2(r.position.x, r.end.y)], [Vector2(r.position.x, r.end.y), r.position]]:
 				draw_dashed_line(e[0], e[1], color, w * 0.8, s * 0.1, true, true)
 			txt.call("12", P.call(0.42, 0.38), int(s * 0.3))
-		"jigsaw":
+		"jigsaw", "toroidal":
 			var pts := [P.call(0.12, 0.12), P.call(0.55, 0.12), P.call(0.55, 0.4), P.call(0.88, 0.4), P.call(0.88, 0.88), P.call(0.4, 0.88), P.call(0.4, 0.6), P.call(0.12, 0.6), P.call(0.12, 0.12)]
 			draw_polyline(PackedVector2Array(pts), color, w, true)
-		"diagonal", "axia", "bishop":
+		"diagonal", "axia", "bishop", "anti_diagonal", "argyle":
 			draw_rect(Rect2(P.call(0.14, 0.14), Vector2(s, s) * 0.72), color, false, w)
 			line.call(P.call(0.14, 0.14), P.call(0.86, 0.86)); line.call(P.call(0.86, 0.14), P.call(0.14, 0.86))
 		"kropki":
@@ -84,16 +84,48 @@ func _draw() -> void:
 			for x in 2:
 				for y in 2:
 					draw_rect(Rect2(P.call(0.14 + x * 0.4, 0.14 + y * 0.4), Vector2(s, s) * 0.3), color, false, w)
-		"german_whispers", "dutch_whispers", "renban", "palindrome", "zipper", "reflection", "lockout", "between":
-			var cols := {"german_whispers": Color("#2fb36b"), "dutch_whispers": Color("#f08a24"), "renban": Color("#c14fd6"), "palindrome": Color("#3fa6e8")}
+		"german_whispers", "dutch_whispers", "renban", "palindrome", "zipper", "reflection", "lockout", "between", 				"region_sum", "entropic", "modular", "parity_lines", "nabner", "ten_lines", "double_arrow":
+			var cols := {"german_whispers": Color("#2fb36b"), "dutch_whispers": Color("#f08a24"), "renban": Color("#c14fd6"), "palindrome": Color("#3fa6e8"),
+				"region_sum": Color("#4db8db"), "entropic": Color("#d98c40"), "modular": Color("#33a094"), "parity_lines": Color("#e65c73"),
+				"nabner": Color("#ebcc33"), "ten_lines": Color("#808fad")}
 			var lc: Color = cols.get(variant, color)
 			draw_polyline(PackedVector2Array([P.call(0.14, 0.78), P.call(0.4, 0.4), P.call(0.62, 0.62), P.call(0.86, 0.22)]), lc, w * 1.4, true)
-			if variant == "between" or variant == "lockout":
+			if variant == "between" or variant == "lockout" or variant == "double_arrow":
 				draw_circle(P.call(0.14, 0.78), s * 0.11, UI.PAPER, true, -1.0, true); ring.call(P.call(0.14, 0.78), s * 0.11)
 				draw_circle(P.call(0.86, 0.22), s * 0.11, UI.PAPER, true, -1.0, true); ring.call(P.call(0.86, 0.22), s * 0.11)
 		"quadruple":
 			line.call(P.call(0.5, 0.1), P.call(0.5, 0.9)); line.call(P.call(0.1, 0.5), P.call(0.9, 0.5))
 			draw_circle(P.call(0.5, 0.5), s * 0.2, UI.PAPER, true, -1.0, true); ring.call(P.call(0.5, 0.5), s * 0.2)
+		"pill_arrow":
+			draw_rect(Rect2(P.call(0.1, 0.12), Vector2(s * 0.5, s * 0.26)), color, false, w)
+			line.call(P.call(0.6, 0.25), P.call(0.84, 0.82))
+			line.call(P.call(0.84, 0.82), P.call(0.62, 0.72)); line.call(P.call(0.84, 0.82), P.call(0.88, 0.58))
+		"fortress":
+			draw_rect(Rect2(P.call(0.36, 0.36), Vector2(s, s) * 0.28), color)
+			draw_rect(Rect2(P.call(0.08, 0.08), Vector2(s, s) * 0.84), color, false, w)
+		"min_max":
+			txt.call("<>", P.call(0.5, 0.48), int(s * 0.55))
+		"clone":
+			draw_rect(Rect2(P.call(0.1, 0.14), Vector2(s * 0.34, s * 0.3)), color)
+			draw_rect(Rect2(P.call(0.56, 0.56), Vector2(s * 0.34, s * 0.3)), color)
+		"frame", "numbered_rooms", "battlefield":
+			draw_rect(Rect2(P.call(0.3, 0.3), Vector2(s, s) * 0.6), color, false, w)
+			txt.call({"frame": "15", "numbered_rooms": "4", "battlefield": "8"}[variant], P.call(0.16, 0.16), int(s * 0.3))
+		"rossini":
+			draw_rect(Rect2(P.call(0.3, 0.3), Vector2(s, s) * 0.6), color, false, w)
+			line.call(P.call(0.04, 0.6), P.call(0.22, 0.6)); line.call(P.call(0.22, 0.6), P.call(0.14, 0.52)); line.call(P.call(0.22, 0.6), P.call(0.14, 0.68))
+		"sum_product_dots":
+			txt.call("×", P.call(0.5, 0.48), int(s * 0.8))
+		"center_dot", "asterisk", "girandola":
+			for x in 3:
+				for y in 3:
+					dot.call(P.call(0.2 + x * 0.3, 0.2 + y * 0.3), s * 0.06)
+		"queen":
+			txt.call("♛", P.call(0.5, 0.46), int(s * 0.75))
+		"miracle":
+			txt.call("✦", P.call(0.5, 0.46), int(s * 0.75))
+		"magic_square":
+			txt.call("15", P.call(0.5, 0.5), int(s * 0.45))
 		"friendly":
 			txt.call("♥", P.call(0.5, 0.48), int(s * 0.7))
 		"xsum":

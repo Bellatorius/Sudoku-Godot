@@ -62,7 +62,15 @@ func setup(params: Dictionary) -> void:
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.add_theme_constant_override("separation", 10)
 	h.add_child(right)
-	right.add_child(UI.label("EXAMPLE", 12, UI.INK_FAINT, UI.font_sans_bold))
+	var ehead := HBoxContainer.new()
+	var el := UI.label("EXAMPLE", 12, UI.INK_FAINT, UI.font_sans_bold)
+	el.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	el.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	ehead.add_child(el)
+	var sol_btn := UI.button("Show solution", "")
+	sol_btn.add_theme_font_size_override("font_size", 13)
+	ehead.add_child(sol_btn)
+	right.add_child(ehead)
 	var board := Board.new()
 	board.interactive = false
 	board.align_top = true
@@ -75,7 +83,17 @@ func setup(params: Dictionary) -> void:
 	else:
 		pz = Generator.make(vid, "easy", 7)
 	if pz:
-		board.set_session(Session.new(pz))
+		var es := Session.new(pz)
+		board.set_session(es)
+		sol_btn.pressed.connect(func():
+			var show := sol_btn.text == "Show solution"
+			for c in 81:
+				if not es.is_given(c):
+					es.values[c] = pz.solution[c] if show else 0
+			sol_btn.text = "Hide solution" if show else "Show solution"
+			board.queue_redraw())
+	else:
+		sol_btn.visible = false
 
 
 func _difficulty_row(d: String) -> Control:

@@ -1,11 +1,11 @@
 extends Control
 ## Settings in tabs: Gameplay (highlighting, notes, timer), Display (dark mode, fullscreen, FPS cap,
-## V-Sync), Sound, Data (reset progress).
+## V-Sync), Sound.
 
 
 ## Tab shown last; kept while the game runs (dark mode rebuilds the screen, the tab stays).
 static var _tab := "gameplay"
-const TABS := [["gameplay", "Gameplay"], ["display", "Display"], ["sound", "Sound"], ["data", "Data"]]
+const TABS := [["gameplay", "Gameplay"], ["display", "Display"], ["sound", "Sound"]]
 
 
 func setup(_params: Dictionary) -> void:
@@ -68,34 +68,9 @@ func setup(_params: Dictionary) -> void:
 	sv.add_child(_toggle("sfx_on", "Sound effects", "Arabic frame drum: a bright stroke for a valid digit, a dull double hit when a digit breaks a rule."))
 	sv.add_child(_slider("sfx_volume", "Effects volume", "correct"))
 
-	# --- Data
-	var av := _panel(pages.data)
-	av.add_child(UI.label("Reset progress", 17, UI.INK, UI.font_sans_medium))
-	var rd := UI.label("Deletes all stats, streaks, best times and saved games. Settings are kept.", 14, UI.INK_MUTED)
-	rd.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	rd.custom_minimum_size = Vector2(300, 0)
-	av.add_child(rd)
-	var reset := UI.button("Reset all progress", "")
-	reset.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	reset.add_theme_color_override("font_color", UI.DANGER)
-	var confirm := ConfirmationDialog.new()
-	confirm.dialog_text = "Delete all stats, streaks and saved games?"
-	confirm.ok_button_text = "Delete"
-	confirm.confirmed.connect(func():
-		for path in [GameState.STATS_PATH, GameState.SAVES_PATH]:
-			if FileAccess.file_exists(path):
-				DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
-		GameState.stats = {"total_solved": 0, "variants": {}, "pack_done": {}, "daily": {"last": "", "streak": 0, "best_streak": 0, "done": {}}}
-		GameState.saves = {}
-		UI.toast("Progress reset."))
-	add_child(confirm)
-	reset.pressed.connect(func(): confirm.popup_centered())
-	av.add_child(reset)
-	av.add_child(HSeparator.new())
-	av.add_child(UI.label("Logic Wiz: Sudoku Variants v%s" % ProjectSettings.get_setting("application/config/version"), 13, UI.INK_FAINT))
-
 	for k in pages:
 		col.add_child(pages[k])
+	col.add_child(UI.label("Logic Wiz: Sudoku Variants v%s" % ProjectSettings.get_setting("application/config/version"), 13, UI.INK_FAINT))
 	show.call(_tab if pages.has(_tab) else "gameplay")
 
 

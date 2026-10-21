@@ -41,6 +41,7 @@ var overlay_box: VBoxContainer
 var board_holder: Control
 var left_col: VBoxContainer
 var restart_btn: Button
+var rules_head: HBoxContainer
 var cheat_l: Label
 var main_row: HBoxContainer
 
@@ -238,7 +239,13 @@ func _build() -> void:
 	var rules_box := PanelContainer.new()
 	rules_box.add_theme_stylebox_override("panel", UI.box(UI.PAPER_WARM, Color(0, 0, 0, 0), 12, 0, 14))
 	var rv := VBoxContainer.new()
-	rv.add_child(UI.label("RULES", 12, UI.INK_MUTED, UI.font_sans_bold))
+	var rhead := HBoxContainer.new()
+	var rt := UI.label("RULES", 12, UI.INK_MUTED, UI.font_sans_bold)
+	rt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rt.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	rhead.add_child(rt)
+	rules_head = rhead   # the example "i" (tooltip) is added once the variant is known
+	rv.add_child(rhead)
 	rules_l = UI.label("", 14, UI.INK)
 	rules_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rules_l.custom_minimum_size = Vector2(300, 0)
@@ -334,6 +341,12 @@ func _start(s: Session) -> void:
 		diff_tag_holder.add_child(UI.tag(session.puzzle.difficulty.to_upper(), UI.ACCENT, UI.ACCENT_SOFT))
 	var info := Variants.get_info(session.puzzle.variant)
 	rules_l.text = info.get("rules", info.get("short", ""))
+	for c in rules_head.get_children():
+		if c is ExampleHint:
+			c.queue_free()
+	var hint := ExampleHint.new()
+	hint.pressed.connect(_toggle_example)
+	rules_head.add_child(hint)
 	timer_l.visible = GameState.settings.show_timer
 	_hide_overlay()
 	if not versus.is_empty():
@@ -617,6 +630,83 @@ const HELP_LINES := [
 ]
 
 
+var example_layer: Control
+
+
+## A solved example of this variant (a different puzzle), over the screen; Close, a click outside or Esc closes it.
+func _toggle_example() -> void:
+	if example_layer and is_instance_valid(example_layer):
+		example_layer.queue_free()
+		example_layer = null
+		return
+	var variant: String = session.puzzle.variant if session else str(_gen_params.get("variant", "classic"))
+	var es := Board.solved_example(variant, session.puzzle.id if session else "")
+	if es == null:
+		UI.toast("No example available.")
+		return
+	example_layer = ColorRect.new()
+	(example_layer as ColorRect).color = Color(0, 0, 0, 0.45)
+	example_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	example_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	example_layer.gui_input.connect(func(e):
+		if e is InputEventMouseButton and e.pressed and e.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
+			_toggle_example())
+	add_child(example_layer)
+	var cc := CenterContainer.new()
+	cc.set_anchors_preset(Control.PRESET_FULL_RECT)
+	cc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	example_layer.add_child(cc)
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", UI.box(UI.SURFACE, UI.LINE_STRONG, UI.RADIUS, 1, 24))
+	p.mouse_filter = Control.MOUSE_FILTER_STOP
+	cc.add_child(p)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 12)
+	p.add_child(v)
+	var head := HBoxContainer.new()
+	var t := UI.heading("Example: " + Variants.display_name(variant), 26)
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(t)
+	head.add_child(UI.button("Close", "", _toggle_example))
+	v.add_child(head)
+	var side := clampf(size.y - 300.0, 300.0, 500.0)
+	# the main idea, shown on the example's own digits; Next steps through a few of them
+	var ideas := ExampleExplain.explain(es.puzzle)
+	var idea_row := HBoxContainer.new()
+	idea_row.add_theme_constant_override("separation", 10)
+	var cap := UI.label("", 17, UI.INK, UI.font_sans_medium)
+	cap.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	cap.custom_minimum_size = Vector2(side - 120.0, 48)
+	cap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	idea_row.add_child(cap)
+	var next := UI.button("Next ›", "PrimaryButton")
+	next.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	next.visible = ideas.size() > 1
+	idea_row.add_child(next)
+	v.add_child(idea_row)
+	var b := Board.new()
+	b.interactive = false
+	b.custom_minimum_size = Vector2(side, side)
+	v.add_child(b)
+	b.set_session(es)
+	var count := UI.label("", 13, UI.INK_FAINT)
+	v.add_child(count)
+	var at := [0]
+	var show_idea := func():
+		var it: Dictionary = ideas[at[0]]
+		cap.text = it.text
+		b.emphasis = it.cells
+		b.queue_redraw()
+		count.text = "Idea %d of %d  ·  the highlighted cells show it  ·  blue digits were solved" % [at[0] + 1, ideas.size()]
+	next.pressed.connect(func():
+		at[0] = (at[0] + 1) % ideas.size()
+		show_idea.call())
+	if ideas.is_empty():
+		cap.text = "A solved puzzle of this variant."
+	else:
+		show_idea.call()
+
+
 func _toggle_help() -> void:
 	if help_layer and is_instance_valid(help_layer):
 		help_layer.queue_free()
@@ -843,6 +933,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif code == KEY_H: _hint()
 	elif code == KEY_P: _toggle_pause()
 	elif code == KEY_ESCAPE:
+		if example_layer and is_instance_valid(example_layer):
+			_toggle_example()
+			get_viewport().set_input_as_handled()
+			return
 		if help_layer and is_instance_valid(help_layer):
 			_toggle_help()
 			get_viewport().set_input_as_handled()

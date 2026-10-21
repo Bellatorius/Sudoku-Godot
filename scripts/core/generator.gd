@@ -49,6 +49,47 @@ const TARGETS := {
 	"slingshot": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
 	"vertex":   {"beginner": 36, "easy": 28, "medium": 20, "hard": 0, "expert": 0, "master": 0},
 	"zipper":   {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"region_sum": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"entropic": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"modular": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"parity_lines": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"nabner": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"ten_lines": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"double_arrow": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"pill_arrow": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"fortress": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"min_max": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"clone": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"frame": {"beginner": 36, "easy": 28, "medium": 18, "hard": 0, "expert": 0, "master": 0},
+	"numbered_rooms": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"rossini": {"beginner": 34, "easy": 26, "medium": 16, "hard": 0, "expert": 0, "master": 0},
+	"battlefield": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"sum_product_dots": {"beginner": 36, "easy": 28, "medium": 18, "hard": 0, "expert": 0, "master": 0},
+	"anti_diagonal": {"beginner": 40, "easy": 32, "medium": 26, "hard": 0, "expert": 0, "master": 0},
+	"center_dot": {"beginner": 40, "easy": 34, "medium": 27, "hard": 0, "expert": 0, "master": 0},
+	"asterisk": {"beginner": 40, "easy": 34, "medium": 27, "hard": 0, "expert": 0, "master": 0},
+	"girandola": {"beginner": 40, "easy": 34, "medium": 27, "hard": 0, "expert": 0, "master": 0},
+	"argyle": {"beginner": 40, "easy": 34, "medium": 27, "hard": 0, "expert": 0, "master": 0},
+	"queen": {"beginner": 40, "easy": 34, "medium": 27, "hard": 0, "expert": 0, "master": 0},
+	"miracle": {"beginner": 30, "easy": 20, "medium": 12, "hard": 0, "expert": 0, "master": 0},
+	"magic_square": {"beginner": 40, "easy": 32, "medium": 26, "hard": 0, "expert": 0, "master": 0},
+	"toroidal": {"beginner": 44, "easy": 36, "medium": 29, "hard": 0, "expert": 0, "master": 0},
+	"ratio_dots": {"beginner": 36, "easy": 28, "medium": 18, "hard": 0, "expert": 0, "master": 0},
+	"difference_dots": {"beginner": 36, "easy": 28, "medium": 18, "hard": 0, "expert": 0, "master": 0},
+	"product_lines": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"difference_lines": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"ratio_lines": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"prime_composite": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"parity_regions": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"missing_digit": {"beginner": 38, "easy": 30, "medium": 24, "hard": 0, "expert": 0, "master": 0},
+	"forbidden_digit": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"divisibility": {"beginner": 38, "easy": 30, "medium": 22, "hard": 0, "expert": 0, "master": 0},
+	"kenken": {"beginner": 34, "easy": 22, "medium": 12, "hard": 0, "expert": 0, "master": 0},
+	"alphabet": {"beginner": 46, "easy": 38, "medium": 30, "hard": 0, "expert": 0, "master": 0},
+	"wordoku": {"beginner": 46, "easy": 38, "medium": 30, "hard": 0, "expert": 0, "master": 0},
+	"symbol": {"beginner": 46, "easy": 38, "medium": 30, "hard": 0, "expert": 0, "master": 0},
+	"color": {"beginner": 46, "easy": 38, "medium": 30, "hard": 0, "expert": 0, "master": 0},
+	"roman": {"beginner": 46, "easy": 38, "medium": 30, "hard": 0, "expert": 0, "master": 0},
 }
 const LEVELS := ["beginner", "easy", "medium", "hard", "expert", "master"]
 ## How many lines / cages / dots / outside clues a level gets: beginner like easy, expert and master like medium
@@ -99,6 +140,22 @@ const GRADE := {
 	"slingshot": [53.86, 76.75],
 	"vertex": [53.29, 74.65],
 }
+## Expert: as few given digits as possible. 0 = an empty grid (the clues alone solve it); 2 = variants whose
+## rules stay true when digits are swapped (d -> 10-d …), so a digit or two must break the tie. The generator adds
+## more clues (hard amounts × EXPERT_BOOSTS) until the goal is met, else keeps the try with the fewest digits.
+const EXPERT_GOAL := {
+	# measured: these reach 0-8 digits in under ~2 minutes a puzzle. The slow outside-clue and many line
+	# variants (Sandwich, Skyscraper, Ascending, Ten Lines, Frame, Region Sum, …) keep the graded Expert.
+	"kropki": 0, "xv": 0, "sum_product_dots": 0, "quadruple": 0, "numbered_rooms": 0, "greater_than": 0, "xsum": 0,
+	"killer": 0, "arrow": 0, "pill_arrow": 0, "zipper": 0, "thermo": 0, "slow_thermo": 0,
+	"consecutive": 2, "twisted": 2, "german_whispers": 2, "renban": 2, "reflection": 2, "miracle": 2,
+	"ratio_dots": 0, "product_lines": 0, "ratio_lines": 0, "kenken": 0, "difference_dots": 2, "difference_lines": 2,
+}
+## Wordoku: 9-letter words with no repeated letter (the letters stand for the digits 1-9).
+const WORDS := ["AUTHORIZE", "COMPUTERS", "ABDUCTING", "BACKFIRED", "BLUDGEONS", "CHAMPIONS", "DUPLICATE",
+	"EDUCATION", "FORMULATE", "PATHOGENS", "MOUSETRAP", "HYDRAULIC", "COUNTRIES"]
+const EXPERT_BOOSTS := [1.0, 1.6, 2.4, 3.5]
+const EXPERT_NODES := 40000
 ## Expert / master: how many graded candidates make() tries before settling for the toughest one.
 const GRADE_TRIES := 40
 const NODE_LIMIT := 6000
@@ -107,19 +164,24 @@ const REDUCE_NODES := {"ascending": 2000}
 ## Search budget for building the full solution grid, and how many tries make() gets.
 ## Non-consecutive solutions are hard to find by random search and the time is heavy-tailed,
 ## so it gets many short tries instead of a few long ones.
-const SOLVE_NODES := {"non_consecutive": 40000, "twisted": 40000}
-const ATTEMPTS := {"non_consecutive": 40, "twisted": 40}
+const SOLVE_NODES := {"non_consecutive": 40000, "twisted": 40000, "miracle": 40000, "anti_diagonal": 40000, "magic_square": 300000}
+const ATTEMPTS := {"non_consecutive": 40, "twisted": 40, "miracle": 60, "anti_diagonal": 40, "toroidal": 40}
+## Magic Square: the 3 rows, 3 columns and 2 diagonals of the centre box sum to 15.
+const MAGIC_LINES := [[30, 31, 32], [39, 40, 41], [48, 49, 50], [30, 39, 48], [31, 40, 49], [32, 41, 50],
+	[30, 40, 50], [32, 40, 48]]
 
 var rng := RandomNumberGenerator.new()
 var _budget := 0
+var _wrap := false   # toroidal: neighbours wrap around the edges while building regions
+var _boost := 1.0    # expert: clue counts are multiplied by this
 
 
 static func make(variant: String, difficulty: String, seed_value: int) -> Puzzle:
 	var g := Generator.new()
 	g.rng.seed = seed_value
 	var need := 0.0
-	if difficulty == "expert" or difficulty == "master":
-		need = float(GRADE.get(variant, [0.0, 0.0])[0 if difficulty == "expert" else 1])
+	if (difficulty == "expert" and not EXPERT_GOAL.has(variant)) or difficulty == "master":
+		need = float(grade_bar(variant)[0 if difficulty == "expert" else 1])
 	var best: Puzzle = null
 	var best_grade := -1.0
 	for t in (GRADE_TRIES if need > 0.0 else 1):
@@ -141,6 +203,22 @@ static func make(variant: String, difficulty: String, seed_value: int) -> Puzzle
 	return best
 
 
+static var _grades_file = null   # extra bars measured later (res://puzzles/grades.json, variant -> [expert, master])
+
+
+## Expert / master minimum grade for a variant: GRADE, or puzzles/grades.json for newer variants.
+static func grade_bar(variant: String) -> Array:
+	if GRADE.has(variant):
+		return GRADE[variant]
+	if _grades_file == null:
+		_grades_file = {}
+		if FileAccess.file_exists("res://puzzles/grades.json"):
+			var data = JSON.parse_string(FileAccess.get_file_as_string("res://puzzles/grades.json"))
+			if data is Dictionary:
+				_grades_file = data
+	return _grades_file.get(variant, [0.0, 0.0])
+
+
 ## Solver effort to prove the puzzle has one solution, per empty cell: about 1 when plain deduction
 ## finishes it, higher when the solver has to try things out. Used to sort expert / master puzzles.
 static func grade(pz: Puzzle) -> float:
@@ -156,8 +234,28 @@ func _attempt(variant: String, difficulty: String) -> Puzzle:
 	pz.diagonals = variant == "diagonal"
 	if variant == "jigsaw":
 		pz.regions = _jigsaw_regions()
+	elif variant == "toroidal":
+		_wrap = true
+		pz.regions = _jigsaw_regions()
+		_wrap = false
+	elif variant == "magic_square":
+		for ln in MAGIC_LINES:
+			pz.sums.append({"cells": ln.duplicate(), "sum": 15, "o": [], "dir": []})
 	var empty := PackedInt32Array()
 	empty.resize(81)
+	if variant == "magic_square":   # start from one of the 8 magic squares (rotations / mirrors of one)
+		var sq := [[2, 7, 6], [9, 5, 1], [4, 3, 8]]
+		var turn := rng.randi_range(0, 3)
+		var flip := rng.randf() < 0.5
+		for r in 3:
+			for c in 3:
+				var rr := r
+				var cc := c
+				for k in turn:
+					var t := rr; rr = cc; cc = 2 - t
+				if flip:
+					cc = 2 - cc
+				empty[(3 + rr) * 9 + 3 + cc] = sq[r][c]
 	pz.twist_gen = variant == "twisted"
 	var sol := Solver.new(pz).solve(empty, rng, int(SOLVE_NODES.get(variant, 20000)))
 	pz.twist_gen = false
@@ -165,40 +263,10 @@ func _attempt(variant: String, difficulty: String) -> Puzzle:
 		return null
 	pz.solution = sol
 	var tier: String = CLUE_TIER.get(difficulty, difficulty)   # how many variant clues this level gets
-	var e := tier == "easy"
-	var m := tier == "medium"
+	if difficulty == "expert" and EXPERT_GOAL.has(variant):
+		return _attempt_fewest(pz, variant)
 
-	match variant:
-		"killer": _make_cages(pz)
-		"thermo": _make_thermos(pz, {"easy": 6, "medium": 7, "hard": 9}[tier])
-		"arrow": _make_arrows(pz, {"easy": 6, "medium": 7, "hard": 9}[tier])
-		"kropki": _make_edges(pz, true)
-		"xv": _make_edges(pz, false)
-		"even_odd": _make_parity(pz, {"easy": 24, "medium": 18, "hard": 14}[tier])
-		"german_whispers": _make_lines(pz, "gw", {"easy": 6, "medium": 7, "hard": 9}[tier])
-		"renban": _make_lines(pz, "rb", {"easy": 6, "medium": 7, "hard": 9}[tier])
-		"sandwich": _make_outer(pz, "sw", ["L", "T"], 10 if e else (12 if m else 14))
-		"skyscraper": _make_outer(pz, "sk", ["L", "R", "T", "B"], 12 if e else (14 if m else 18))
-		"xsum": _make_outer(pz, "xs", ["L", "R", "T", "B"], 12 if e else (14 if m else 18))
-		"ascending": _make_outer(pz, "as", ["L", "T"], 12 if e else (14 if m else 18))
-		"running": _make_outer(pz, "rn", ["L", "T"], 12 if e else (14 if m else 18))
-		"little_killer": _make_little_killer(pz, 8 if e else (10 if m else 12))
-		"palindrome": _make_path_lines(pz, "pal", 5 if e else (6 if m else 8))
-		"zipper": _make_path_lines(pz, "zp", 5 if e else (6 if m else 8))
-		"between": _make_path_lines(pz, "bt", 6 if e else (7 if m else 9))
-		"lockout": _make_path_lines(pz, "lo", 6 if e else (7 if m else 9))
-		"dutch_whispers": _make_path_lines(pz, "dw", 6 if e else (7 if m else 9))
-		"slow_thermo": _make_path_lines(pz, "st", 6 if e else (7 if m else 9))
-		"bishop": _make_path_lines(pz, "bi", 6 if e else (7 if m else 9))
-		"reflection": _make_reflection(pz, 3 if e else (4 if m else 5))
-		"consecutive": _make_consecutive(pz)
-		"greater_than": _make_relations(pz, true, 50 if e else (60 if m else 80))
-		"couples": _make_relations(pz, false, 40 if e else (50 if m else 60))
-		"quadruple": _make_quads(pz, 10 if e else (12 if m else 16))
-		"twisted": _make_twists(pz)
-		"axia", "friendly", "index", "pulse": _make_marks(pz, variant, 8 if e else (10 if m else 12))
-		"slingshot": _make_slings(pz, 5 if e else (6 if m else 8))
-		"vertex": _make_vertices(pz, 8 if e else (10 if m else 12))
+	_make_clues(pz, variant, tier)
 	if variant == "pulse" and pz.marks.size() < 2:
 		return null
 
@@ -275,6 +343,8 @@ func _orth(i: int) -> Array:
 	var r := i / 9
 	var c := i % 9
 	var out: Array = []
+	if _wrap:   # toroidal: the board wraps around
+		return [((r + 8) % 9) * 9 + c, ((r + 1) % 9) * 9 + c, r * 9 + (c + 8) % 9, r * 9 + (c + 1) % 9]
 	if r > 0: out.append(i - 9)
 	if r < 8: out.append(i + 9)
 	if c > 0: out.append(i - 1)
@@ -303,7 +373,7 @@ func _connected(reg: PackedInt32Array, id: int) -> bool:
 
 # --------------------------------------------------------------- killer
 
-func _make_cages(pz: Puzzle) -> void:
+func _make_cages(pz: Puzzle, ops := false) -> void:
 	var owner := PackedInt32Array()
 	owner.resize(81)
 	owner.fill(-1)
@@ -357,7 +427,24 @@ func _make_cages(pz: Puzzle) -> void:
 		for c in cells:
 			s += pz.solution[c]
 		cells.sort()
-		pz.cages.append({"cells": cells, "sum": s})
+		if not ops:
+			pz.cages.append({"cells": cells, "sum": s})
+			continue
+		# Mathdoku: + or × for any cage, − or ÷ for two cells
+		var a: int = pz.solution[cells[0]]
+		var b: int = pz.solution[cells[-1]]
+		var choices: Array = ["+", "*"]
+		if cells.size() == 2:
+			choices += ["-", "-"]
+			if maxi(a, b) % mini(a, b) == 0: choices += ["/", "/"]
+		var op: String = choices[rng.randi_range(0, choices.size() - 1)]
+		var val := s
+		if op == "*":
+			val = 1
+			for c in cells: val *= pz.solution[c]
+		elif op == "-": val = absi(a - b)
+		elif op == "/": val = maxi(a, b) / mini(a, b)
+		pz.cages.append({"cells": cells, "sum": val, "op": op})
 
 
 # --------------------------------------------------------------- lines
@@ -419,6 +506,7 @@ func _add_segs(path: Array, segs: Dictionary) -> void:
 
 
 func _make_thermos(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
 	var used := {}
 	var segs := {}
 	var tries := 0
@@ -453,6 +541,7 @@ func _make_thermos(pz: Puzzle, n: int) -> void:
 
 
 func _make_arrows(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
 	var used := {}
 	var segs := {}
 	var tries := 0
@@ -526,6 +615,7 @@ func _make_edges(pz: Puzzle, kropki: bool) -> void:
 # --------------------------------------------------------------- even-odd
 
 func _make_parity(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
 	var cells: Array = range(81)
 	_shuffle(cells)
 	for i in mini(n, 81):
@@ -536,6 +626,7 @@ func _make_parity(pz: Puzzle, n: int) -> void:
 # --------------------------------------------------------------- whispers / renban lines
 
 func _make_lines(pz: Puzzle, t: String, n: int) -> void:
+	n = _scaled(n)
 	var used := {}
 	var segs := {}
 	var tries := 0
@@ -616,6 +707,7 @@ func _renban_dfs(pz: Puzzle, path: Array, want: int, used: Dictionary, segs: Dic
 # --------------------------------------------------------------- outside clues
 
 func _make_outer(pz: Puzzle, t: String, sides: Array, n: int) -> void:
+	n = _scaled(n)
 	var slots: Array = []
 	for sd in sides:
 		for i in 9:
@@ -632,6 +724,7 @@ func _make_outer(pz: Puzzle, t: String, sides: Array, n: int) -> void:
 
 ## Little (unique) killer: diagonal sums from a clue just outside the grid; digits on a sum differ.
 func _make_little_killer(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
 	var cands: Array = []
 	var seen := {}
 	var spots: Array = []
@@ -740,6 +833,7 @@ func _centre_path(pz: Puzzle, start: int, pairs: int, used: Dictionary, segs: Di
 
 
 func _make_path_lines(pz: Puzzle, t: String, n: int) -> void:
+	n = _scaled(n)
 	var sol := pz.solution
 	var used := {}
 	var segs := {}
@@ -775,6 +869,62 @@ func _make_path_lines(pz: Puzzle, t: String, n: int) -> void:
 			if sol[pp[i]] >= lo and sol[pp[i]] <= hi:
 				return false
 		return true
+	var en_ok := func(pp: Array) -> bool:   # entropic / modular: the last three cells all differ
+		if pp.size() < 2: return true
+		var g := func(x: int) -> int: return (x - 1) / 3 if t == "en" else x % 3
+		for i in range(maxi(0, pp.size() - 3), pp.size() - 1):
+			if g.call(sol[pp[i]]) == g.call(sol[pp[-1]]): return false
+		return true
+	var pa_ok := func(pp: Array) -> bool: return pp.size() < 2 or sol[pp[-1]] % 2 != sol[pp[-2]] % 2
+	var nb_ok := func(pp: Array) -> bool:
+		for i in pp.size() - 1:
+			if absi(sol[pp[i]] - sol[pp[-1]]) <= 1: return false
+		return true
+	var ten_run := func(pp: Array) -> int:   # running sum of the open piece, -1 if a piece overshoots 10
+		var r := 0
+		for c in pp:
+			r += sol[c]
+			if r == 10: r = 0
+			elif r > 10: return -1
+		return r
+	var tn_ok := func(pp: Array) -> bool: return ten_run.call(pp) >= 0
+	var tn_done := func(pp: Array) -> bool: return ten_run.call(pp) == 0
+	var da_ok := func(pp: Array) -> bool:
+		var inner := 0
+		for i in range(1, pp.size()): inner += sol[pp[i]]
+		return inner - sol[pp[-1]] <= 17
+	var da_done := func(pp: Array) -> bool:
+		var inner := 0
+		for i in range(1, pp.size() - 1): inner += sol[pp[i]]
+		return sol[pp[0]] + sol[pp[-1]] == inner
+	var pr_done := func(pp: Array) -> bool:   # 2+ box pieces, all with the same product
+		var prods: Array = []
+		for j in pp.size():
+			if j == 0 or pz.regions[pp[j]] != pz.regions[pp[j - 1]]:
+				prods.append(1)
+			prods[-1] *= sol[pp[j]]
+		if prods.size() < 2: return false
+		for x in prods:
+			if x != prods[0]: return false
+		return true
+	var df_ok := func(pp: Array) -> bool:   # every step the same (non-zero) difference
+		if pp.size() < 2: return true
+		var g := absi(sol[pp[1]] - sol[pp[0]])
+		return g > 0 and absi(sol[pp[-1]] - sol[pp[-2]]) == g
+	var rt_ok := func(pp: Array) -> bool:   # every step a 2:1 ratio
+		if pp.size() < 2: return true
+		var x: int = sol[pp[-1]]; var y: int = sol[pp[-2]]
+		return x == y * 2 or y == x * 2
+	var rs_done := func(pp: Array) -> bool:   # 2+ box segments, all with the same sum
+		var sums: Array = []
+		for j in pp.size():
+			if j == 0 or pz.regions[pp[j]] != pz.regions[pp[j - 1]]:
+				sums.append(0)
+			sums[-1] += sol[pp[j]]
+		if sums.size() < 2: return false
+		for x in sums:
+			if x != sums[0]: return false
+		return true
 	while pz.lines.size() < n and tries < 800:
 		tries += 1
 		var start := rng.randi_range(0, 80)
@@ -782,6 +932,24 @@ func _make_path_lines(pz: Puzzle, t: String, n: int) -> void:
 			continue
 		var path: Array = []
 		match t:
+			"en", "mo":
+				path = _path_dfs(start, rng.randi_range(4, 7), used, segs, en_ok, any)
+			"pa":
+				path = _path_dfs(start, rng.randi_range(4, 7), used, segs, pa_ok, any)
+			"nb":
+				path = _path_dfs(start, rng.randi_range(3, 5), used, segs, nb_ok, any)
+			"tn":
+				path = _path_dfs(start, rng.randi_range(3, 7), used, segs, tn_ok, tn_done)
+			"da":
+				path = _path_dfs(start, rng.randi_range(3, 5), used, segs, da_ok, da_done)
+			"rs":
+				path = _path_dfs(start, rng.randi_range(4, 7), used, segs, any, rs_done)
+			"pr":
+				path = _path_dfs(start, rng.randi_range(3, 6), used, segs, any, pr_done)
+			"df":
+				path = _path_dfs(start, rng.randi_range(3, 6), used, segs, df_ok, any)
+			"rt":
+				path = _path_dfs(start, 3, used, segs, rt_ok, any)
 			"pal":
 				path = _centre_path(pz, start, rng.randi_range(2, 4), used, segs,
 					func(x: int, y: int) -> bool: return x == y)
@@ -814,6 +982,7 @@ func _make_path_lines(pz: Puzzle, t: String, n: int) -> void:
 
 ## Reflection: groups of two lines that read the same digits from their starting symbol.
 func _make_reflection(pz: Puzzle, groups: int) -> void:
+	groups = _scaled(groups)
 	var sol := pz.solution
 	var used := {}
 	var segs := {}
@@ -886,6 +1055,7 @@ func _make_consecutive(pz: Puzzle) -> void:
 
 ## Greater-than signs (">" = the lower-index cell is bigger) or Couples parity tildes.
 func _make_relations(pz: Puzzle, greater: bool, n: int) -> void:
+	n = _scaled(n)
 	var pairs := _edge_pairs()
 	_shuffle(pairs)
 	for k in mini(n, pairs.size()):
@@ -896,6 +1066,7 @@ func _make_relations(pz: Puzzle, greater: bool, n: int) -> void:
 
 
 func _make_quads(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
 	var tops: Array = []
 	for r in 8:
 		for c in 8:
@@ -922,6 +1093,7 @@ func _make_twists(pz: Puzzle) -> void:
 # --------------------------------------------------------------- cell marks
 
 func _make_marks(pz: Puzzle, variant: String, n: int) -> void:
+	n = _scaled(n)
 	var sol := pz.solution
 	var cand: Array = []
 	for m in 81:
@@ -948,6 +1120,17 @@ func _make_marks(pz: Puzzle, variant: String, n: int) -> void:
 				for nb in _orth(m):
 					if not Solver.edge_rel(Solver.Edge.PULSE, d, sol[nb]):
 						code = ""
+			"prime_composite":
+				if d in [2, 3, 5, 7]: code = "pm"
+				elif d in [4, 6, 8, 9]: code = "cm"
+			"forbidden_digit":
+				var x := rng.randi_range(1, 8)
+				code = "x%d" % (x if x < d else x + 1)   # any digit except the right one
+			"divisibility":
+				var opts: Array = []
+				for q in [2, 3, 4]:
+					if d % q == 0: opts.append("d%d" % q)
+				if not opts.is_empty(): code = opts[rng.randi_range(0, opts.size() - 1)]
 			"index":
 				var h: bool = sol[r * 9 + d - 1] == c + 1
 				var v: bool = sol[(d - 1) * 9 + c] == r + 1
@@ -971,6 +1154,7 @@ func _make_marks(pz: Puzzle, variant: String, n: int) -> void:
 
 ## Slingshot: source s next to arrow cell a; the arrow bends 90 degrees into dir.
 func _make_slings(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
 	var sol := pz.solution
 	var cand: Array = []
 	for a in 81:
@@ -996,6 +1180,7 @@ func _make_slings(pz: Puzzle, n: int) -> void:
 
 ## Vertex: a tip cell with two arm cells around it (not in a straight line through the tip).
 func _make_vertices(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
 	var sol := pz.solution
 	var cand: Array = []
 	for t in 81:
@@ -1022,3 +1207,300 @@ func _make_vertices(pz: Puzzle, n: int) -> void:
 			used[c] = true
 		_add_segs([cd.a, cd.tip, cd.b], segs)
 		pz.vertices.append(cd)
+
+
+
+# --------------------------------------------------------------- newer clue types
+
+## Pill Arrow: two orthogonal cells read as a 2-digit number, then an arrow whose digits sum to it.
+func _make_pills(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
+	var sol := pz.solution
+	var used := {}
+	var segs := {}
+	var tries := 0
+	while pz.lines.size() < n and tries < 800:
+		tries += 1
+		var a := rng.randi_range(0, 80)
+		var nbs := _orth(a)
+		var b: int = nbs[rng.randi_range(0, nbs.size() - 1)]
+		if used.has(a) or used.has(b):
+			continue
+		var target: int = sol[a] * 10 + sol[b]
+		if target > 40:
+			continue
+		var paths: Array = []
+		_arrow_dfs(pz, [b], 0, target, used.merged({a: true}), segs, paths)
+		paths = paths.filter(func(pp): return pp.size() <= 7)
+		if paths.is_empty():
+			continue
+		var path: Array = paths[rng.randi_range(0, paths.size() - 1)]
+		var cells: Array = [a] + path
+		for c in cells:
+			used[c] = true
+		_add_segs(path, segs)
+		pz.lines.append({"t": "pl", "cells": cells})
+
+
+## Fortress: grey cells bigger than each orthogonal neighbour that isn't grey.
+func _make_fortress(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
+	var sol := pz.solution
+	var order: Array = range(81)
+	_shuffle(order)
+	var grey := {}
+	for c in order:
+		if grey.size() >= n:
+			break
+		var ok := true
+		for nb in _orth(c):
+			if not grey.has(nb) and sol[nb] >= sol[c]:
+				ok = false
+		# a grey neighbour that relied on this cell being white must still be bigger than it
+		if ok:
+			grey[c] = true
+			pz.marks[c] = "fo"
+
+
+## Minimum / Maximum: cells smaller / bigger than all orthogonal neighbours.
+func _make_minmax(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
+	var sol := pz.solution
+	var cand: Array = []
+	for c in 81:
+		var lo := true
+		var hi := true
+		for nb in _orth(c):
+			if sol[nb] < sol[c]: lo = false
+			if sol[nb] > sol[c]: hi = false
+		if lo: cand.append([c, "mn"])
+		if hi: cand.append([c, "mx"])
+	_shuffle(cand)
+	for cd in cand:
+		if pz.marks.size() >= n:
+			break
+		var clash := false
+		for nb in _orth(cd[0]):
+			if pz.marks.has(nb): clash = true
+		if not clash:
+			pz.marks[cd[0]] = cd[1]
+
+
+## Clone: pairs of same-shaped areas (2-5 cells) whose digits match cell by cell.
+func _make_clones(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
+	var sol := pz.solution
+	var used := {}
+	var tries := 0
+	while pz.clones.size() < n and tries < 3000:
+		tries += 1
+		var a := rng.randi_range(0, 80)
+		var dr := rng.randi_range(-8, 8)
+		var dc := rng.randi_range(-8, 8)
+		if dr == 0 and dc == 0:
+			continue
+		var shape: Array = []   # grow a shape from a while the shifted cells keep matching
+		var frontier: Array = [a]
+		var want := rng.randi_range(2, 5)
+		while shape.size() < want and not frontier.is_empty():
+			var c: int = frontier.pop_at(rng.randi_range(0, frontier.size() - 1))
+			if shape.has(c) or used.has(c):
+				continue
+			var r: int = c / 9 + dr
+			var k: int = c % 9 + dc
+			if r < 0 or r > 8 or k < 0 or k > 8:
+				continue
+			var t: int = r * 9 + k
+			if used.has(t) or sol[t] != sol[c] or shape.has(t):
+				continue
+			shape.append(c)
+			for nb in _orth(c):
+				frontier.append(nb)
+		if shape.size() < 2:
+			continue
+		var b: Array = shape.map(func(c): return (c / 9 + dr) * 9 + c % 9 + dc)
+		var overlap := false
+		for c in b:
+			if shape.has(c): overlap = true
+		if overlap:
+			continue
+		for c in shape + b:
+			used[c] = true
+		pz.clones.append({"a": shape, "b": b})
+
+
+## Sum & product dots: a number on the edge between two cells, "+N" (sum) or "*N" (product).
+func _make_value_dots(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
+	var pairs := _edge_pairs()
+	_shuffle(pairs)
+	for k in mini(n, pairs.size()):
+		var a: int = pz.solution[pairs[k][0]]
+		var b: int = pz.solution[pairs[k][1]]
+		var t := ("+%d" % (a + b)) if rng.randf() < 0.5 else ("*%d" % (a * b))
+		pz.edges[Puzzle.edge_key(pairs[k][0], pairs[k][1])] = t
+
+
+## Lines, cages, dots, outside numbers … for a level's clue tier (scaled by _boost for expert).
+func _make_clues(pz: Puzzle, variant: String, tier: String) -> void:
+	var e := tier == "easy"
+	var m := tier == "medium"
+	match variant:
+		"killer": _make_cages(pz)
+		"kenken": _make_cages(pz, true)
+		"thermo": _make_thermos(pz, {"easy": 6, "medium": 7, "hard": 9}[tier])
+		"arrow": _make_arrows(pz, {"easy": 6, "medium": 7, "hard": 9}[tier])
+		"kropki": _make_edges(pz, true)
+		"xv": _make_edges(pz, false)
+		"even_odd": _make_parity(pz, {"easy": 24, "medium": 18, "hard": 14}[tier])
+		"german_whispers": _make_lines(pz, "gw", {"easy": 6, "medium": 7, "hard": 9}[tier])
+		"renban": _make_lines(pz, "rb", {"easy": 6, "medium": 7, "hard": 9}[tier])
+		"sandwich": _make_outer(pz, "sw", ["L", "T"], 10 if e else (12 if m else 14))
+		"skyscraper": _make_outer(pz, "sk", ["L", "R", "T", "B"], 12 if e else (14 if m else 18))
+		"xsum": _make_outer(pz, "xs", ["L", "R", "T", "B"], 12 if e else (14 if m else 18))
+		"ascending": _make_outer(pz, "as", ["L", "T"], 12 if e else (14 if m else 18))
+		"running": _make_outer(pz, "rn", ["L", "T"], 12 if e else (14 if m else 18))
+		"little_killer": _make_little_killer(pz, 8 if e else (10 if m else 12))
+		"palindrome": _make_path_lines(pz, "pal", 5 if e else (6 if m else 8))
+		"zipper": _make_path_lines(pz, "zp", 5 if e else (6 if m else 8))
+		"between": _make_path_lines(pz, "bt", 6 if e else (7 if m else 9))
+		"lockout": _make_path_lines(pz, "lo", 6 if e else (7 if m else 9))
+		"dutch_whispers": _make_path_lines(pz, "dw", 6 if e else (7 if m else 9))
+		"slow_thermo": _make_path_lines(pz, "st", 6 if e else (7 if m else 9))
+		"bishop": _make_path_lines(pz, "bi", 6 if e else (7 if m else 9))
+		"reflection": _make_reflection(pz, 3 if e else (4 if m else 5))
+		"consecutive": _make_consecutive(pz)
+		"greater_than": _make_relations(pz, true, 50 if e else (60 if m else 80))
+		"couples": _make_relations(pz, false, 40 if e else (50 if m else 60))
+		"quadruple": _make_quads(pz, 10 if e else (12 if m else 16))
+		"twisted": _make_twists(pz)
+		"axia", "friendly", "index", "pulse": _make_marks(pz, variant, 8 if e else (10 if m else 12))
+		"slingshot": _make_slings(pz, 5 if e else (6 if m else 8))
+		"vertex": _make_vertices(pz, 8 if e else (10 if m else 12))
+		"region_sum": _make_path_lines(pz, "rs", 5 if e else (6 if m else 8))
+		"entropic": _make_path_lines(pz, "en", 5 if e else (6 if m else 8))
+		"modular": _make_path_lines(pz, "mo", 5 if e else (6 if m else 8))
+		"parity_lines": _make_path_lines(pz, "pa", 6 if e else (7 if m else 9))
+		"nabner": _make_path_lines(pz, "nb", 6 if e else (7 if m else 9))
+		"ten_lines": _make_path_lines(pz, "tn", 6 if e else (7 if m else 9))
+		"double_arrow": _make_path_lines(pz, "da", 6 if e else (7 if m else 9))
+		"pill_arrow": _make_pills(pz, 5 if e else (6 if m else 8))
+		"fortress": _make_fortress(pz, 10 if e else (12 if m else 16))
+		"min_max": _make_minmax(pz, 8 if e else (10 if m else 14))
+		"clone": _make_clones(pz, 3 if e else (4 if m else 5))
+		"frame": _make_outer(pz, "fs", ["L", "R", "T", "B"], 14 if e else (18 if m else 24))
+		"numbered_rooms": _make_outer(pz, "nr", ["L", "R", "T", "B"], 12 if e else (14 if m else 18))
+		"rossini": _make_outer(pz, "ro", ["L", "R", "T", "B"], 36)   # every side: no arrow means "neither"
+		"battlefield": _make_outer(pz, "bf", ["L", "T"], 12 if e else (14 if m else 18))
+		"sum_product_dots": _make_value_dots(pz, 24 if e else (30 if m else 40))
+		"ratio_dots": _make_ratio_dots(pz, 24 if e else (30 if m else 40))
+		"difference_dots": _make_diff_dots(pz, 24 if e else (30 if m else 40))
+		"product_lines": _make_path_lines(pz, "pr", 5 if e else (6 if m else 8))
+		"difference_lines": _make_path_lines(pz, "df", 6 if e else (7 if m else 9))
+		"ratio_lines": _make_path_lines(pz, "rt", 6 if e else (8 if m else 10))
+		"prime_composite": _make_marks(pz, variant, 14 if e else (18 if m else 24))
+		"forbidden_digit": _make_marks(pz, variant, 20 if e else (28 if m else 36))
+		"divisibility": _make_marks(pz, variant, 14 if e else (18 if m else 24))
+		"parity_regions": _make_areas(pz, 6 if e else (8 if m else 10))
+		"missing_digit": _make_outer(pz, "md", ["L", "R", "T", "B"], 16 if e else (22 if m else 30))
+		"wordoku": pz.word = WORDS[rng.randi_range(0, WORDS.size() - 1)]
+
+
+
+## Expert with the fewest given digits: more and more clues on the same solution until the clues
+## (almost) solve the grid alone; keeps the try with the fewest digits.
+func _attempt_fewest(pz: Puzzle, variant: String) -> Puzzle:
+	var goal: int = EXPERT_GOAL[variant]
+	var best: Puzzle = null
+	var keep_sums: Array = pz.sums.duplicate(true)   # magic-square lines are part of the setup, not clues
+	for boost in EXPERT_BOOSTS:
+		_clear_clues(pz)
+		pz.sums = keep_sums.duplicate(true)
+		_boost = boost
+		_make_clues(pz, variant, "hard")
+		_boost = 1.0
+		if variant == "pulse" and pz.marks.size() < 2:
+			continue
+		pz.givens = pz.solution.duplicate()
+		_reduce(pz, 0, maxi(EXPERT_NODES, int(REDUCE_NODES.get(variant, 0))))
+		if best == null or pz.given_count() < best.given_count():
+			best = Puzzle.from_dict(pz.to_dict())
+		if pz.given_count() <= goal:
+			break
+	return best
+
+
+func _clear_clues(pz: Puzzle) -> void:
+	pz.cages = []
+	pz.thermos = []
+	pz.arrows = []
+	pz.edges = {}
+	pz.negative = false
+	pz.parity = {}
+	pz.lines = []
+	pz.outer = []
+	pz.sums = []
+	pz.twists = []
+	pz.quads = []
+	pz.marks = {}
+	pz.vertices = []
+	pz.slings = []
+	pz.clones = []
+	pz.areas = []
+
+
+func _scaled(n: int) -> int:
+	return int(ceil(n * _boost))
+
+
+
+## Ratio dots: "/N" where one cell is N times the other.
+func _make_ratio_dots(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
+	var pairs := _edge_pairs()
+	_shuffle(pairs)
+	for pr in pairs:
+		if pz.edges.size() >= n:
+			break
+		var a: int = pz.solution[pr[0]]
+		var b: int = pz.solution[pr[1]]
+		if maxi(a, b) % mini(a, b) == 0:
+			pz.edges[Puzzle.edge_key(pr[0], pr[1])] = "/%d" % (maxi(a, b) / mini(a, b))
+
+
+## Difference dots: "-N", the two cells differ by N.
+func _make_diff_dots(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
+	var pairs := _edge_pairs()
+	_shuffle(pairs)
+	for k in mini(n, pairs.size()):
+		pz.edges[Puzzle.edge_key(pairs[k][0], pairs[k][1])] = "-%d" % absi(pz.solution[pairs[k][0]] - pz.solution[pairs[k][1]])
+
+
+## Even-Odd Regions: connected areas (3-6 cells) whose digits are all even or all odd.
+func _make_areas(pz: Puzzle, n: int) -> void:
+	n = _scaled(n)
+	var sol := pz.solution
+	var used := {}
+	var tries := 0
+	while pz.areas.size() < n and tries < 2000:
+		tries += 1
+		var start := rng.randi_range(0, 80)
+		if used.has(start):
+			continue
+		var par: int = sol[start] % 2
+		var cells: Array = [start]
+		var want := rng.randi_range(3, 6)
+		var frontier: Array = _orth(start)
+		while cells.size() < want and not frontier.is_empty():
+			var c: int = frontier.pop_at(rng.randi_range(0, frontier.size() - 1))
+			if used.has(c) or cells.has(c) or sol[c] % 2 != par:
+				continue
+			cells.append(c)
+			frontier += _orth(c)
+		if cells.size() < 3:
+			continue
+		for c in cells:
+			used[c] = true
+		cells.sort()
+		pz.areas.append({"cells": cells, "t": "e" if par == 0 else "o"})

@@ -32,6 +32,17 @@ extends RefCounted
 ##   "vertices":[{"tip": 40, "a": 30, "b": 32}]   Vertex: tip = sum or difference of the arm digits
 ##   "slings":  [{"s": 39, "a": 40, "dir": [0, 1]}] Slingshot: digit N in cell a means the digit of s
 ##              repeats N cells beyond a in direction dir
+##   "clones":  [{"a": [10, 11], "b": [40, 41]}]  Clone: matching cells hold the same digit
+##   more line types: rs region sum, en entropic, mo modular, pa parity, nb nabner, tn ten, da double arrow
+##              (ends = circles), pl pill arrow (cells 0-1 = the pill read as a 2-digit number)
+##   more outside clues: fs frame (first 3 sum), nr numbered rooms, ro rossini (v 1 up / -1 down / 0 neither,
+##              read from the clue side), bf battlefield; edges "+N" sum dot, "*N" product dot
+##   marks also: fo fortress (grey: bigger than white neighbours), mn minimum, mx maximum,
+##              pm prime / cm composite, xN digit N is forbidden here, d2 / d3 / d4 divisible by 2 / 3 / 4
+##   more line types: pr product (box pieces share a product), df difference (neighbours all differ by the
+##              same amount), rt ratio (neighbours are always 2:1); edges "/N" ratio 1:N, "-N" difference N
+##   outer "md" missing digit (v isn't among the first three cells); cages may have "op" (+ - * /, Mathdoku)
+##   "areas":   [{"cells": [...], "t": "e"}] Even-Odd Regions;  "word": "BLACKSMITH"-style letters for Wordoku
 ## }
 ## Rules without clues (Non-consecutive, Anti-King, Anti-Knight) come from the variant id alone.
 
@@ -56,6 +67,9 @@ var quads: Array = []        # [{c, d: Array[int]}]
 var marks: Dictionary = {}   # cell -> "ax" | "fr" | "pu" | "ih" | "iv" | "ihv"
 var vertices: Array = []     # [{tip, a, b}]
 var slings: Array = []       # [{s, a, dir}]
+var clones: Array = []       # [{a: Array[int], b: Array[int]}] same-shaped areas holding the same digits
+var areas: Array = []        # [{cells, t: "e" | "o"}] Even-Odd Regions: every digit in the area is even / odd
+var word := ""               # Wordoku: the 9 letters shown for digits 1-9
 var twist_gen := false       # generator only: build a solution whose 2x2 diagonals agree (Twisted)
 
 
@@ -78,7 +92,7 @@ static func edge_key(a: int, b: int) -> String:
 
 
 func uses_boxes() -> bool:
-	return variant != "jigsaw"
+	return not variant in ["jigsaw", "toroidal", "kenken"]
 
 
 func given_count() -> int:
@@ -110,7 +124,7 @@ func to_dict() -> Dictionary:
 		"id": id, "variant": variant, "difficulty": difficulty,
 		"givens": _arr_to_str(givens), "solution": _arr_to_str(solution),
 	}
-	if variant == "jigsaw":
+	if variant == "jigsaw" or variant == "toroidal":
 		d.regions = _arr_to_str(regions)
 	if diagonals:
 		d.diagonals = true
@@ -130,10 +144,12 @@ func to_dict() -> Dictionary:
 		d.parity = pd
 	if not lines.is_empty():
 		d.lines = lines
-	for key in ["outer", "sums", "twists", "quads", "vertices", "slings"]:
+	for key in ["outer", "sums", "twists", "quads", "vertices", "slings", "clones", "areas"]:
 		var arr: Array = get(key)
 		if not arr.is_empty():
 			d[key] = arr
+	if word != "":
+		d.word = word
 	if not marks.is_empty():
 		var md := {}
 		for k in marks:
@@ -153,7 +169,10 @@ static func from_dict(d: Dictionary) -> Puzzle:
 		p.regions = _str_to_arr(str(d.regions))
 	p.diagonals = bool(d.get("diagonals", p.variant == "diagonal"))
 	for c in d.get("cages", []):
-		p.cages.append({"cells": _ints(c.cells), "sum": int(c.sum)})
+		var cg := {"cells": _ints(c.cells), "sum": int(c.sum)}
+		if c.has("op"):
+			cg.op = str(c.op)   # Mathdoku: "+", "-", "*", "/"
+		p.cages.append(cg)
 	for t in d.get("thermos", []):
 		p.thermos.append(_ints(t))
 	for a in d.get("arrows", []):
@@ -174,7 +193,13 @@ static func from_dict(d: Dictionary) -> Puzzle:
 	for o in d.get("outer", []):
 		p.outer.append({"t": str(o.t), "s": str(o.s), "i": int(o.i), "v": int(o.v)})
 	for sm in d.get("sums", []):
-		p.sums.append({"cells": _ints(sm.cells), "sum": int(sm.sum), "o": _ints(sm.o), "dir": _ints(sm.dir)})
+		var s2 := {"cells": _ints(sm.cells), "sum": int(sm.sum), "o": _ints(sm.get("o", [])), "dir": _ints(sm.get("dir", []))}
+		p.sums.append(s2)   # no "o" = a sum without an outside clue (magic square lines)
+	for cl in d.get("clones", []):
+		p.clones.append({"a": _ints(cl.a), "b": _ints(cl.b)})
+	for ar in d.get("areas", []):
+		p.areas.append({"cells": _ints(ar.cells), "t": str(ar.t)})
+	p.word = str(d.get("word", ""))
 	p.twists = _ints(d.get("twists", []))
 	for q in d.get("quads", []):
 		p.quads.append({"c": int(q.c), "d": _ints(q.d)})

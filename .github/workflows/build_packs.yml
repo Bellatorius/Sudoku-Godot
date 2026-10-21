@@ -14,6 +14,10 @@ on:
         description: "Puzzles per shard (5 shards per variant)"
         required: true
         default: "100"
+      variants:
+        description: 'Variants as a JSON list, e.g. ["killer","thermo"]. Empty = the original 42.'
+        required: false
+        default: ""
 
 jobs:
   build:
@@ -22,10 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [classic, killer, thermo, arrow, jigsaw, diagonal, kropki, xv, non_consecutive, king, knight,
-          even_odd, german_whispers, renban, sandwich, skyscraper, little_killer, palindrome, between, consecutive,
-          greater_than, dutch_whispers, slow_thermo, quadruple, universal, windoku, xsum, zipper, lockout, twisted,
-          bishop, ascending, axia, couples, dutch_flatmates, friendly, index, pulse, reflection, running, slingshot, vertex]
+        variant: ${{ fromJSON(inputs.variants != '' && inputs.variants || '["classic", "killer", "thermo", "arrow", "jigsaw", "diagonal", "kropki", "xv", "non_consecutive", "king", "knight", "even_odd", "german_whispers", "renban", "sandwich", "skyscraper", "little_killer", "palindrome", "between", "consecutive", "greater_than", "dutch_whispers", "slow_thermo", "quadruple", "universal", "windoku", "xsum", "zipper", "lockout", "twisted", "bishop", "ascending", "axia", "couples", "dutch_flatmates", "friendly", "index", "pulse", "reflection", "running", "slingshot", "vertex"]') }}
         shard: [0, 1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4

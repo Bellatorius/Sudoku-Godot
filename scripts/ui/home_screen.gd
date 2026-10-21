@@ -1,12 +1,13 @@
 extends Control
-## "Sudoku Variants — 40+ Logic Puzzle Types": hero, search, daily banner and variant card grid.
+## "Sudoku Variants — 60+ Logic Puzzle Types": hero, search, daily banner and variant card grid.
 
-var grid: GridContainer
+var grids: Array = []            # one card grid per group
+var sections := {}               # group id -> VBoxContainer (heading + grid)
 var search: LineEdit
 var cards: Array = []
-var only_playable := false
-var _chip_all: Button
-var _chip_play: Button
+## Group shown on the home page ("all" or a Variants.CATEGORIES id); kept while the game runs.
+static var _group := "all"
+var _chips := {}
 var empty_label: Label
 
 
@@ -16,7 +17,7 @@ func setup(_params: Dictionary) -> void:
 	var col: VBoxContainer = parts[1]
 	add_child(scroll)
 
-	var title := UI.heading("Sudoku Variants — 40+ Logic Puzzle Types", 46)
+	var title := UI.heading("Sudoku Variants — 60+ Logic Puzzle Types", 46)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(title)
@@ -26,65 +27,75 @@ func setup(_params: Dictionary) -> void:
 	col.add_child(sub)
 	col.add_child(UI.spacer(6))
 
-	var sc := CenterContainer.new()
-	search = LineEdit.new()
-	search.placeholder_text = "Search variants..."
-	search.custom_minimum_size = Vector2(480, 0)
-	search.clear_button_enabled = true
-	search.text_changed.connect(func(_t): _filter())
-	sc.add_child(search)
-	col.add_child(sc)
 	col.add_child(UI.spacer(8))
 
 	col.add_child(_daily_banner())
 	col.add_child(_random_card())
 	col.add_child(UI.spacer(4))
 
-	var chips := HBoxContainer.new()
-	chips.add_theme_constant_override("separation", 8)
-	_chip_all = UI.button("All 42", "ChipButton", func(): _set_mode(false))
-	_chip_play = UI.button("Playable now (%d)" % Variants.CORE.size(), "ChipButton", func(): _set_mode(true))
-	_chip_all.toggle_mode = true
-	_chip_play.toggle_mode = true
-	chips.add_child(_chip_all)
-	chips.add_child(_chip_play)
-	col.add_child(chips)
+	# Group filter chips (wrap onto a second line when narrow) with the search box beside them
+	var filter_row := HBoxContainer.new()
+	filter_row.add_theme_constant_override("separation", 12)
+	col.add_child(filter_row)
+	var chips := HFlowContainer.new()
+	chips.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	chips.add_theme_constant_override("h_separation", 8)
+	chips.add_theme_constant_override("v_separation", 8)
+	var all_groups: Array = [["all", "All", []]] + Variants.CATEGORIES
+	for g in all_groups:
+		var n: int = Variants.LIST.size() if g[0] == "all" else g[2].size()
+		var b := UI.button("%s %d" % [g[1], n], "ChipButton")
+		b.toggle_mode = true
+		var key: String = g[0]
+		b.pressed.connect(func(): _set_group(key))
+		_chips[key] = b
+		chips.add_child(b)
+	filter_row.add_child(chips)
+	search = LineEdit.new()
+	search.placeholder_text = "Search variants..."
+	search.custom_minimum_size = Vector2(240, 0)
+	search.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	search.clear_button_enabled = true
+	search.text_changed.connect(func(_t): _filter())
+	filter_row.add_child(search)
 
-	grid = GridContainer.new()
-	grid.columns = 2
-	grid.add_theme_constant_override("h_separation", 14)
-	grid.add_theme_constant_override("v_separation", 14)
-	col.add_child(grid)
+	# One section per group: heading + its cards (in "All" every group is shown under its heading)
+	for g in Variants.CATEGORIES:
+		var sec := VBoxContainer.new()
+		sec.add_theme_constant_override("separation", 10)
+		var head := UI.label(g[1], 24, UI.INK, UI.font_serif)
+		head.name = "Head"
+		sec.add_child(head)
+		var gr := GridContainer.new()
+		gr.columns = 2
+		gr.add_theme_constant_override("h_separation", 14)
+		gr.add_theme_constant_override("v_separation", 14)
+		sec.add_child(gr)
+		grids.append(gr)
+		for id in g[2]:
+			var card := _make_card(Variants.get_info(id))
+			cards.append(card)
+			gr.add_child(card)
+		sections[g[0]] = sec
+		col.add_child(sec)
 	empty_label = UI.label("No variants match your search.", 16, UI.INK_MUTED)
 	empty_label.visible = false
 	col.add_child(empty_label)
 
-	# Playable variants first, then the rest alphabetically (site order).
-	var ordered: Array = []
-	for id in Variants.CORE:
-		ordered.append(Variants.get_info(id))
-	for v in Variants.LIST:
-		if not Variants.is_playable(v.id):
-			ordered.append(v)
-	for v in ordered:
-		var card := _make_card(v)
-		cards.append(card)
-		grid.add_child(card)
-
 	resized.connect(_on_resized)
 	_on_resized()
-	_set_mode(false)
+	_set_group(_group if _chips.has(_group) else "all")
 
 
 func _on_resized() -> void:
-	if grid:
-		grid.columns = 3 if size.x >= 1180 else 2
+	for gr in grids:
+		gr.columns = 3 if size.x >= 1180 else 2
 
 
-func _set_mode(playable: bool) -> void:
-	only_playable = playable
-	_chip_all.button_pressed = not playable
-	_chip_play.button_pressed = playable
+func _set_group(key: String) -> void:
+	_group = key
+	for k in _chips:
+		_chips[k].button_pressed = k == key
 	_filter()
 
 
@@ -94,10 +105,17 @@ func _filter() -> void:
 	for card in cards:
 		var v: Dictionary = card.get_meta("info")
 		var hit: bool = q == "" or v.name.to_lower().contains(q) or v.short.to_lower().contains(q)
-		if only_playable and not Variants.is_playable(v.id):
+		if _group != "all" and Variants.category(v.id) != _group:
 			hit = false
 		card.visible = hit
 		if hit: shown += 1
+	for k in sections:   # hide groups with nothing to show; the heading only matters in "All"
+		var sec: VBoxContainer = sections[k]
+		var any := false
+		for c in sec.get_child(1).get_children():
+			if c.visible: any = true
+		sec.visible = any
+		sec.get_node("Head").visible = _group == "all"
 	empty_label.visible = shown == 0
 
 
@@ -211,9 +229,12 @@ func _random_card() -> Control:
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_theme_constant_override("separation", 2)
 	v.add_child(UI.label("Random puzzle", 22, UI.INK, UI.font_serif))
-	v.add_child(UI.label("Pick a difficulty, then press it again to play a random variant.", 14, UI.INK_MUTED))
+	var sub := UI.label("Pick a difficulty, then press it again to play a random variant.", 14, UI.INK_MUTED)
+	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	sub.custom_minimum_size = Vector2(180, 0)
+	v.add_child(sub)
 	h.add_child(v)
-	_add_random_buttons(h, 92)
+	_add_random_buttons(h, 78)
 	return p
 
 
@@ -228,13 +249,24 @@ func _add_random_buttons(box: BoxContainer, min_w := 96) -> void:
 			var b: Button = buttons[d]
 			var on: bool = d == sel
 			b.text = "" if on else String(d).capitalize()
-			b.theme_type_variation = "PrimaryButton" if on else ""
+			# selected: an outlined box with the level's name sitting in its top border, and the tick inside
+			var sb := UI.box(UI.SURFACE, UI.ACCENT if on else UI.LINE_STRONG, 10, 2 if on else 1)
+			sb.content_margin_left = 12; sb.content_margin_right = 12
+			sb.content_margin_top = 8; sb.content_margin_bottom = 8
+			var sbh := sb.duplicate()
+			sbh.border_color = UI.ACCENT if on else UI.INK
+			for k in ["normal", "focus"]:
+				b.add_theme_stylebox_override(k, sb)
+			for k in ["hover", "pressed", "hover_pressed"]:
+				b.add_theme_stylebox_override(k, sbh)
 			b.tooltip_text = ("%s selected. Click again to play a random %s puzzle." % [String(d).capitalize(), d]) if on else "Select %s" % d
 			b.get_node("Tick").visible = on
+			b.get_node("Legend").visible = on
 	for d in GameState.DIFFICULTIES:
 		var b := UI.button(String(d).capitalize(), "")
 		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		b.custom_minimum_size = Vector2(min_w, 40)
+		b.add_theme_font_size_override("font_size", 14)
 		var tick := Control.new()
 		tick.name = "Tick"
 		tick.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -243,10 +275,19 @@ func _add_random_buttons(box: BoxContainer, min_w := 96) -> void:
 			var c := tick.size / 2.0
 			# same line weight as the other icons in the UI (about 2 px)
 			var s := minf(tick.size.y * 0.22, 8.0)
-			var col: Color = b.get_theme_color("font_color")
+			var col: Color = UI.ACCENT
 			tick.draw_polyline(PackedVector2Array([c + Vector2(-s, 0.05 * s), c + Vector2(-0.3 * s, 0.75 * s), c + Vector2(s, -0.75 * s)]),
 				col, 2.2, true))
 		b.add_child(tick)
+		var legend := Label.new()   # the level name in the top border (shown when selected)
+		legend.name = "Legend"
+		legend.text = " %s " % String(d).capitalize()
+		legend.add_theme_font_size_override("font_size", 11)
+		legend.add_theme_color_override("font_color", UI.ACCENT)
+		legend.add_theme_stylebox_override("normal", UI.box(UI.SURFACE, Color(0, 0, 0, 0), 0, 0))
+		legend.position = Vector2(8, -9)
+		legend.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		b.add_child(legend)
 		b.pressed.connect(func():
 			if str(GameState.settings.get("random_difficulty", "medium")) == d:
 				GameState.go("game", GameState.random_game_params(d))

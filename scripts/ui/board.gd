@@ -11,6 +11,7 @@ var flash_cells: Array = []
 var flash_t := 0.0
 var celebrate_t := -1.0
 var align_top := false
+var emphasis: Array = []   # example popup: cells to spotlight (the rest of the board is dimmed)
 var versus := false   # multiplayer: only rule conflicts are marked, never solution mismatches
 
 var _dragging := false
@@ -22,9 +23,15 @@ var _cell := 0.0
 const LINE_COLORS := {"gw": Color(0.18, 0.70, 0.42, 0.75), "rb": Color(0.76, 0.31, 0.84, 0.55),
 	"dw": Color(0.94, 0.54, 0.14, 0.75), "pal": Color(0.25, 0.65, 0.91, 0.55), "bt": Color(0.45, 0.47, 0.58, 0.75),
 	"lo": Color(0.55, 0.60, 0.20, 0.75), "st": Color(0.55, 0.80, 0.55, 0.7), "bi": Color(0.80, 0.58, 0.15, 0.6),
-	"rf": Color(0.96, 0.62, 0.40, 0.7), "zp": Color(0.56, 0.48, 0.88, 0.6)}
+	"rf": Color(0.96, 0.62, 0.40, 0.7), "zp": Color(0.56, 0.48, 0.88, 0.6),
+	"rs": Color(0.30, 0.72, 0.86, 0.6), "en": Color(0.85, 0.55, 0.25, 0.65), "mo": Color(0.20, 0.62, 0.58, 0.65),
+	"pa": Color(0.90, 0.36, 0.45, 0.6), "nb": Color(0.92, 0.80, 0.20, 0.7), "tn": Color(0.50, 0.56, 0.68, 0.65),
+	"da": Color(0.45, 0.47, 0.58, 0.75), "pl": Color(0.45, 0.47, 0.58, 0.85)}
 const LINE_WIDTH := {"gw": 0.16, "dw": 0.16, "rb": 0.24, "pal": 0.22, "bt": 0.07, "lo": 0.09, "st": 0.26,
-	"bi": 0.14, "rf": 0.16, "zp": 0.18}
+	"bi": 0.14, "rf": 0.16, "zp": 0.18, "rs": 0.18, "en": 0.16, "mo": 0.16, "pa": 0.16, "nb": 0.16,
+	"tn": 0.16, "da": 0.07, "pl": 0.045}
+## Extra regions of the fixed-pattern variants, shaded like Windoku's windows.
+const SHADED := {"center_dot": [10, 13, 16, 37, 40, 43, 64, 67, 70], "asterisk": Solver.ASTERISK, "girandola": Solver.GIRANDOLA}
 ## Margin around the grid (in cells) when clues sit outside it.
 const OUTER_MARGIN := 0.8
 const C_DIAG := Color(0.165, 0.31, 1.0, 0.22)
@@ -36,6 +43,40 @@ func _init() -> void:
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	custom_minimum_size = Vector2(300, 300)
+
+
+static var _examples = null   # res://puzzles/examples.json: one ready puzzle per variant (opens instantly)
+
+
+## A solved example of a variant for the rules: the variant's puzzle from puzzles/examples.json, or else
+## an easy pack puzzle (never `avoid_id`, the one being played), with every cell filled.
+static func solved_example(variant: String, avoid_id := "") -> Session:
+	var pz: Puzzle = null
+	if _examples == null:
+		_examples = {}
+		if FileAccess.file_exists("res://puzzles/examples.json"):
+			var data = JSON.parse_string(FileAccess.get_file_as_string("res://puzzles/examples.json"))
+			if data is Dictionary:
+				_examples = data
+	if _examples.has(variant) and str(_examples[variant].get("id", "")) != avoid_id:
+		pz = Puzzle.from_dict(_examples[variant])
+	for lv in ["easy", "beginner", "medium"]:
+		if pz:
+			break
+		for d in GameState.pack_puzzles(variant, lv):
+			if str(d.get("id", "")) != avoid_id:
+				pz = Puzzle.from_dict(d)
+				break
+		if pz:
+			break
+	if pz == null:
+		pz = Generator.make(variant, "easy", 7)
+	if pz == null:
+		return null
+	var s := Session.new(pz)
+	for c in 81:
+		s.values[c] = pz.solution[c]
+	return s
 
 
 func set_session(s: Session) -> void:
@@ -198,7 +239,24 @@ func _draw() -> void:
 	if pz.variant == "windoku":
 		for top in [1, 5]:
 			for left in [1, 5]:
-				draw_rect(Rect2(cell_rect(top * 9 + left).position, Vector2(cell, cell) * 3.0), Color(UI.ACCENT, 0.09))
+				draw_rect(Rect2(cell_rect(top * 9 + left).position, Vector2(cell, cell) * 3.0), Color(UI.ACCENT, 0.09 if not UI.dark else 0.18))
+
+	for c in SHADED.get(pz.variant, []):
+		draw_rect(cell_rect(c), Color(UI.ACCENT, 0.12 if not UI.dark else 0.22))
+	if pz.variant == "magic_square":
+		draw_rect(Rect2(cell_rect(30).position, Vector2(cell, cell) * 3.0), Color(UI.GOLD, 0.12))
+	# Clone pairs: one pastel per pair
+	for ci in pz.clones.size():
+		var ccol: Color = UI.CELL_COLORS[1 + ci % 9]
+		for c in pz.clones[ci].a + pz.clones[ci].b:
+			draw_rect(cell_rect(c), Color(ccol, 0.55))
+	# Fortress grey cells, minimum (blue) / maximum (red) cells
+	for k in pz.marks:
+		var mk: String = pz.marks[k]
+		if mk == "fo":
+			draw_rect(cell_rect(int(k)), Color(UI.INK, 0.16 if not UI.dark else 0.22))
+		elif mk == "mn" or mk == "mx":
+			draw_rect(cell_rect(int(k)), Color(0.3, 0.5, 1.0, 0.16) if mk == "mn" else Color(1.0, 0.35, 0.35, 0.16))
 
 	# Highlights
 	var cursor: int = selected[-1] if not selected.is_empty() else -1
@@ -235,6 +293,18 @@ func _draw() -> void:
 	# Selection outline (visible even on coloured cells)
 	for c in selected:
 		draw_rect(cell_rect(c).grow(-2), UI.ACCENT, false, 3.0)
+
+	# Argyle lines / Anti-Diagonal's two diagonals
+	if pz.variant == "argyle":
+		for ln in Solver.ARGYLE:
+			var a0 := cell_center(ln[0])
+			var a1 := cell_center(ln[0] + ln[1] * (ln[2] - 1))
+			var dv := (a1 - a0).normalized() * cell * 0.5
+			draw_line(a0 - dv, a1 + dv, C_DIAG, maxf(2.0, cell * 0.05), true)
+	if pz.variant == "anti_diagonal":
+		var ad := Color(UI.GOLD, 0.35)
+		draw_line(_rect.position, _rect.end, ad, maxf(2.0, cell * 0.05), true)
+		draw_line(Vector2(_rect.end.x, _rect.position.y), Vector2(_rect.position.x, _rect.end.y), ad, maxf(2.0, cell * 0.05), true)
 
 	# Diagonals
 	if pz.diagonals:
@@ -274,6 +344,19 @@ func _draw() -> void:
 					draw_rect(Rect2(pt - half, half * 2.0), Color(lcol, 1.0), false, maxf(2.0, cell * 0.045))
 			"rf":
 				_draw_symbol(int(ln.get("g", 0)), lpts[0], cell * 0.2, Color(lcol.darkened(0.15), 0.9))
+			"da":
+				for pt in [lpts[0], lpts[-1]]:
+					draw_circle(pt, cell * 0.38, UI.SURFACE, true, -1.0, true)
+					draw_circle(pt, cell * 0.38, Color(lcol, 1.0), false, maxf(2.0, cell * 0.045), true)
+			"pl":   # the pill (first two cells) and an arrowhead at the end
+				var a0 := lpts[0]
+				var a1 := lpts[1]
+				var half := Vector2(absf(a1.x - a0.x), absf(a1.y - a0.y)) / 2.0 + Vector2(cell, cell) * 0.36
+				var pr := Rect2((a0 + a1) / 2.0 - half, half * 2.0)
+				draw_style_box(UI.box(UI.SURFACE, Color(lcol, 1.0), int(cell * 0.36), int(maxf(2.0, cell * 0.045))), pr)
+				var tip := lpts[-1]
+				var dir := (tip - lpts[-2]).normalized()
+				_arrow_head(tip, dir, cell * 0.2, Color(lcol, 1.0), lw)
 
 	# Thermometers
 	for t in pz.thermos:
@@ -317,7 +400,24 @@ func _draw() -> void:
 			draw_line(Vector2(r.end.x, r.position.y - thick / 2), Vector2(r.end.x, r.end.y + thick / 2), UI.INK, thick)
 		if c / 9 < 8 and pz.regions[c] != pz.regions[c + 9]:
 			draw_line(Vector2(r.position.x - thick / 2, r.end.y), Vector2(r.end.x + thick / 2, r.end.y), UI.INK, thick)
-	draw_rect(_rect.grow(thick / 2), UI.INK, false, thick)
+	if pz.variant == "toroidal":
+		# the board wraps: the outer edge is thick only where the region changes across the wrap
+		draw_rect(_rect, Color(UI.INK, 0.35), false, 1.0)
+		for k in 9:
+			var top := k
+			var bottom := 72 + k
+			var left := k * 9
+			var right := k * 9 + 8
+			if pz.regions[top] != pz.regions[bottom]:
+				var r := cell_rect(top)
+				draw_line(Vector2(r.position.x, _rect.position.y), Vector2(r.end.x, _rect.position.y), UI.INK, thick)
+				draw_line(Vector2(r.position.x, _rect.end.y), Vector2(r.end.x, _rect.end.y), UI.INK, thick)
+			if pz.regions[left] != pz.regions[right]:
+				var r := cell_rect(left)
+				draw_line(Vector2(_rect.position.x, r.position.y), Vector2(_rect.position.x, r.end.y), UI.INK, thick)
+				draw_line(Vector2(_rect.end.x, r.position.y), Vector2(_rect.end.x, r.end.y), UI.INK, thick)
+	else:
+		draw_rect(_rect.grow(thick / 2), UI.INK, false, thick)
 
 	# Killer cages
 	var cage_label := {}
@@ -349,6 +449,14 @@ func _draw() -> void:
 				var k := cell * 0.08
 				draw_polyline(PackedVector2Array([mid - dv * k + pv * k * 1.7, mid + dv * k, mid - dv * k - pv * k * 1.7]),
 					UI.INK, maxf(2.0, cell * 0.04), true)
+			_ when t.begins_with("+") or t.begins_with("*"):
+				var fs := int(cell * 0.25)
+				var f := UI.font_sans_bold
+				var txt := ("×" + t.substr(1)) if t[0] == "*" else t
+				var sz := f.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
+				var rr := Rect2(mid - Vector2(sz.x / 2 + 4, fs * 0.55), Vector2(sz.x + 8, fs * 1.1))
+				draw_style_box(UI.box(UI.SURFACE, UI.INK, int(fs * 0.55), 1), rr)
+				draw_string(f, mid + Vector2(-sz.x / 2, fs * 0.36), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, UI.INK)
 			"s", "d":
 				var dv := (cell_center(b) - cell_center(a)).normalized()
 				var pv := Vector2(-dv.y, dv.x)
@@ -425,6 +533,13 @@ func _draw() -> void:
 					if d == 5 and cm:
 						off = Vector2(-0.5, float(rows[0])) * cell * 0.31   # make room for the centre marks
 					_draw_centered(UI.font_sans, str(d), center + off, small, _note_color(c, d, UI.INK_MUTED))
+
+	if not emphasis.is_empty():
+		for c in 81:
+			if not emphasis.has(c):
+				draw_rect(cell_rect(c), Color(UI.SURFACE, 0.62))
+		for c in emphasis:
+			draw_rect(cell_rect(c).grow(-1.5), UI.GOLD, false, 3.0)
 
 
 ## Shown in red: rule breaks always; on easy and medium also any placed digit that doesn't match the
@@ -544,10 +659,21 @@ func _draw_extra_clues(pz: Puzzle) -> void:
 			"R": at = Vector2(_rect.end.x + m / 2.0, _rect.position.y + (i + 0.5) * cell)
 			"T": at = Vector2(_rect.position.x + (i + 0.5) * cell, _rect.position.y - m / 2.0)
 			_: at = Vector2(_rect.position.x + (i + 0.5) * cell, _rect.end.y + m / 2.0)
+		if o.t == "ro":   # Rossini: arrow pointing the way the first three digits go up; 0 = no arrow
+			if int(o.v) == 0:
+				continue
+			var inward := {"L": Vector2.RIGHT, "R": Vector2.LEFT, "T": Vector2.DOWN, "B": Vector2.UP}[o.s] as Vector2
+			var dv := inward if int(o.v) == 1 else -inward
+			var aw := maxf(2.0, cell * 0.045)
+			draw_line(at - dv * cell * 0.22, at + dv * cell * 0.22, ink, aw, true)
+			_arrow_head(at + dv * cell * 0.22, dv, cell * 0.12, ink, aw)
+			continue
 		_draw_centered(UI.font_sans_medium, str(o.v), at, int(cell * 0.36), ink)
 
 	for sm in pz.sums:
 		var o: Array = sm.o
+		if o.is_empty():
+			continue   # a sum without an outside clue (magic square lines)
 		var dv := Vector2(sm.dir[1], sm.dir[0]).normalized()
 		var vc := _rect.position + (Vector2(o[1], o[0]) + Vector2(0.5, 0.5)) * cell
 		# pull the clue into the margin band next to the grid
@@ -584,6 +710,13 @@ func _draw_extra_clues(pz: Puzzle) -> void:
 	for k in pz.marks:
 		var mc := int(k)
 		var t: String = pz.marks[k]
+		if t == "mn" or t == "mx":
+			var rr := cell_rect(mc)
+			_draw_centered(UI.font_sans_bold, "MIN" if t == "mn" else "MAX", rr.position + Vector2(cell * 0.5, cell * 0.86),
+				int(cell * 0.14), Color(UI.INK, 0.55))
+			continue
+		if t == "fo":
+			continue
 		var r := cell_rect(mc)
 		var ctr := cell_center(mc)
 		match t:
