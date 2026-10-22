@@ -1,0 +1,36 @@
+name: Build daily puzzles
+# Rebuilds every day of puzzles/daily.json (2026-01-01 … 2031-12-31) in parallel shards of 60 days.
+# Each job uploads puzzles/_parts/daily_<start>.json; download them all into puzzles/_parts/, delete
+# puzzles/daily.json (merge keeps existing days) and run: godot --headless -s tools/build_daily.gd -- merge
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Godot 4.7.2
+        run: |
+          curl -sL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q godot.zip && mv Godot_v4.7.2-stable_linux.x86_64 godot && chmod +x godot
+      - name: Import project
+        run: timeout 300 ./godot --headless --path . --import || true
+      - name: Build shard
+        run: |
+          rm -f puzzles/daily.json
+          START=$(date -u -d "2026-01-01 + $(( ${{ matrix.shard }} * 60 )) days" +%F)
+          DAYS=60
+          [ ${{ matrix.shard }} -eq 36 ] && DAYS=31
+          echo "START=$START" >> $GITHUB_ENV
+          ./godot --headless --path . -s tools/build_daily.gd -- part $START $DAYS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: daily_${{ env.START }}
+          path: puzzles/_parts/daily_${{ env.START }}.json
+          if-no-files-found: error
