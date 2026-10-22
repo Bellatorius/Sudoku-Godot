@@ -55,6 +55,10 @@ const SHADED := {"center_dot": [10, 13, 16, 37, 40, 43, 64, 67, 70], "asterisk":
 ## Margin around the grid (in cells) when clues sit outside it.
 const OUTER_MARGIN := 0.8
 var _n := 9   # grid size of the shown puzzle (6 for Mini)
+var _hover := -1          # cell under the mouse (its lines are highlighted)
+var _intro := -1.0        # seconds since a new puzzle opened: the lines draw themselves in; -1 = done
+const INTRO_STAGGER := 0.07   # delay between one line starting to draw and the next
+const INTRO_DRAW := 0.55      # how long one line takes to draw
 const C_DIAG := Color(0.165, 0.31, 1.0, 0.22)
 
 
@@ -101,8 +105,11 @@ static func solved_example(variant: String, avoid_id := "") -> Session:
 
 
 func set_session(s: Session) -> void:
+	var fresh := session == null or session.puzzle != s.puzzle
 	if session and session.changed.is_connected(queue_redraw):
 		session.changed.disconnect(queue_redraw)
+	if fresh and interactive and GameState.settings.get("line_intro", true):
+		_intro = 0.0
 	session = s
 	session.changed.connect(queue_redraw)
 	selected = []
@@ -113,6 +120,11 @@ func _process(delta: float) -> void:
 	var redraw := false
 	if flash_t > 0.0:
 		flash_t = maxf(0.0, flash_t - delta)
+		redraw = true
+	if _intro >= 0.0:
+		_intro += delta
+		if session == null or _intro > INTRO_DRAW + INTRO_STAGGER * _shape_count() + 0.1:
+			_intro = -1.0
 		redraw = true
 	if celebrate_t >= 0.0:
 		celebrate_t += delta
@@ -202,7 +214,12 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 		else:
 			_dragging = false
-	elif event is InputEventMouseMotion and _dragging:
+	if event is InputEventMouseMotion:
+		var hc := cell_at(event.position)
+		if hc != _hover:
+			_hover = hc
+			queue_redraw()
+	if event is InputEventMouseMotion and _dragging:
 		var c := cell_at(event.position)
 		if c >= 0:
 			if _drag_add and not selected.has(c):
@@ -213,6 +230,77 @@ func _gui_input(event: InputEvent) -> void:
 				selected.erase(c)
 				selection_changed.emit()
 				queue_redraw()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_MOUSE_EXIT and _hover != -1:
+		_hover = -1
+		queue_redraw()
+
+
+# ------------------------------------------------------------------ line highlight + draw-in
+
+func _shape_count() -> int:
+	var pz := session.puzzle
+	return pz.thermos.size() + pz.lines.size() + pz.arrows.size()
+
+
+## How much of shape number k (thermos, then lines, then arrows) is drawn during the intro, 0..1.
+func _reveal(k: int) -> float:
+	if _intro < 0.0:
+		return 1.0
+	var f := clampf((_intro - k * INTRO_STAGGER) / INTRO_DRAW, 0.0, 1.0)
+	return 1.0 - pow(1.0 - f, 3.0)   # ease out
+
+
+## The first fraction f of a polyline (by length).
+func _partial(pts: PackedVector2Array, f: float) -> PackedVector2Array:
+	if f >= 1.0 or pts.size() < 2:
+		return pts
+	var total := 0.0
+	for i in pts.size() - 1:
+		total += pts[i].distance_to(pts[i + 1])
+	var left := total * f
+	var out := PackedVector2Array([pts[0]])
+	for i in pts.size() - 1:
+		var d := pts[i].distance_to(pts[i + 1])
+		if left >= d:
+			out.append(pts[i + 1])
+			left -= d
+		else:
+			out.append(pts[i].lerp(pts[i + 1], left / maxf(d, 0.001)))
+			break
+	return out
+
+
+## The cell whose lines are highlighted: the one under the mouse, else the single selected cell.
+func _focus_cell() -> int:
+	if _hover >= 0:
+		return _hover
+	return selected[0] if selected.size() == 1 else -1
+
+
+## Shapes through the focus cell: {"t": {thermo idx}, "l": {line idx}, "a": {arrow idx}}; empty = no focus.
+func _focused_shapes() -> Dictionary:
+	var c := _focus_cell()
+	var out := {}
+	if c < 0 or session == null:
+		return out
+	var pz := session.puzzle
+	for i in pz.thermos.size():
+		if pz.thermos[i].has(c): out["t%d" % i] = true
+	for i in pz.lines.size():
+		if pz.lines[i].cells.has(c): out["l%d" % i] = true
+	for i in pz.arrows.size():
+		if pz.arrows[i].circle == c or pz.arrows[i].line.has(c): out["a%d" % i] = true
+	return out
+
+
+## Colour for a shape: full when it's focused (or nothing is), faded when another shape is focused.
+func _shape_alpha(key: String, focus: Dictionary) -> float:
+	if focus.is_empty() or focus.has(key):
+		return 1.0
+	return 0.32
 
 
 func move_cursor(dx: int, dy: int, extend := false) -> void:
@@ -350,13 +438,26 @@ func _draw() -> void:
 			draw_circle(pc, cell * 0.36, mark, true, -1.0, true)
 
 	# Line clues (colour per type), plus end circles / squares / bulbs / reflection symbols
-	for ln in pz.lines:
+	var focus := _focused_shapes()
+	for li in pz.lines.size():
+		var ln: Dictionary = pz.lines[li]
+		var reveal := _reveal(pz.thermos.size() + li)
+		if reveal <= 0.0:
+			continue
 		var lpts := PackedVector2Array()
 		for c in ln.cells: lpts.append(cell_center(c))
 		var lcol: Color = LINE_COLORS.get(ln.t, UI.THERMO)
+		var la := _shape_alpha("l%d" % li, focus)
 		var lw: float = cell * float(LINE_WIDTH.get(ln.t, 0.2))
-		draw_polyline(lpts, lcol, lw, true)
-		for pt in lpts: draw_circle(pt, lw * 0.5, lcol, true, -1.0, true)
+		if la >= 1.0 and not focus.is_empty():   # the focused line glows a little wider
+			draw_polyline(lpts, Color(lcol, lcol.a * 0.35), lw * 1.9, true)
+			lw *= 1.15
+		lcol.a *= la
+		var shown := _partial(lpts, reveal)
+		draw_polyline(shown, lcol, lw, true)
+		for pt in shown: draw_circle(pt, lw * 0.5, lcol, true, -1.0, true)
+		if reveal < 1.0:
+			continue   # end symbols appear once the line is drawn
 		match ln.t:
 			"st":
 				draw_circle(lpts[0], cell * 0.34, lcol, true, -1.0, true)
@@ -386,15 +487,30 @@ func _draw() -> void:
 				_arrow_head(tip, dir, cell * 0.2, Color(lcol, 1.0), lw)
 
 	# Thermometers
-	for t in pz.thermos:
+	for ti in pz.thermos.size():
+		var t: Array = pz.thermos[ti]
+		var reveal := _reveal(ti)
+		if reveal <= 0.0:
+			continue
 		var pts := PackedVector2Array()
 		for c in t: pts.append(cell_center(c))
-		draw_polyline(pts, UI.THERMO, cell * 0.26, true)
-		for pt in pts: draw_circle(pt, cell * 0.13, UI.THERMO, true, -1.0, true)
-		draw_circle(pts[0], cell * 0.36, UI.THERMO, true, -1.0, true)
+		var tcol := UI.THERMO
+		var ta := _shape_alpha("t%d" % ti, focus)
+		var tw := cell * 0.26
+		if ta >= 1.0 and not focus.is_empty():
+			draw_polyline(pts, Color(tcol, tcol.a * 0.35), tw * 1.8, true)
+			draw_circle(pts[0], cell * 0.46, Color(tcol, tcol.a * 0.3), true, -1.0, true)
+		tcol.a *= ta
+		var shown := _partial(pts, reveal)
+		draw_polyline(shown, tcol, tw, true)
+		for pt in shown: draw_circle(pt, cell * 0.13, tcol, true, -1.0, true)
+		draw_circle(pts[0], cell * 0.36 * minf(1.0, reveal * 2.0), tcol, true, -1.0, true)
 
 	# Arrows
-	for a in pz.arrows:
+	for ai in pz.arrows.size():
+		var a: Dictionary = pz.arrows[ai]
+		if _reveal(pz.thermos.size() + pz.lines.size() + ai) <= 0.0:
+			continue
 		var cc := cell_center(a.circle)
 		var rad := cell * 0.40
 		draw_circle(cc, rad, UI.SURFACE, true, -1.0, true)

@@ -83,6 +83,7 @@ var slings: Array = []       # [{s, a, dir}]
 var clones: Array = []       # [{a: Array[int], b: Array[int]}] same-shaped areas holding the same digits
 var areas: Array = []        # [{cells, t: "e" | "o"}] Even-Odd Regions: every digit in the area is even / odd
 var word := ""               # Wordoku: the 9 letters shown for digits 1-9
+var title := ""              # picture puzzles: the picture's name ("Black Widow")
 var twist_gen := false       # generator only: build a solution whose 2x2 diagonals agree (Twisted)
 
 
@@ -174,6 +175,8 @@ func to_dict() -> Dictionary:
 			d[key] = arr
 	if word != "":
 		d.word = word
+	if title != "":
+		d.title = title
 	if not marks.is_empty():
 		var md := {}
 		for k in marks:
@@ -225,6 +228,7 @@ static func from_dict(d: Dictionary) -> Puzzle:
 	for ar in d.get("areas", []):
 		p.areas.append({"cells": _ints(ar.cells), "t": str(ar.t)})
 	p.word = str(d.get("word", ""))
+	p.title = str(d.get("title", ""))
 	p.twists = _ints(d.get("twists", []))
 	for q in d.get("quads", []):
 		p.quads.append({"c": int(q.c), "d": _ints(q.d)})

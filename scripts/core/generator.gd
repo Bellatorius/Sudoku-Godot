@@ -155,6 +155,21 @@ const EXPERT_GOAL := {
 const WORDS := ["AUTHORIZE", "COMPUTERS", "ABDUCTING", "BACKFIRED", "BLUDGEONS", "CHAMPIONS", "DUPLICATE",
 	"EDUCATION", "FORMULATE", "PATHOGENS", "MOUSETRAP", "HYDRAULIC", "COUNTRIES"]
 const EXPERT_BOOSTS := [1.0, 1.6, 2.4, 3.5]
+## Line variants built as pictures (Shapes): the picture is laid down first and the digits are solved to fit it.
+## Value = line type ("th" = thermometers).
+const PICTURE := {"thermo": "th", "slow_thermo": "st", "german_whispers": "gw", "dutch_whispers": "dw", "renban": "rb",
+	"between": "bt", "lockout": "lo", "zipper": "zp", "region_sum": "rs", "entropic": "en",
+	"modular": "mo", "parity_lines": "pa", "nabner": "nb", "ten_lines": "tn", "double_arrow": "da"}
+## (Palindrome, product, difference and ratio lines keep random lines: their rules almost never fit a drawing.)
+## Longest / shortest line per type (longer picture paths are cut into pieces that meet end to end).
+const PIC_MAX := {"nb": 4, "da": 6, "zp": 5, "lo": 5, "bt": 7, "th": 5, "st": 5, "rs": 6, "gw": 6, "dw": 7}
+const PIC_MIN := {"zp": 3, "bt": 3, "lo": 3, "da": 3}
+const PIC_NODES := 15000
+## Share of picture puzzles drawn from the hand-drawn library (the rest are generated designs).
+const PIC_HAND := {9: 0.6, 6: 0.3}
+## Pack builds set this to the puzzle's number in its pack (tools/build_packs.gd): pictures are then
+## dealt in a shuffled cycle per variant + level, so none comes back before all the others were used.
+static var pic_plan := -1
 const EXPERT_NODES := 40000
 ## Expert / master: how many graded candidates make() tries before settling for the toughest one.
 const GRADE_TRIES := 40
@@ -211,15 +226,15 @@ static var _grades_file = null   # extra bars measured later (res://puzzles/grad
 
 ## Expert / master minimum grade for a variant: GRADE, or puzzles/grades.json for newer variants.
 static func grade_bar(variant: String) -> Array:
-	if GRADE.has(variant):
-		return GRADE[variant]
 	if _grades_file == null:
 		_grades_file = {}
 		if FileAccess.file_exists("res://puzzles/grades.json"):
 			var data = JSON.parse_string(FileAccess.get_file_as_string("res://puzzles/grades.json"))
 			if data is Dictionary:
 				_grades_file = data
-	return _grades_file.get(variant, [0.0, 0.0])
+	if _grades_file.has(variant):   # measured later (newer variants, and the picture versions of line variants)
+		return _grades_file[variant]
+	return GRADE.get(variant, [0.0, 0.0])
 
 
 ## Solver effort to prove the puzzle has one solution, per empty cell: about 1 when plain deduction
@@ -269,6 +284,8 @@ func _attempt(id: String, difficulty: String) -> Puzzle:
 				if flip:
 					cc = 2 - cc
 				empty[(3 + rr) * _n + 3 + cc] = sq[r][c]
+	if PICTURE.has(variant):
+		return _attempt_picture(pz, id, variant, difficulty, empty)
 	pz.twist_gen = variant == "twisted"
 	var sol := Solver.new(pz).solve(empty, rng, int(SOLVE_NODES.get(variant, 20000)))
 	pz.twist_gen = false
@@ -1427,6 +1444,138 @@ func _make_clues(pz: Puzzle, variant: String, tier: String) -> void:
 
 ## Expert with the fewest given digits: more and more clues on the same solution until the clues
 ## (almost) solve the grid alone; keeps the try with the fewest digits.
+## Picture puzzle: a named drawing (Shapes.PICTURES_*) or a symmetric design becomes the lines, then the
+## solver finds digits that fit; the givens are removed as usual.
+func _attempt_picture(pz: Puzzle, id: String, variant: String, difficulty: String, empty: PackedInt32Array) -> Puzzle:
+	var t: String = PICTURE[variant]
+	var library := picture_library(t, _n)
+	var hand: float = PIC_HAND.get(_n, 0.6)
+	for tries in 10:
+		var title := ""
+		var paths: Array = []
+		var planned := _planned_picture(library, id, difficulty, hand) if tries < 5 else []   # 5 goes at the planned picture
+		if pic_plan >= 0 and tries >= 5:
+			hand = 0.0   # the planned picture didn't fit: a generated design, never a random repeat
+		if not planned.is_empty() and planned[0] == null:
+			planned = []
+			hand = 0.0   # this slot of the plan is a generated design
+		if not planned.is_empty():
+			title = planned[0][0]
+			paths = Shapes.transform(Shapes.parse(planned[0][1], _n), planned[1], _n)
+		elif not library.is_empty() and rng.randf() < hand:
+			var pic: Array = library[rng.randi_range(0, library.size() - 1)]
+			title = pic[0]
+			paths = Shapes.transform(Shapes.parse(pic[1], _n), 1 if rng.randf() < 0.5 else 0, _n)   # mirror only: pictures stay upright
+		else:
+			var pr: Array = Shapes.procedural(rng, _n)
+			title = pr[0]
+			paths = pr[1]
+			if Shapes.has_cross(paths, _n):   # no + or X shapes in the pictures
+				continue
+		var lines := _picture_lines(pz, paths, t)
+		if lines.size() < 3:
+			continue
+		pz.thermos = []
+		pz.lines = []
+		for cells in lines:
+			if t == "th":
+				pz.thermos.append(cells)
+			else:
+				pz.lines.append({"t": t, "cells": cells})
+		var sol := Solver.new(pz).solve(empty, rng, PIC_NODES)
+		if sol.size() != _nc:
+			continue
+		pz.solution = sol
+		pz.title = title
+		pz.givens = sol.duplicate()
+		if difficulty == "expert" and EXPERT_GOAL.has(variant):
+			_reduce(pz, 0, EXPERT_NODES)   # the picture alone should (nearly) solve it
+		else:
+			_reduce(pz, target(id, difficulty), int(REDUCE_NODES.get(variant, NODE_LIMIT)))
+		return pz
+	return null
+
+
+## Pack plan (pic_plan >= 0): [picture, mirror] for this slot, [null] for a generated design, [] = no plan.
+## Out of every 10 slots the first round(10 * hand) are pictures; pictures go through a shuffled order of the
+## library (reshuffled each cycle, never the same one twice in a row), mirrored on every other cycle.
+func _planned_picture(library: Array, id: String, difficulty: String, hand: float) -> Array:
+	if pic_plan < 0 or library.is_empty():
+		return []
+	var per10 := int(round(10.0 * hand))
+	if pic_plan % 10 >= per10:
+		return [null]
+	var h := (pic_plan / 10) * per10 + pic_plan % 10   # number of this picture slot
+	var cycle := h / library.size()
+	var order := _pic_order(library.size(), id, difficulty, cycle)
+	return [library[order[h % library.size()]], cycle % 2]
+
+
+static func _pic_order(n: int, id: String, difficulty: String, cycle: int) -> Array:
+	var order: Array = range(n)
+	var r := RandomNumberGenerator.new()
+	r.seed = absi(hash("%s:%s:%d" % [id, difficulty, cycle]))
+	for i in range(n - 1, 0, -1):
+		var j := r.randi_range(0, i)
+		var t = order[i]; order[i] = order[j]; order[j] = t
+	if cycle > 0 and n > 1 and order[0] == _pic_order(n, id, difficulty, cycle - 1)[-1]:
+		var t = order[0]; order[0] = order[1]; order[1] = t
+	return order
+
+
+static var _pic_table = null   # res://puzzles/pictures.json: grid size -> line type -> picture names that fit
+
+
+## The hand-drawn pictures that suit line type t on an n x n grid (tools/build_picture_table.gd measured
+## which ones the rule can satisfy); all of them if the table is missing.
+static func picture_library(t: String, n: int) -> Array:
+	var lib: Array = Shapes.PICTURES_9 if n == 9 else Shapes.PICTURES_6
+	if _pic_table == null:
+		_pic_table = {}
+		if FileAccess.file_exists("res://puzzles/pictures.json"):
+			var data = JSON.parse_string(FileAccess.get_file_as_string("res://puzzles/pictures.json"))
+			if data is Dictionary:
+				_pic_table = data
+	var ok: Array = _pic_table.get(str(n), {}).get(t, [])
+	if ok.is_empty() and not _pic_table.has(str(n)):
+		return lib
+	return lib.filter(func(pic): return ok.has(pic[0]))
+
+
+## Cuts the picture's paths to the line type's length limits (pieces meet end to end), turns some around
+## and drops lines a rule can't use (region sum / product lines must cross a box border).
+func _picture_lines(pz: Puzzle, paths: Array, t: String) -> Array:
+	var mx: int = mini(int(PIC_MAX.get(t, _n)), _n if t in ["th", "rb"] else 99)
+	if _n == 6:
+		mx = mini(mx, {"nb": 3, "da": 5}.get(t, 6))
+	var mn: int = PIC_MIN.get(t, 2)
+	var out: Array = []
+	for p in paths:
+		var path: Array = p.duplicate()
+		var flip := rng.randi_range(0, 1)
+		var pieces := 1
+		while (path.size() - 1) / float(pieces) > mx - 1:
+			pieces += 1
+		var step := float(path.size() - 1) / pieces
+		for k in pieces:
+			var a := int(round(k * step))
+			var b := int(round((k + 1) * step))
+			var cells: Array = path.slice(a, b + 1)
+			if (k + flip) % 2 == 1:
+				cells.reverse()   # pieces alternate direction: a cut line never chains into one long thermometer
+			if t == "zp" and cells.size() % 2 == 0:
+				cells.pop_back()   # a zipper needs a middle cell
+			if cells.size() < mn:
+				continue
+			if t in ["rs", "pr"]:
+				var boxes := {}
+				for c in cells: boxes[pz.regions[c]] = true
+				if boxes.size() < 2:
+					continue
+			out.append(cells)
+	return out
+
+
 func _attempt_fewest(pz: Puzzle, variant: String) -> Puzzle:
 	var goal: int = EXPERT_GOAL[variant]   # (the rule, also for Mini)
 	var best: Puzzle = null

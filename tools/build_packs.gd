@@ -61,7 +61,9 @@ func _build(v: String, d: String, count: int, part_path: String, shard := -1) ->
 	var t0 := Time.get_ticks_msec()
 	while list.size() < count:
 		seed_value += 1
+		Generator.pic_plan = maxi(0, shard) * count + list.size()   # deal pictures evenly (picture variants)
 		var p := Generator.make(v, d, seed_value)
+		Generator.pic_plan = -1
 		if p == null:
 			continue
 		var key := Puzzle._arr_to_str(p.givens) + Puzzle._arr_to_str(p.solution)

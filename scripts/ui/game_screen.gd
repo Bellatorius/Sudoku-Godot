@@ -21,6 +21,7 @@ var _cheat_keys: Array = []
 var _cheat_time := 0
 
 var title_l: Label
+var pic_l: Label   # picture puzzles: the picture's name next to the title
 var diff_tag_holder: HBoxContainer
 var timer_l: Label
 var mistakes_l: Label
@@ -125,6 +126,9 @@ func _build() -> void:
 	head.add_child(UI.button("←", "NavButton", _go_back))
 	title_l = UI.heading("", 32)
 	head.add_child(title_l)
+	pic_l = UI.label("", 22, UI.INK_MUTED, UI.font_serif)
+	pic_l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	head.add_child(pic_l)
 	diff_tag_holder = HBoxContainer.new()
 	diff_tag_holder.add_theme_constant_override("separation", 6)
 	diff_tag_holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -340,6 +344,8 @@ func _start(s: Session) -> void:
 	board.set_session(session)
 	session.changed.connect(_on_changed)
 	title_l.text = Variants.display_name(session.puzzle.variant)
+	pic_l.text = ("·  " + session.puzzle.title) if session.puzzle.title != "" else ""
+	pic_l.visible = pic_l.text != ""
 	for c in diff_tag_holder.get_children():
 		c.queue_free()
 	if daily_date != "":

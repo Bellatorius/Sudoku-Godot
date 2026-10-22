@@ -14,6 +14,7 @@ var settings := {
 	"highlight_conflicts": true,
 	"highlight_same": true,
 	"highlight_peers": true,
+	"line_intro": true,
 	"show_timer": true,
 	"auto_clear_notes": true,
 	"color_notes": true,

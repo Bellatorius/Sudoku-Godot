@@ -52,6 +52,7 @@ func setup(_params: Dictionary) -> void:
 	var dv := _panel(pages.display)
 	dv.add_child(_toggle("dark_mode", "Dark mode", "Dark paper and light ink, easier on the eyes at night."))
 	dv.add_child(_toggle("fullscreen", "Fullscreen", "Also toggled with F11."))
+	dv.add_child(_toggle("line_intro", "Draw-in animation", "When a puzzle opens, its lines, thermometers and arrows draw themselves in."))
 	dv.add_child(HSeparator.new())
 	dv.add_child(_fps_cap())
 	dv.add_child(HSeparator.new())
