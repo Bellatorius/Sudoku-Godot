@@ -565,7 +565,7 @@ func _hide_overlay() -> void:
 func _on_solved() -> void:
 	board.celebrate()
 	Audio.play("solved")
-	var res := GameState.record_solve(session.puzzle, session.elapsed, session.hints_used, daily_date)
+	var res := GameState.record_solve(session.puzzle, session.elapsed, session.hints_used, daily_date, session.mistakes)
 	_dirty = true
 	_save()
 	await get_tree().create_timer(1.3).timeout
@@ -1228,6 +1228,7 @@ func _show_result(won: bool, my_time: float, opp_time: float, note := "") -> voi
 	mp[key] = int(mp.get(key, 0)) + 1
 	GameState.stats.multiplayer = mp
 	GameState.save_stats()
+	SteamManager.on_versus(won, mp)
 	if not session.solved:
 		Audio.play("solved" if won else "wrong")
 	await get_tree().create_timer(1.0 if session.solved else 0.2).timeout

@@ -22,6 +22,37 @@ const ACHIEVEMENTS := {
 	"DAILY_FIRST":    "Daily Habit — complete a daily puzzle",
 	"DAILY_STREAK_7": "On a Roll — 7-day daily streak",
 	"DAILY_STREAK_30":"Devoted — 30-day daily streak",
+	# added 2026-10-22 (levels, groups, Mini, multiplayer)
+	"SOLVE_250":      "Grid Regular — solve 250 puzzles",
+	"SOLVE_500":      "Grid Veteran — solve 500 puzzles",
+	"SOLVE_1000":     "Thousand Grids — solve 1,000 puzzles",
+	"EXPERT_SOLVE":   "Expert Eye — solve an Expert puzzle",
+	"EXPERT_10":      "Sharp Mind — solve 10 Expert puzzles",
+	"MASTER_SOLVE":   "Master Class — solve a Master puzzle",
+	"MASTER_10":      "Grandmaster — solve 10 Master puzzles",
+	"MASTER_50":      "Living Legend — solve 50 Master puzzles",
+	"MASTER_FLAWLESS":"Flawless — solve a Master puzzle without a mistake",
+	"ALL_LEVELS":     "Full Ladder — solve one variant at all six levels",
+	"BLANK_SLATE":    "Blank Slate — solve a puzzle that starts with no digits",
+	"NO_HINTS_25":    "Self-Made — solve 25 puzzles without hints",
+	"VARIETY_25":     "Explorer — solve 25 different variants",
+	"CAT_REGIONS":    "Region Ranger — solve every Regions variant",
+	"CAT_LINES":      "Line Walker — solve every Lines variant",
+	"CAT_SUMS":       "Sum Total — solve every Sums & Arrows variant",
+	"CAT_OUTSIDE":    "Outsider — solve every Outside Clues variant",
+	"CAT_DOTS":       "Dot Connector — solve every Dots & Signs variant",
+	"CAT_MARKS":      "Marked Cells — solve every Cell Marks variant",
+	"CAT_THEMES":     "Polyglot — solve every Letters & Symbols variant",
+	"CAT_GLOBAL":     "Chess Club — solve every Chess & Global Rules variant",
+	"CAT_MINI":       "Small Wonders — solve every Mini 6×6 variant",
+	"MINI_FIRST":     "Pocket Puzzle — solve a Mini 6×6 puzzle",
+	"MINI_SPRINT":    "Mini Sprint — solve a Mini Medium or harder in under 2 minutes",
+	"DAILY_10":       "Ten Days — complete 10 daily puzzles",
+	"DAILY_STREAK_100":"Unbreakable — 100-day daily streak",
+	"MP_FIRST_RACE":  "At the Start Line — finish a 1v1 race",
+	"MP_FIRST_WIN":   "First Blood — win a 1v1 race",
+	"MP_WINS_10":     "Racer — win 10 races",
+	"MP_WINS_50":     "Champion — win 50 races",
 }
 
 ## Emitted when a daily leaderboard download finishes.
@@ -117,32 +148,69 @@ func unlock(api_name: String) -> void:
 	steam.call("storeStats")
 
 
-func on_solve(puzzle: Puzzle, seconds: float, hints: int, is_daily: bool, stats: Dictionary) -> void:
+func on_solve(puzzle: Puzzle, seconds: float, hints: int, is_daily: bool, stats: Dictionary, mistakes := 0) -> void:
 	var total := int(stats.total_solved)
 	unlock("FIRST_SOLVE")
-	if total >= 10: unlock("SOLVE_10")
-	if total >= 50: unlock("SOLVE_50")
-	if total >= 100: unlock("SOLVE_100")
+	for n in [10, 50, 100, 250, 500, 1000]:
+		if total >= n: unlock("SOLVE_%d" % n)
 	if puzzle.difficulty in ["hard", "expert", "master"]:
 		unlock("HARD_SOLVE")
 		if hints == 0:
 			unlock("HARD_NO_HINTS")
+	var levels: Dictionary = stats.get("levels", {})
+	var at := int(levels.get(puzzle.difficulty, 0))
+	if puzzle.difficulty == "expert":
+		unlock("EXPERT_SOLVE")
+		if at >= 10: unlock("EXPERT_10")
+	if puzzle.difficulty == "master":
+		unlock("MASTER_SOLVE")
+		if at >= 10: unlock("MASTER_10")
+		if at >= 50: unlock("MASTER_50")
+		if mistakes == 0 and hints == 0: unlock("MASTER_FLAWLESS")
+	if puzzle.given_count() == 0:
+		unlock("BLANK_SLATE")
+	if puzzle.size == 6:
+		unlock("MINI_FIRST")
+		if not puzzle.difficulty in ["beginner", "easy"] and seconds < 120:
+			unlock("MINI_SPRINT")
 	if puzzle.variant == "classic" and not puzzle.difficulty in ["beginner", "easy"] and seconds < 300:
 		unlock("SPEED_CLASSIC")
 	var vs: Dictionary = stats.variants
 	if int(vs.get("killer", {}).get("solved", 0)) >= 10:
 		unlock("KILLER_INSTINCT")
-	var all := true
-	for id in Variants.CORE:
-		if int(vs.get(id, {}).get("solved", 0)) == 0:
-			all = false
-	if all:
+	var solved := func(id: String) -> bool: return int(vs.get(id, {}).get("solved", 0)) > 0
+	if Variants.CORE.all(solved):
 		unlock("ALL_CORE")
+	if Variants.CORE.filter(solved).size() >= 25:
+		unlock("VARIETY_25")
+	for g in Variants.CATEGORIES:
+		if (g[2] as Array).all(solved):
+			unlock("CAT_" + str(g[0]).to_upper())
+	var no_hint := 0
+	var ladder := false
+	for id in vs:
+		no_hint += int(vs[id].get("no_hint", 0))
+		ladder = ladder or (vs[id].get("best", {}) as Dictionary).size() >= 6   # a best time at every level
+	if ladder:
+		unlock("ALL_LEVELS")
+	if no_hint >= 25:
+		unlock("NO_HINTS_25")
 	if is_daily:
 		unlock("DAILY_FIRST")
 		var streak := int(stats.daily.streak)
 		if streak >= 7: unlock("DAILY_STREAK_7")
 		if streak >= 30: unlock("DAILY_STREAK_30")
+		if streak >= 100: unlock("DAILY_STREAK_100")
+		if (stats.daily.done as Dictionary).size() >= 10: unlock("DAILY_10")
+
+
+## After a 1v1 race (stats.multiplayer already counts it).
+func on_versus(won: bool, mp: Dictionary) -> void:
+	unlock("MP_FIRST_RACE")
+	var wins := int(mp.get("wins", 0))
+	if won: unlock("MP_FIRST_WIN")
+	if wins >= 10: unlock("MP_WINS_10")
+	if wins >= 50: unlock("MP_WINS_50")
 
 
 # ------------------------------------------------------------------ daily leaderboards

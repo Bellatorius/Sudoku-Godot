@@ -309,7 +309,7 @@ func variant_stats(id: String) -> Dictionary:
 
 
 ## Records a solve and returns a summary {new_best: bool, streak: int}.
-func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String) -> Dictionary:
+func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String, mistakes := 0) -> Dictionary:
 	var vs := variant_stats(puzzle.variant)
 	vs.solved = int(vs.solved) + 1
 	if hints == 0:
@@ -320,6 +320,9 @@ func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String
 	if new_best:
 		best[puzzle.difficulty] = seconds
 	stats.total_solved = int(stats.total_solved) + 1
+	var levels: Dictionary = stats.get("levels", {})   # solves per level (achievements)
+	levels[puzzle.difficulty] = int(levels.get(puzzle.difficulty, 0)) + 1
+	stats.levels = levels
 	if puzzle.id.begins_with("pack-"):
 		stats.pack_done[puzzle.id] = true
 
@@ -334,7 +337,7 @@ func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String
 			stats.daily.best_streak = maxi(int(stats.daily.best_streak), streak)
 		SteamManager.upload_daily_time(daily_date, seconds)
 	save_stats()
-	SteamManager.on_solve(puzzle, seconds, hints, daily_date != "", stats)
+	SteamManager.on_solve(puzzle, seconds, hints, daily_date != "", stats, mistakes)
 	return {"new_best": new_best, "streak": streak}
 
 
