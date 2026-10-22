@@ -3,9 +3,14 @@ name: Build puzzle packs
 # Run it from Actions → "Build puzzle packs" → Run workflow, pick the level.
 # Each job uploads puzzles/_parts/<variant>_<level>_s<shard>.json as an artifact;
 # download them all into puzzles/_parts/ and run: godot --headless -s tools/build_packs.gd -- merge
+run-name: packs ${{ inputs.level }} ${{ inputs.tag }}
 on:
   workflow_dispatch:
     inputs:
+      tag:
+        description: "Free label shown in the run name (the pipeline uses it to find its runs)"
+        required: false
+        default: ""
       level:
         description: "Level to build (beginner / expert / master / …)"
         required: true

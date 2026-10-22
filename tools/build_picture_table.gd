@@ -15,6 +15,8 @@ func _init() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.size() >= 1 and args[0] == "merge":
 		_merge()
+	elif args.size() >= 4 and args[0] == "shard":   # shard <type> <k> <n>: only pictures k, k+n, k+2n … (for CI)
+		_part(args[1], int(args[2]), int(args[3]))
 	else:
 		var types: Array = args.slice(1) if args.size() > 1 else Generator.PICTURE.values()
 		for t in types:
@@ -22,7 +24,7 @@ func _init() -> void:
 	quit()
 
 
-func _part(t: String) -> void:
+func _part(t: String, shard := 0, shards := 1) -> void:
 	var out := {}
 	for n in [9, 6]:
 		var rule := ""
@@ -34,8 +36,9 @@ func _part(t: String) -> void:
 		var ok: Array = []
 		var lib: Array = Shapes.PICTURES_9 if n == 9 else Shapes.PICTURES_6
 		var skip: Array = _tested().get(str(n), [])
-		for pic in lib:
-			if skip.has(pic[0]):
+		for pi in lib.size():
+			var pic: Array = lib[pi]
+			if skip.has(pic[0]) or pi % shards != shard:
 				continue
 			for k in TRIES:
 				var g := Generator.new()
@@ -57,7 +60,8 @@ func _part(t: String) -> void:
 					break
 		out[str(n)] = ok
 		print("%s %dx%d: %d / %d pictures" % [t, n, n, ok.size(), lib.size()])
-	var f := FileAccess.open("res://puzzles/_parts/pictures_%s.json" % t, FileAccess.WRITE)
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://puzzles/_parts/"))
+	var f := FileAccess.open("res://puzzles/_parts/pictures_%s.json" % (t if shards == 1 else "%s_s%d" % [t, shard]), FileAccess.WRITE)
 	f.store_string(JSON.stringify(out))
 
 
@@ -75,7 +79,7 @@ func _merge() -> void:
 	var dir := DirAccess.open("res://puzzles/_parts/")
 	for fn in dir.get_files():
 		if fn.begins_with("pictures_") and fn.ends_with(".json"):
-			var t := fn.trim_prefix("pictures_").trim_suffix(".json")
+			var t := fn.trim_prefix("pictures_").trim_suffix(".json").get_slice("_s", 0)   # shards: pictures_tn_s3.json
 			var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://puzzles/_parts/" + fn))
 			for n in d:
 				var have: Array = table[n].get(t, [])

@@ -1,0 +1,37 @@
+name: Picture table
+# Tests which hand-drawn pictures each picture line type can satisfy (tools/build_picture_table.gd),
+# split into shards. Each job uploads puzzles/_parts/pictures_<type>_s<k>.json; the pipeline merges them
+# into puzzles/pictures.json.
+run-name: picture table ${{ inputs.types }}
+on:
+  workflow_dispatch:
+    inputs:
+      types:
+        description: 'Line types as a JSON list, e.g. ["tn","da"]'
+        required: true
+        default: '["tn","da"]'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        type: ${{ fromJSON(inputs.types) }}
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Godot 4.7.2
+        run: |
+          curl -sL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q godot.zip && mv Godot_v4.7.2-stable_linux.x86_64 godot && chmod +x godot
+      - name: Import project
+        run: timeout 300 ./godot --headless --path . --import || true
+      - name: Test pictures
+        run: ./godot --headless --path . -s tools/build_picture_table.gd -- shard ${{ matrix.type }} ${{ matrix.shard }} 8
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pictures_${{ matrix.type }}_s${{ matrix.shard }}
+          path: puzzles/_parts/pictures_${{ matrix.type }}_s${{ matrix.shard }}.json
+          if-no-files-found: error

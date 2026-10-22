@@ -5,3 +5,5 @@ puzzles/_parts/
 *.tmp
 # test harness leftovers
 tools/_t.*
+_dl/
+/godot

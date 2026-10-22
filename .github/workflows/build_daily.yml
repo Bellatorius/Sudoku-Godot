@@ -2,6 +2,7 @@ name: Build daily puzzles
 # Rebuilds every day of puzzles/daily.json (2026-01-01 … 2031-12-31) in parallel shards of 60 days.
 # Each job uploads puzzles/_parts/daily_<start>.json; download them all into puzzles/_parts/, delete
 # puzzles/daily.json (merge keeps existing days) and run: godot --headless -s tools/build_daily.gd -- merge
+run-name: daily calendar
 on:
   workflow_dispatch:
 

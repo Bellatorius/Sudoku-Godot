@@ -1,0 +1,29 @@
+name: Pipeline
+# Unattended pack pipeline (tools/pipeline.py, state in pipeline/state.json): every 20 minutes it checks
+# whether the runs of the current stage are done; if so it merges them, commits and starts the next runs.
+# It switches itself off when finished. Run it by hand from Actions → Pipeline → Run workflow.
+on:
+  schedule:
+    - cron: "*/20 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+jobs:
+  step:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Pipeline step
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/pipeline.py
