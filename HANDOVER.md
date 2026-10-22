@@ -120,11 +120,14 @@ list); "Continue" always resumes the latest. The generator is only used after th
 0. **GitHub pack builds in flight (2026-10-22)**, repo Bellatorius/Sudoku-Godot (made PUBLIC temporarily for free
    Actions minutes: make it PRIVATE again when done). Merged and committed so far: all 6 levels for the 42 originals,
    beginner-hard for the 41 newer variants (old easy/medium/hard checked unchanged), grade bars in puzzles/grades.json.
-   Still running: 39781680727 expert and 39781688672 master for the 41 newer variants;
-   39799548945 daily calendar (download all daily_* artifacts into puzzles/_parts, delete puzzles/daily.json, then
-   `godot --headless -s tools/build_daily.gd -- merge`, expect 2191 days); Mini packs 39802161841 hard,
-   39802170333 medium, 39802176916 easy, 39802187324 beginner (then build_grades.gd for the 30 mini_* ids, commit,
-   and dispatch expert + master with the mini variants list).
+   Still running: 39781680727 expert and 39781688672 master for the 41 newer variants (old style: when merging, SKIP
+   the shards of picture variants region_sum, entropic, modular, parity_lines, nabner).
+   Picture + Mini packs (2026-10-23, variants list in ../_dl/pic_variants.json = 13 picture variants + 30 mini_*):
+   39857584539 hard, 39857589887 medium, 39857595336 easy, 39857602014 beginner. When merging these, DELETE the old
+   puzzles/<v>.json of those variants first (old random-line puzzles). Then grades (tools/build_grades.gd for those 43
+   ids, from their hard), then expert + master runs. ten_lines + double_arrow: picture table still to finish
+   (puzzles/_parts/pictures_tn/da.json), then build their 6 levels the same way. Daily calendar run was cancelled:
+   re-dispatch build_daily.yml after the picture packs are in (daily uses Generator, so line days get pictures).
    Collect: `gh run download <id> -D ../_dl/<id>` (one folder per artifact), copy every *.json into puzzles/_parts/,
    then `godot --headless -s tools/build_packs.gd -- merge`, check 500 per level, commit + push.
    Old local partial master files (stale design) were moved to ../_dl/old_local_master; they can be deleted.
