@@ -114,17 +114,12 @@ list); "Continue" always resumes the latest. The generator is only used after th
 
 ## Open items / suggested next steps
 0. **GitHub pack builds in flight (2026-10-22)**, repo Bellatorius/Sudoku-Godot (made PUBLIC temporarily for free
-   Actions minutes: make it PRIVATE again when done). Each run uploads one artifact per variant × 5 shards.
-   - 39657891070 master (42 originals), 39657905828 beginner (42 originals)
-   - 39657898722 expert, CANCELLED: keep its artifacts for classic, jigsaw, diagonal, non_consecutive, king, knight,
-     even_odd, little_killer, palindrome, between, universal (unchanged Expert design)
-   - 39678078328 expert for the other 31 originals (new fewest-digit design where it applies)
-   - 39678083580 hard, 39678090168 medium, 39678095765 easy, 39678101160 beginner for the 25 newer variants
-   - 39679079469 hard, 39679085684 medium, 39679091100 easy, 39679096399 beginner for the 16 newest variants
-   - Still to run for the 25 newer AND the 16 newest variants: grades (tools/build_grades.gd on their hard parts → puzzles/grades.json,
-     commit), then expert + master.
-   Collect: `gh run download <id> -D puzzles/_parts` (flatten the per-artifact folders), then
-   `godot --headless -s tools/build_packs.gd -- merge`, check old easy/medium/hard are unchanged.
+   Actions minutes: make it PRIVATE again when done). Merged and committed so far: all 6 levels for the 42 originals,
+   beginner-hard for the 41 newer variants (old easy/medium/hard checked unchanged), grade bars in puzzles/grades.json.
+   Still running: 39781680727 expert and 39781688672 master for the 41 newer variants.
+   Collect: `gh run download <id> -D ../_dl/<id>` (one folder per artifact), copy every *.json into puzzles/_parts/,
+   then `godot --headless -s tools/build_packs.gd -- merge`, check 500 per level, commit + push.
+   Old local partial master files (stale design) were moved to ../_dl/old_local_master; they can be deleted.
 1. Ask the user to confirm the Shift/Ctrl/colour behaviour matches their reference app. They wanted Claude to
    inspect their Chrome tab, but the Claude in Chrome extension wasn't connected, so it was copied from screenshots.
 2. Unanswered questions to the user: final Steam title (keep "Logic Wiz"?), real Steam App ID (currently 480 in
