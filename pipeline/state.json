@@ -1,0 +1,77 @@
+{
+ "stage": "levels",
+ "level_runs": [
+  39857584539,
+  39857589887,
+  39857595336,
+  39857602014
+ ],
+ "old_runs": [
+  39781680727,
+  39781688672
+ ],
+ "old_skip": [
+  "region_sum",
+  "entropic",
+  "modular",
+  "parity_lines",
+  "nabner",
+  "ten_lines",
+  "double_arrow"
+ ],
+ "table_runs": [
+  39870132115
+ ],
+ "pic_variants": [
+  "thermo",
+  "slow_thermo",
+  "german_whispers",
+  "dutch_whispers",
+  "renban",
+  "between",
+  "lockout",
+  "zipper",
+  "region_sum",
+  "entropic",
+  "modular",
+  "parity_lines",
+  "nabner",
+  "mini_classic",
+  "mini_killer",
+  "mini_thermo",
+  "mini_arrow",
+  "mini_jigsaw",
+  "mini_diagonal",
+  "mini_kropki",
+  "mini_xv",
+  "mini_even_odd",
+  "mini_renban",
+  "mini_sandwich",
+  "mini_skyscraper",
+  "mini_xsum",
+  "mini_little_killer",
+  "mini_palindrome",
+  "mini_between",
+  "mini_consecutive",
+  "mini_greater_than",
+  "mini_non_consecutive",
+  "mini_king",
+  "mini_knight",
+  "mini_region_sum",
+  "mini_entropic",
+  "mini_parity_lines",
+  "mini_zipper",
+  "mini_slow_thermo",
+  "mini_kenken",
+  "mini_difference_dots",
+  "mini_ratio_dots",
+  "mini_sum_product_dots"
+ ],
+ "tn_variants": [
+  "ten_lines",
+  "double_arrow"
+ ],
+ "log": [
+  "2026-10-23  pipeline set up"
+ ]
+}
