@@ -26,7 +26,8 @@ func _draw() -> void:
 		var sz := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 		draw_string(f, c + Vector2(-sz.x / 2, fs * 0.36), t, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, color)
 
-	match variant:
+	var vid := variant.trim_prefix("mini_")
+	match vid:   # Mini variants use their rule's icon plus a "6" badge
 		"classic":
 			line.call(P.call(0.38, 0.12), P.call(0.32, 0.88)); line.call(P.call(0.68, 0.12), P.call(0.62, 0.88))
 			line.call(P.call(0.14, 0.36), P.call(0.88, 0.36)); line.call(P.call(0.12, 0.64), P.call(0.86, 0.64))
@@ -89,9 +90,9 @@ func _draw() -> void:
 				"region_sum": Color("#4db8db"), "entropic": Color("#d98c40"), "modular": Color("#33a094"), "parity_lines": Color("#e65c73"),
 				"nabner": Color("#ebcc33"), "ten_lines": Color("#808fad"), "product_lines": Color("#9e6bd9"),
 				"difference_lines": Color("#f2734d"), "ratio_lines": Color("#4dbf8c")}
-			var lc: Color = cols.get(variant, color)
+			var lc: Color = cols.get(vid, color)
 			draw_polyline(PackedVector2Array([P.call(0.14, 0.78), P.call(0.4, 0.4), P.call(0.62, 0.62), P.call(0.86, 0.22)]), lc, w * 1.4, true)
-			if variant == "between" or variant == "lockout" or variant == "double_arrow":
+			if vid == "between" or vid == "lockout" or vid == "double_arrow":
 				draw_circle(P.call(0.14, 0.78), s * 0.11, UI.PAPER, true, -1.0, true); ring.call(P.call(0.14, 0.78), s * 0.11)
 				draw_circle(P.call(0.86, 0.22), s * 0.11, UI.PAPER, true, -1.0, true); ring.call(P.call(0.86, 0.22), s * 0.11)
 		"quadruple":
@@ -111,7 +112,7 @@ func _draw() -> void:
 			draw_rect(Rect2(P.call(0.56, 0.56), Vector2(s * 0.34, s * 0.3)), color)
 		"frame", "numbered_rooms", "battlefield", "missing_digit":
 			draw_rect(Rect2(P.call(0.3, 0.3), Vector2(s, s) * 0.6), color, false, w)
-			txt.call({"frame": "15", "numbered_rooms": "4", "battlefield": "8", "missing_digit": "7"}[variant], P.call(0.16, 0.16), int(s * 0.3))
+			txt.call({"frame": "15", "numbered_rooms": "4", "battlefield": "8", "missing_digit": "7"}[vid], P.call(0.16, 0.16), int(s * 0.3))
 		"rossini":
 			draw_rect(Rect2(P.call(0.3, 0.3), Vector2(s, s) * 0.6), color, false, w)
 			line.call(P.call(0.04, 0.6), P.call(0.22, 0.6)); line.call(P.call(0.22, 0.6), P.call(0.14, 0.52)); line.call(P.call(0.22, 0.6), P.call(0.14, 0.68))
@@ -123,7 +124,7 @@ func _draw() -> void:
 					dot.call(P.call(0.2 + x * 0.3, 0.2 + y * 0.3), s * 0.06)
 		"ratio_dots", "difference_dots", "prime_composite", "forbidden_digit", "divisibility", "kenken", "alphabet", "wordoku", 				"symbol", "roman":
 			var t: String = {"ratio_dots": "1:2", "difference_dots": "Δ", "prime_composite": "P", "forbidden_digit": "✕",
-				"divisibility": "÷", "kenken": "+×", "alphabet": "A", "wordoku": "W", "symbol": "★", "roman": "IV"}[variant]
+				"divisibility": "÷", "kenken": "+×", "alphabet": "A", "wordoku": "W", "symbol": "★", "roman": "IV"}[vid]
 			txt.call(t, P.call(0.5, 0.48), int(s * (0.42 if t.length() > 1 else 0.7)))
 		"color":
 			for i in 3:
@@ -166,3 +167,10 @@ func _draw() -> void:
 						draw_rect(rr, color)
 					else:
 						draw_rect(rr, color, false, w * 0.6)
+	if variant.begins_with("mini_"):
+		var bc: Vector2 = P.call(0.86, 0.86)
+		draw_circle(bc, s * 0.2, UI.ACCENT, true, -1.0, true)
+		var bf: Font = UI.font_sans_bold
+		var bfs := int(s * 0.26)
+		var bsz := bf.get_string_size("6", HORIZONTAL_ALIGNMENT_LEFT, -1, bfs)
+		draw_string(bf, bc + Vector2(-bsz.x / 2, bfs * 0.36), "6", HORIZONTAL_ALIGNMENT_LEFT, -1, bfs, Color.WHITE)

@@ -31,11 +31,11 @@ func _init(pz: Puzzle) -> void:
 	puzzle = pz
 	solver = Solver.new(pz)
 	values = pz.givens.duplicate()
-	corner.resize(81)
-	center.resize(81)
-	hinted.resize(81)
-	colors.resize(81)
-	conflicts.resize(81)
+	corner.resize(pz.cell_count())
+	center.resize(pz.cell_count())
+	hinted.resize(pz.cell_count())
+	colors.resize(pz.cell_count())
+	conflicts.resize(pz.cell_count())
 	_refresh()
 
 
@@ -221,16 +221,16 @@ func hint(cell := -1) -> int:
 		var best := 10
 		solver.grid = values
 		# Prefer cells that are currently wrong, then the most constrained empty cell.
-		for c in 81:
+		for c in values.size():
 			if values[c] != 0 and values[c] != puzzle.solution[c]:
 				cell = c; break
 		if cell < 0:
 			var g := values.duplicate()
-			for c in 81:
+			for c in values.size():
 				if g[c] != 0 and g[c] != puzzle.solution[c]:
 					g[c] = 0
 			solver._load(g)
-			for c in 81:
+			for c in values.size():
 				if g[c] != 0: continue
 				var n := solver._popc[solver.candidates(c)]
 				if n < best:
@@ -251,7 +251,7 @@ func hint(cell := -1) -> int:
 ## Cells whose digit disagrees with the solution.
 func wrong_cells() -> Array:
 	var out: Array = []
-	for c in 81:
+	for c in values.size():
 		if values[c] != 0 and values[c] != puzzle.solution[c]:
 			out.append(c)
 	return out
@@ -277,7 +277,7 @@ func digit_count(d: int) -> int:
 func autofill_all_but_one() -> int:
 	if solved: return -1
 	var open: Array = []
-	for c in 81:
+	for c in values.size():
 		if values[c] != puzzle.solution[c]:
 			open.append(c)
 	if open.size() <= 1:

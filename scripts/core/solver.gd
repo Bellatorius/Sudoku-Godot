@@ -17,6 +17,9 @@ const ODD := (1 << 1) | (1 << 3) | (1 << 5) | (1 << 7) | (1 << 9)
 enum Edge { NONE, WHITE, BLACK, X, V, GT, LT, SAME, DIFF, PULSE, SUMN, PRODN, RATION, DIFFN }
 
 var p: Puzzle
+var N := 9            # grid size (6 for Mini)
+var NC := 81          # cells
+var all_mask := ALL   # bits 1..N
 var grid := PackedInt32Array()
 var units: Array[PackedInt32Array] = []
 var cell_units: Array[PackedInt32Array] = []
@@ -64,6 +67,9 @@ var _found := PackedInt32Array()
 
 func _init(puzzle: Puzzle) -> void:
 	p = puzzle
+	N = p.size
+	NC = N * N
+	all_mask = ((1 << (N + 1)) - 1) & ~1
 	_popc.resize(1024)
 	for i in 1024:
 		var n := 0
@@ -84,42 +90,42 @@ func _add_unit(cells: PackedInt32Array) -> int:
 
 
 func _build() -> void:
-	cell_units.resize(81)
-	for i in 81:
+	cell_units.resize(NC)
+	for i in NC:
 		cell_units[i] = PackedInt32Array()
-	for r in 9:
+	for r in N:
 		var row := PackedInt32Array()
 		var col := PackedInt32Array()
-		for k in 9:
-			row.append(r * 9 + k)
-			col.append(k * 9 + r)
+		for k in N:
+			row.append(r * N + k)
+			col.append(k * N + r)
 		_add_unit(row)
 		_add_unit(col)
 	var regs: Array[PackedInt32Array] = []
-	regs.resize(9)
-	for i in 9:
+	regs.resize(N)
+	for i in N:
 		regs[i] = PackedInt32Array()
-	for i in 81:
+	for i in NC:
 		regs[p.regions[i]].append(i)
 	for rg in regs:
-		_add_unit(rg if p.variant != "kenken" else PackedInt32Array())   # Mathdoku has no boxes (empty units keep the indices)
+		_add_unit(rg if p.rule != "kenken" else PackedInt32Array())   # Mathdoku has no boxes (empty units keep the indices)
 	if p.diagonals:
 		var d1 := PackedInt32Array()
 		var d2 := PackedInt32Array()
-		for k in 9:
-			d1.append(k * 9 + k)
-			d2.append(k * 9 + (8 - k))
+		for k in N:
+			d1.append(k * N + k)
+			d2.append(k * N + (N - 1 - k))
 		_add_unit(d1)
 		_add_unit(d2)
 
-	cell_cage.resize(81)
+	cell_cage.resize(NC)
 	cell_cage.fill(-1)
-	has_extra.resize(81)
+	has_extra.resize(NC)
 	has_extra.fill(0)
-	cell_thermos.resize(81)
-	cell_arrows.resize(81)
-	cell_edges.resize(81)
-	for i in 81:
+	cell_thermos.resize(NC)
+	cell_arrows.resize(NC)
+	cell_edges.resize(NC)
+	for i in NC:
 		cell_thermos[i] = []
 		cell_arrows[i] = []
 		cell_edges[i] = []
@@ -146,22 +152,22 @@ func _build() -> void:
 
 	_build_new_rules()
 
-	if p.variant == "kropki":
+	if p.rule == "kropki":
 		neg_types = [Edge.WHITE, Edge.BLACK]
-	elif p.variant == "xv":
+	elif p.rule == "xv":
 		neg_types = [Edge.X, Edge.V]
-	elif p.variant == "consecutive" or p.variant == "twisted":
+	elif p.rule == "consecutive" or p.rule == "twisted":
 		neg_types = [Edge.WHITE]
 	var codes := {"w": Edge.WHITE, "b": Edge.BLACK, "x": Edge.X, "v": Edge.V, "c": Edge.WHITE,
 		"s": Edge.SAME, "d": Edge.DIFF}
 	if not p.edges.is_empty() or p.negative:
-		for i in 81:
-			var r := i / 9
-			var c := i % 9
+		for i in NC:
+			var r := i / N
+			var c := i % N
 			for nb in [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]]:
-				if nb[0] < 0 or nb[0] > 8 or nb[1] < 0 or nb[1] > 8:
+				if nb[0] < 0 or nb[0] >= N or nb[1] < 0 or nb[1] >= N:
 					continue
-				var n: int = nb[0] * 9 + nb[1]
+				var n: int = nb[0] * N + nb[1]
 				var key := Puzzle.edge_key(i, n)
 				var code: String = p.edges.get(key, "")
 				var tcode: int = codes.get(code, Edge.NONE)
@@ -180,42 +186,42 @@ func _build() -> void:
 
 ## Even-Odd marks, line clues and the global neighbour rules.
 func _build_new_rules() -> void:
-	cell_mask.resize(81)
-	cell_mask.fill(ALL)
-	cell_diff.resize(81)
-	cell_orth.resize(81)
-	cell_lines.resize(81)
-	for i in 81:
+	cell_mask.resize(NC)
+	cell_mask.fill(all_mask)
+	cell_diff.resize(NC)
+	cell_orth.resize(NC)
+	cell_lines.resize(NC)
+	for i in NC:
 		cell_diff[i] = []
 		cell_orth[i] = []
 		cell_lines[i] = []
-		var r := i / 9
-		var c := i % 9
+		var r := i / N
+		var c := i % N
 		for nb in [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]]:
-			if nb[0] >= 0 and nb[0] <= 8 and nb[1] >= 0 and nb[1] <= 8:
-				cell_orth[i].append(nb[0] * 9 + nb[1])
+			if nb[0] >= 0 and nb[0] < N and nb[1] >= 0 and nb[1] < N:
+				cell_orth[i].append(nb[0] * N + nb[1])
 	var moves: Array = []
-	if p.variant == "king" or p.variant == "miracle":
+	if p.rule == "king" or p.rule == "miracle":
 		moves = [[-1, -1], [-1, 1], [1, -1], [1, 1]]   # orthogonal ones are already row/column
-	if p.variant == "knight" or p.variant == "miracle":
+	if p.rule == "knight" or p.rule == "miracle":
 		moves.append_array([[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]])
-	for i in 81:
+	for i in NC:
 		for mv in moves:
-			var r: int = i / 9 + mv[0]
-			var c: int = i % 9 + mv[1]
-			if r >= 0 and r <= 8 and c >= 0 and c <= 8:
-				cell_diff[i].append(r * 9 + c)
+			var r: int = i / N + mv[0]
+			var c: int = i % N + mv[1]
+			if r >= 0 and r < N and c >= 0 and c < N:
+				cell_diff[i].append(r * N + c)
 		if not moves.is_empty():
 			has_extra[i] = 1
-	non_consecutive = p.variant == "non_consecutive" or p.variant == "miracle"
+	non_consecutive = p.rule == "non_consecutive" or p.rule == "miracle"
 	if non_consecutive:
 		has_extra.fill(1)
-	queen = p.variant == "queen"
-	anti_diag = p.variant == "anti_diagonal"
+	queen = p.rule == "queen"
+	anti_diag = p.rule == "anti_diagonal"
 	if queen or anti_diag:
 		has_extra.fill(1)
 	var extra_regions: Array = []
-	match p.variant:
+	match p.rule:
 		"center_dot":
 			extra_regions = [[10, 13, 16, 37, 40, 43, 64, 67, 70]]
 		"asterisk":
@@ -234,16 +240,16 @@ func _build_new_rules() -> void:
 		cell_mask[int(k)] = EVEN if p.parity[k] == "e" else ODD
 		has_extra[int(k)] = 1
 	for arr in [cell_eq, cell_outer, cell_sums, cell_quads, cell_index, cell_vertex, cell_sling]:
-		arr.resize(81)
-		for i in 81:
+		arr.resize(NC)
+		for i in NC:
 			arr[i] = []
-	if p.variant == "universal":   # same position in every box
+	if p.rule == "universal":   # same position in every box
 		for k in 9:
 			var u := PackedInt32Array()
 			for b in 9:
 				u.append(((b / 3) * 3 + k / 3) * 9 + (b % 3) * 3 + k % 3)
 			_add_unit(u)
-	elif p.variant == "windoku":
+	elif p.rule == "windoku":
 		for top in [1, 5]:
 			for left in [1, 5]:
 				var u := PackedInt32Array()
@@ -282,7 +288,7 @@ func _build_new_rules() -> void:
 			cell_mask[c] &= EVEN if ar.t == "e" else ODD
 			has_extra[c] = 1
 	for oi in p.outer.size():
-		var cells := outer_cells(p.outer[oi].s, p.outer[oi].i)
+		var cells := outer_cells(p.outer[oi].s, p.outer[oi].i, N)
 		outer_lines.append(cells)
 		for c in cells:
 			cell_outer[c].append(oi)
@@ -295,7 +301,7 @@ func _build_new_rules() -> void:
 			has_extra[c] = 1
 	for qi in p.quads.size():
 		var t: int = p.quads[qi].c
-		for c in [t, t + 1, t + 9, t + 10]:
+		for c in [t, t + 1, t + N, t + N + 1]:
 			cell_quads[c].append(qi)
 			has_extra[c] = 1
 	for vi in p.vertices.size():
@@ -375,11 +381,11 @@ func _build_new_rules() -> void:
 				for j in 9:
 					cell_index[j * 9 + cc].append([m, false])
 					has_extra[j * 9 + cc] = 1
-	flatmates = p.variant == "dutch_flatmates"
+	flatmates = p.rule == "dutch_flatmates"
 	twist_gen = p.twist_gen
 	if flatmates or twist_gen:
 		has_extra.fill(1)
-	if p.variant == "twisted" and not twist_gen:
+	if p.rule == "twisted" and not twist_gen:
 		var tw := {}
 		for t in p.twists:
 			tw[int(t)] = true
@@ -414,14 +420,14 @@ func _add_rel(a: int, b: int, code: int) -> void:
 
 
 ## The 9 cells of an outside clue, in reading order from the clue's side (L/R = row i, T/B = column i).
-static func outer_cells(side: String, i: int) -> PackedInt32Array:
+static func outer_cells(side: String, i: int, n := 9) -> PackedInt32Array:
 	var out := PackedInt32Array()
-	for k in 9:
+	for k in n:
 		match side:
-			"L": out.append(i * 9 + k)
-			"R": out.append(i * 9 + 8 - k)
-			"T": out.append(k * 9 + i)
-			_: out.append((8 - k) * 9 + i)
+			"L": out.append(i * n + k)
+			"R": out.append(i * n + n - 1 - k)
+			"T": out.append(k * n + i)
+			_: out.append((n - 1 - k) * n + i)
 	return out
 
 
@@ -430,7 +436,7 @@ static func outer_value(t: String, a: PackedInt32Array) -> int:
 	match t:
 		"sw":
 			var i1 := a.find(1)
-			var i9 := a.find(9)
+			var i9 := a.find(a.size())   # the biggest digit (9, or 6 on Mini)
 			var s := 0
 			for j in range(mini(i1, i9) + 1, maxi(i1, i9)):
 				s += a[j]
@@ -456,8 +462,8 @@ static func outer_value(t: String, a: PackedInt32Array) -> int:
 			return n
 		"rn":
 			var n := 0
-			for i in 9:
-				if (i > 0 and absi(a[i] - a[i - 1]) == 1) or (i < 8 and absi(a[i] - a[i + 1]) == 1):
+			for i in a.size():
+				if (i > 0 and absi(a[i] - a[i - 1]) == 1) or (i < a.size() - 1 and absi(a[i] - a[i + 1]) == 1):
 					n += 1
 			return n
 		"fs":
@@ -562,16 +568,17 @@ func _line_ok(ln: Dictionary, pos: int, d: int) -> bool:
 			var hi := 999
 			for sg in segs:
 				lo = maxi(lo, sg[0] + sg[1])
-				hi = mini(hi, sg[0] + 9 * sg[1])
+				hi = mini(hi, sg[0] + N * sg[1])
 			if lo > hi:
 				return false
 		"en", "mo":   # Entropic (low/mid/high) / Modular (remainders): any 3 in a row all differ
-			var g := (d - 1) / 3 if ln.t == "en" else d % 3
+			var third := N / 3   # Entropic groups: 1-3 / 4-6 / 7-9 (Mini: 1-2 / 3-4 / 5-6)
+			var g := (d - 1) / third if ln.t == "en" else d % 3
 			for j in range(pos - 2, pos + 3):
 				if j == pos or j < 0 or j >= cells.size():
 					continue
 				var v: int = grid[cells[j]]
-				if v != 0 and ((v - 1) / 3 if ln.t == "en" else v % 3) == g:
+				if v != 0 and ((v - 1) / third if ln.t == "en" else v % 3) == g:
 					return false
 		"pa":   # Parity: odd and even alternate
 			for j in [pos - 1, pos + 1]:
@@ -668,7 +675,7 @@ func _line_ok(ln: Dictionary, pos: int, d: int) -> bool:
 				var x: int = d if pos == m - k else grid[cells[m - k]]
 				var y: int = d if pos == m + k else grid[cells[m + k]]
 				if x and y:
-					if (cv and x + y != cv) or (not cv and x + y > 9):
+					if (cv and x + y != cv) or (not cv and x + y > N):
 						return false
 				elif cv and (x >= cv or y >= cv):
 					return false
@@ -685,13 +692,13 @@ func _outer_ok(oi: int, c: int, d: int) -> bool:
 	var cells: PackedInt32Array = outer_lines[oi]
 	var v: int = o.v
 	var a := PackedInt32Array()
-	a.resize(9)
-	for k in 9:
+	a.resize(N)
+	for k in N:
 		a[k] = _v(cells[k], c, d)
 	match o.t:
 		"sw":
 			var i1 := a.find(1)
-			var i9 := a.find(9)
+			var i9 := a.find(N)
 			if i1 < 0 or i9 < 0:
 				return true
 			var s := 0
@@ -699,21 +706,21 @@ func _outer_ok(oi: int, c: int, d: int) -> bool:
 			for j in range(mini(i1, i9) + 1, maxi(i1, i9)):
 				if a[j] == 0: k += 1
 				else: s += a[j]
-			return s + 2 * k <= v and v <= s + 8 * k
+			return s + 2 * k <= v and v <= s + (N - 1) * k
 		"sk":
-			var i9 := a.find(9)
+			var i9 := a.find(N)
 			if i9 >= 0 and v > i9 + 1:
 				return false
 			var vis := 0
 			var mx := 0
-			for j in 9:
+			for j in N:
 				var x := a[j]
 				if x == 0:
-					return vis <= v and vis + mini(9 - j, 9 - mx) >= v
+					return vis <= v and vis + mini(N - j, N - mx) >= v
 				if x > mx:
 					vis += 1
 					mx = x
-				if x == 9:
+				if x == N:
 					return vis == v
 			return vis == v
 		"xs":
@@ -725,7 +732,7 @@ func _outer_ok(oi: int, c: int, d: int) -> bool:
 			for j in x:
 				if a[j] == 0: k += 1
 				else: s += a[j]
-			return s + k <= v and v <= s + 9 * k
+			return s + k <= v and v <= s + N * k
 		"as":
 			if 9 - a.count(0) < 6:
 				return true   # too few digits to prune much; skip the cost
@@ -755,11 +762,11 @@ func _outer_ok(oi: int, c: int, d: int) -> bool:
 		"rn":
 			var lb := 0
 			var ub := 0
-			for i in 9:
+			for i in N:
 				var yes := false
 				var maybe := false
 				for j in [i - 1, i + 1]:
-					if j < 0 or j > 8:
+					if j < 0 or j >= N:
 						continue
 					if a[i] == 0 or a[j] == 0:
 						maybe = true
@@ -779,14 +786,14 @@ func _outer_ok(oi: int, c: int, d: int) -> bool:
 			for j in 3:
 				if a[j] == 0: k += 1
 				else: s += a[j]
-			return s + k <= v and v <= s + 9 * k
+			return s + k <= v and v <= s + N * k
 		"nr":
 			if a[0] == 0:
 				return true
 			var t := a[0] - 1
 			if a[t] != 0 and a[t] != v:
 				return false
-			for j in 9:
+			for j in N:
 				if j != t and a[j] == v:
 					return false
 			return true
@@ -857,13 +864,13 @@ func _sum_ok(cells: Array, total: int, c: int, d: int) -> bool:
 	var lo := 0
 	var hi := 0
 	var n := 0
-	for dd in range(1, 10):
+	for dd in range(1, N + 1):
 		if n == k: break
 		if not (used & (1 << dd)):
 			lo += dd; n += 1
 	if n < k: return false
 	n = 0
-	for dd in range(9, 0, -1):
+	for dd in range(N, 0, -1):
 		if n == k: break
 		if not (used & (1 << dd)):
 			hi += dd; n += 1
@@ -875,7 +882,7 @@ func _quad_ok(qi: int, c: int, d: int) -> bool:
 	var t: int = q.c
 	var need: Array = q.d.duplicate()
 	var free := 0
-	for x in [t, t + 1, t + 9, t + 10]:
+	for x in [t, t + 1, t + N, t + N + 1]:
 		var v := _v(x, c, d)
 		if v == 0: free += 1
 		else: need.erase(v)
@@ -896,7 +903,7 @@ func _vertex_ok(vi: int, c: int, d: int) -> bool:
 		return vertex_rel(t, a, b)
 	if known < 2:
 		return true
-	for x in range(1, 10):
+	for x in range(1, N + 1):
 		if vertex_rel(t if t else x, a if a else x, b if b else x):
 			return true
 	return false
@@ -1077,7 +1084,7 @@ func extra_ok(c: int, d: int) -> bool:
 		var t: Array = p.thermos[tp[0]]
 		var i: int = tp[1]
 		var L := t.size()
-		if d < i + 1 or d > 9 - (L - 1 - i):
+		if d < i + 1 or d > N - (L - 1 - i):
 			return false
 		for j in L:
 			if j == i:
@@ -1099,7 +1106,7 @@ func extra_ok(c: int, d: int) -> bool:
 				var v: int = grid[lc]
 				if v == 0: k += 1
 				else: s += v
-			if d < s + k or d > s + 9 * k:
+			if d < s + k or d > s + N * k:
 				return false
 		else:
 			for lc in line:
@@ -1109,9 +1116,9 @@ func extra_ok(c: int, d: int) -> bool:
 				else: s += v
 			var cv: int = grid[a.circle]
 			if cv > 0:
-				if s + d + k > cv or s + d + 9 * k < cv:
+				if s + d + k > cv or s + d + N * k < cv:
 					return false
-			elif s + d + k > 9:
+			elif s + d + k > N:
 				return false
 	var cg := cell_cage[c]
 	if cg >= 0:
@@ -1133,7 +1140,7 @@ func candidates(c: int) -> int:
 	var used := 0
 	for u in cell_units[c]:
 		used |= unit_used[u]
-	var m := ALL & ~used & cell_mask[c]
+	var m := all_mask & ~used & cell_mask[c]
 	# fast masks for the global neighbour rules before the full per-digit check
 	for n in cell_diff[c]:
 		var v: int = grid[n]
@@ -1144,9 +1151,9 @@ func candidates(c: int) -> int:
 			var v: int = grid[n]
 			if v != 0:
 				m &= ~((1 << (v - 1)) | (1 << (v + 1)))
-		m &= ALL
+		m &= all_mask
 	if m and has_extra[c]:
-		for d in range(1, 10):
+		for d in range(1, N + 1):
 			if (m & (1 << d)) and not extra_ok(c, d):
 				m &= ~(1 << d)
 	return m
@@ -1157,7 +1164,7 @@ func _load(g: PackedInt32Array) -> bool:
 	unit_used = PackedInt32Array()
 	unit_used.resize(units.size())
 	unit_used.fill(0)
-	for c in 81:
+	for c in NC:
 		var d := grid[c]
 		if d == 0: continue
 		var b := 1 << d
@@ -1166,7 +1173,7 @@ func _load(g: PackedInt32Array) -> bool:
 				return false
 			unit_used[u] |= b
 	# Verify given digits against extra constraints.
-	for c in 81:
+	for c in NC:
 		var d := grid[c]
 		if d and has_extra[c]:
 			grid[c] = 0
@@ -1187,7 +1194,7 @@ func _search() -> void:
 	var best := -1
 	var best_m := 0
 	var best_n := 10
-	for c in 81:
+	for c in NC:
 		if grid[c] != 0: continue
 		var m := candidates(c)
 		var n := _popc[m]
@@ -1202,7 +1209,7 @@ func _search() -> void:
 	if best_n == 0:
 		return
 	var digits: Array[int] = []
-	for d in range(1, 10):
+	for d in range(1, N + 1):
 		if best_m & (1 << d):
 			digits.append(d)
 	if _rng:
@@ -1249,7 +1256,7 @@ func last_nodes() -> int:
 ## Flags (1 = conflict) for every filled cell that breaks a rule given the other filled cells.
 func find_conflicts(g: PackedInt32Array) -> PackedByteArray:
 	var bad := PackedByteArray()
-	bad.resize(81)
+	bad.resize(NC)
 	bad.fill(0)
 	grid = g.duplicate()
 	for u in units:
@@ -1259,7 +1266,7 @@ func find_conflicts(g: PackedInt32Array) -> PackedByteArray:
 			for j in range(i + 1, u.size()):
 				if grid[u[j]] == a:
 					bad[u[i]] = 1; bad[u[j]] = 1
-	for c in 81:
+	for c in NC:
 		var d := grid[c]
 		if d == 0 or not has_extra[c]: continue
 		grid[c] = 0

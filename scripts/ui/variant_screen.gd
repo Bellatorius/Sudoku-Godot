@@ -87,7 +87,7 @@ func setup(params: Dictionary) -> void:
 		board.set_session(es)
 		sol_btn.pressed.connect(func():
 			var show := sol_btn.text == "Show solution"
-			for c in 81:
+			for c in pz.cell_count():
 				if not es.is_given(c):
 					es.values[c] = pz.solution[c] if show else 0
 			sol_btn.text = "Hide solution" if show else "Show solution"

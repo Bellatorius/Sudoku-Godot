@@ -30,7 +30,7 @@ func setup(params: Dictionary) -> void:
 	# a new day starts at 00:00 UTC for everyone: show when that is on this PC's clock
 	var bias := int(Time.get_time_zone_from_system().get("bias", 0))
 	var reset := "%02d:%02d" % [posmod(bias, 1440) / 60, posmod(bias, 60)]
-	var sub := UI.label("A new puzzle every day from all %d variants, the same for every player, always a tough one: no hints or checks, 3 mistakes allowed. The next one starts at %s your time. Missed a day? Play it from the calendar.  ·  Streak: %d day%s" % [Variants.CORE.size(), reset, streak, "" if streak == 1 else "s"], 16, UI.INK_MUTED)
+	var sub := UI.label("A new puzzle every day from all %d variants, the same for every player, always a tough one: no hints or checks, 3 mistakes allowed. The next one starts at %s your time. Missed a day? Play it from the calendar.  ·  Streak: %d day%s" % [Variants.standard().size(), reset, streak, "" if streak == 1 else "s"], 16, UI.INK_MUTED)
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sub.custom_minimum_size = Vector2(300, 0)
 	col.add_child(sub)

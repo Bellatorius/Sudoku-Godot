@@ -13,7 +13,12 @@ const CORE := ["classic", "killer", "thermo", "arrow", "jigsaw", "diagonal", "kr
 	"clone", "frame", "numbered_rooms", "rossini", "battlefield", "sum_product_dots", "anti_diagonal", "center_dot", "asterisk", "girandola",
 	"argyle", "queen", "miracle", "magic_square", "toroidal",
 	"ratio_dots", "difference_dots", "product_lines", "difference_lines", "ratio_lines", "prime_composite", "parity_regions", "missing_digit",
-	"forbidden_digit", "divisibility", "kenken", "alphabet", "wordoku", "symbol", "color", "roman"]
+	"forbidden_digit", "divisibility", "kenken", "alphabet", "wordoku", "symbol", "color", "roman",
+	"mini_classic", "mini_killer", "mini_thermo", "mini_arrow", "mini_jigsaw", "mini_diagonal", "mini_kropki", "mini_xv", "mini_even_odd", "mini_renban", "mini_sandwich", "mini_skyscraper", "mini_xsum", "mini_little_killer", "mini_palindrome", "mini_between", "mini_consecutive", "mini_greater_than", "mini_non_consecutive", "mini_king", "mini_knight", "mini_region_sum", "mini_entropic", "mini_parity_lines", "mini_zipper", "mini_slow_thermo", "mini_kenken", "mini_difference_dots", "mini_ratio_dots", "mini_sum_product_dots"]
+
+## Mini (6x6) versions: "mini_<rule>" plays <rule> on a 6x6 grid with 2x3 boxes and digits 1-6.
+## Their catalog entries are made from the 9x9 entry (get_info).
+const MINI := ["classic", "killer", "thermo", "arrow", "jigsaw", "diagonal", "kropki", "xv", "even_odd", "renban", "sandwich", "skyscraper", "xsum", "little_killer", "palindrome", "between", "consecutive", "greater_than", "non_consecutive", "king", "knight", "region_sum", "entropic", "parity_lines", "zipper", "slow_thermo", "kenken", "difference_dots", "ratio_dots", "sum_product_dots"]
 
 const LIST := [
 	{"id": "classic", "name": "Classic Sudoku", "short": "Each row, column, and 3x3 box must have all the digits 1 to 9 only once.",
@@ -269,10 +274,64 @@ const LIST := [
 
 
 static func get_info(id: String) -> Dictionary:
+	if id.begins_with("mini_"):
+		return _mini_info(id)
 	for v in LIST:
 		if v.id == id:
 			return v
 	return {}
+
+
+static var _mini_cache := {}
+## Tips that need other numbers on 6x6.
+const MINI_TIPS := {
+	"sandwich": "A sum of 14 means the 1 and 6 sit at the two ends. Small sums keep the 1 and 6 close together.",
+	"skyscraper": "A clue of 1 means the 6 is right next to it. A clue of 6 means the line reads 1 to 6 in order.",
+	"xsum": "If the first digit is 1, the clue is 1. A clue of 21 means the first digit is 6.",
+	"difference_dots": "A difference of 5 can only be 1 and 6.",
+	"ratio_dots": "1:2 pairs come from 1-2, 2-4, 3-6; 1:3 only from 1-3 and 2-6.",
+	"kenken": "A 2-cell ÷3 cage can only be 1-3 or 2-6.",
+}
+
+
+## "Mini Killer": the 9x9 entry, retold for a 6x6 grid.
+static func _mini_info(id: String) -> Dictionary:
+	if _mini_cache.has(id):
+		return _mini_cache[id]
+	var base: Dictionary = get_info(id.trim_prefix("mini_"))
+	if base.is_empty():
+		return {}
+	var fix := func(t: String) -> String:
+		for pair in [["1 to 9", "1 to 6"], ["1-9", "1-6"], ["no 3x3 boxes", "no boxes"], ["no 3×3 boxes", "no boxes"], ["No 3×3 boxes", "No boxes"], ["3x3 box", "2×3 box"],
+				["3x3", "2×3"], ["9 cells", "6 cells"], ["9-cell", "6-cell"], ["(2, 4, 6, 8)", "(2, 4, 6)"], ["(1, 3, 5, 7, 9)", "(1, 3, 5)"],
+				["1 and the 9", "1 and the 6"], ["1 and 9", "1 and 6"], ["1 or 9", "1 or 6"], ["sums to 45", "sums to 21"], ["10-n", "7-n"],
+				["one low digit (1-3), one middle digit (4-6) and one high digit (7-9)", "one low digit (1-2), one middle digit (3-4) and one high digit (5-6)"]]:
+			t = t.replace(pair[0], pair[1])
+		return t
+	var info := base.duplicate()
+	var rules := str(base.get("rules", ""))
+	info.id = id
+	info.name = "Mini " + str(base.name)
+	info.short = "6×6 · " + fix.call(str(base.short))
+	if rules.begins_with("Normal Sudoku rules apply. "):
+		rules = "A 6×6 grid: every row, column and 2×3 box holds 1 to 6 once. " + rules.trim_prefix("Normal Sudoku rules apply. ")
+	info.rules = fix.call(rules)
+	info.tip = MINI_TIPS.get(id.trim_prefix("mini_"), fix.call(str(base.get("tip", ""))))
+	_mini_cache[id] = info
+	return info
+
+
+## Every catalog entry: the 9x9 variants, then the Mini ones.
+static func all_list() -> Array:
+	var out: Array = LIST.duplicate()
+	for m in MINI:
+		out.append(get_info("mini_" + m))
+	return out
+
+
+## The 9x9 variants (the daily puzzle rotates through these).
+static func standard() -> Array:
+	return CORE.filter(func(v): return not v.begins_with("mini_"))
 
 
 static func is_playable(id: String) -> bool:
@@ -293,6 +352,7 @@ const CATEGORIES := [
 	["marks", "Cell Marks", ["even_odd", "axia", "friendly", "pulse", "index", "fortress", "min_max", "clone", "vertex", "slingshot", "prime_composite", "parity_regions", "forbidden_digit", "divisibility"]],
 	["themes", "Letters & Symbols", ["alphabet", "wordoku", "symbol", "color", "roman"]],
 	["global", "Chess & Global Rules", ["king", "knight", "queen", "miracle", "non_consecutive", "dutch_flatmates"]],
+	["mini", "Mini 6×6", ["mini_classic", "mini_killer", "mini_thermo", "mini_arrow", "mini_jigsaw", "mini_diagonal", "mini_kropki", "mini_xv", "mini_even_odd", "mini_renban", "mini_sandwich", "mini_skyscraper", "mini_xsum", "mini_little_killer", "mini_palindrome", "mini_between", "mini_consecutive", "mini_greater_than", "mini_non_consecutive", "mini_king", "mini_knight", "mini_region_sum", "mini_entropic", "mini_parity_lines", "mini_zipper", "mini_slow_thermo", "mini_kenken", "mini_difference_dots", "mini_ratio_dots", "mini_sum_product_dots"]],
 ]
 
 

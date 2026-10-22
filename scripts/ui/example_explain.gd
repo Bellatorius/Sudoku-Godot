@@ -4,7 +4,11 @@ extends RefCounted
 ## the cells to highlight and a sentence using the example's real digits.
 ##   explain(pz) -> [{cells: Array[int], text: String}, ...]   (variant idea first, up to ~6 notes)
 
+static var _n := 9   # grid size of the example (6 for Mini)
+
+
 static func explain(pz: Puzzle) -> Array:
+	_n = pz.size
 	var sol := pz.solution
 	var out: Array = []
 	var dg := func(cells: Array) -> Array: return cells.map(func(c): return sol[c])
@@ -57,7 +61,7 @@ static func explain(pz: Puzzle) -> Array:
 						pieces.append([])
 					pieces[-1].append(cells[i])
 				out.append({"cells": cells, "text": "Every box piece sums to %d: %s." % [total.call(pieces[0]), " | ".join(PackedStringArray(pieces.map(func(p): return plus.call(p))))]})
-			"en": out.append({"cells": cells, "text": "Any 3 in a row hold one low (1-3), one middle (4-6), one high (7-9): %s." % j.call(cells, " ")})
+			"en": out.append({"cells": cells, "text": "Any 3 in a row hold one low (%s), one middle (%s), one high (%s): %s." % ((["1-2", "3-4", "5-6"] if _n == 6 else ["1-3", "4-6", "7-9"]) + [j.call(cells, " ")])})
 			"mo": out.append({"cells": cells, "text": "Any 3 in a row have different remainders ÷ 3: %s." % j.call(cells, " ")})
 			"pa": out.append({"cells": cells, "text": "Odd and even alternate: %s." % j.call(cells, " ")})
 			"nb": out.append({"cells": cells, "text": "No two are equal or consecutive: %s." % j.call(cells, " ")})
@@ -95,19 +99,19 @@ static func explain(pz: Puzzle) -> Array:
 			out.append({"cells": ls[0] + ls[1], "text": "Lines with the same symbol read alike from it: %s and %s." % [j.call(ls[0], " "), j.call(ls[1], " ")]})
 
 	for o in pz.outer.slice(0, 6):
-		var cells := Array(Solver.outer_cells(o.s, o.i))
+		var cells := Array(Solver.outer_cells(o.s, o.i, _n))
 		var a := PackedInt32Array(dg.call(cells))
 		var where := ("row %d" % (o.i + 1)) if o.s in ["L", "R"] else ("column %d" % (o.i + 1))
 		var side_name: String = {"L": "the left", "R": "the right", "T": "the top", "B": "the bottom"}[o.s]
 		match str(o.t):
 			"sw":
-				var i1 := a.find(1); var i9 := a.find(9)
+				var i1 := a.find(1); var i9 := a.find(_n)
 				var mid: Array = cells.slice(mini(i1, i9) + 1, maxi(i1, i9))
-				out.append({"cells": cells.slice(mini(i1, i9), maxi(i1, i9) + 1), "text": "In %s, between the 1 and the 9: %s = %d." % [where, plus.call(mid) if not mid.is_empty() else "nothing", o.v]})
+				out.append({"cells": cells.slice(mini(i1, i9), maxi(i1, i9) + 1), "text": "In %s, between the 1 and the %d: %s = %d." % [where, _n, plus.call(mid) if not mid.is_empty() else "nothing", o.v]})
 			"sk":
 				var seen: Array = []
 				var mx := 0
-				for k in 9:
+				for k in _n:
 					if a[k] > mx: seen.append(cells[k]); mx = a[k]
 				out.append({"cells": seen, "text": "From %s you see %d buildings in %s: %s (taller hide shorter)." % [side_name, o.v, where, j.call(seen, ", ")]})
 			"xs":
@@ -123,8 +127,8 @@ static func explain(pz: Puzzle) -> Array:
 				out.append({"cells": cells, "text": "%s has %d ascending runs: %s." % [where.capitalize(), o.v, j.call(cells, " ")]})
 			"rn":
 				var run: Array = []
-				for k in 9:
-					if (k > 0 and absi(a[k] - a[k - 1]) == 1) or (k < 8 and absi(a[k] - a[k + 1]) == 1):
+				for k in _n:
+					if (k > 0 and absi(a[k] - a[k - 1]) == 1) or (k < _n - 1 and absi(a[k] - a[k + 1]) == 1):
 						run.append(cells[k])
 				out.append({"cells": run, "text": "%d cells of %s sit in a ±1 run: %s." % [o.v, where, j.call(run, ", ")]})
 			"md":
@@ -169,11 +173,11 @@ static func explain(pz: Puzzle) -> Array:
 			out.append({"cells": [a, b], "text": text})
 			edge_count += 1
 	if pz.negative and not pz.edges.is_empty():   # the missing marks say something too
-		for a in 80:
+		for a in _n * _n - 1:
 			var b := a + 1
-			if a % 9 < 8 and not pz.edges.has(Puzzle.edge_key(a, b)):
+			if a % _n < _n - 1 and not pz.edges.has(Puzzle.edge_key(a, b)):
 				var what: String = {"kropki": "not consecutive and not double", "xv": "don't sum to 5 or 10",
-					"consecutive": "aren't consecutive"}.get(pz.variant, "")
+					"consecutive": "aren't consecutive"}.get(pz.rule, "")
 				if what != "":
 					out.append({"cells": [a, b], "text": "No mark between %d and %d: they %s." % [sol[a], sol[b], what]})
 				break
@@ -188,7 +192,7 @@ static func explain(pz: Puzzle) -> Array:
 	for k in pz.marks:
 		if marks >= 3: break
 		var m := int(k)
-		var r := m / 9; var c := m % 9
+		var r := m / _n; var c := m % _n
 		var nb := _orth(m)
 		match str(pz.marks[k]):
 			"ax":
@@ -217,7 +221,8 @@ static func explain(pz: Puzzle) -> Array:
 		out.append({"cells": ar.cells, "text": "%s area: %s, all %s." % ["Even" if ar.t == "e" else "Odd", j.call(ar.cells, " "), "even" if ar.t == "e" else "odd"]})
 	for q in pz.quads.slice(0, 2):
 		var t: int = q.c
-		out.append({"cells": [t, t + 1, t + 9, t + 10], "text": "Circle %s: those digits appear around it (%s)." % [" ".join(PackedStringArray(q.d.map(func(x): return str(x)))), j.call([t, t + 1, t + 9, t + 10], " ")]})
+		var four: Array = [t, t + 1, t + _n, t + _n + 1]
+		out.append({"cells": four, "text": "Circle %s: those digits appear around it (%s)." % [" ".join(PackedStringArray(q.d.map(func(x): return str(x)))), j.call(four, " ")]})
 	for t in pz.twists.slice(0, 2):
 		out.append({"cells": [t, t + 1, t + 9, t + 10], "text": "Square: both diagonal pairs are consecutive (%d-%d and %d-%d)." % [sol[t], sol[t + 10], sol[t + 1], sol[t + 9]]})
 	for vx in pz.vertices.slice(0, 2):
@@ -231,25 +236,26 @@ static func explain(pz: Puzzle) -> Array:
 		out.append({"cells": cl.a + cl.b, "text": "Same shape, same digits: %s and %s." % [j.call(cl.a, " "), j.call(cl.b, " ")]})
 
 	# rules without clues: show them on a cell of the example
-	var centre := 40
-	match pz.variant:
+	var mid_rc := _n / 2 - (1 if _n == 6 else 0)   # a cell near the middle (Mini: row/column 3)
+	var centre := mid_rc * _n + mid_rc
+	match pz.rule:
 		"diagonal":
-			var d: Array = range(0, 81, 10)
-			out.append({"cells": d, "text": "The main diagonal holds 1 to 9 once: %s." % j.call(d, " ")})
+			var d: Array = range(0, _n * _n, _n + 1)
+			out.append({"cells": d, "text": "The main diagonal holds 1 to %d once: %s." % [_n, j.call(d, " ")]})
 		"king", "knight", "miracle", "non_consecutive":
 			var near: Array = []
-			if pz.variant != "non_consecutive":
-				var moves: Array = [[-1, -1], [-1, 1], [1, -1], [1, 1]] if pz.variant != "knight" else []
-				if pz.variant != "king":
+			if pz.rule != "non_consecutive":
+				var moves: Array = [[-1, -1], [-1, 1], [1, -1], [1, 1]] if pz.rule != "knight" else []
+				if pz.rule != "king":
 					moves += [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]
 				for mv in moves:
-					near.append((4 + mv[0]) * 9 + 4 + mv[1])
+					near.append((mid_rc + mv[0]) * _n + mid_rc + mv[1])
 			var text := "None of these cells repeats the %d in the middle." % sol[centre]
-			if pz.variant == "non_consecutive" or pz.variant == "miracle":
+			if pz.rule == "non_consecutive" or pz.rule == "miracle":
 				near += _orth(centre)
 				var sides: String = j.call(_orth(centre), ", ")
 				var cons := _consecutive_of(sol[centre])
-				if pz.variant == "miracle":
+				if pz.rule == "miracle":
 					text = "Around the %d: no repeat a king's or knight's move away, and its side neighbours %s aren't %s." % [sol[centre], sides, cons]
 				else:
 					text = "The %d's side neighbours %s are never %s." % [sol[centre], sides, cons]
@@ -287,35 +293,35 @@ static func explain(pz: Puzzle) -> Array:
 					out.append({"cells": who, "text": "This 5 has a 1 above it or a 9 below it."})
 					break
 		"jigsaw", "toroidal":
-			var rg: Array = range(81).filter(func(c): return pz.regions[c] == pz.regions[0])
-			out.append({"cells": rg, "text": "This region holds 1 to 9 once%s." % (" (it wraps around the edge)" if pz.variant == "toroidal" else "")})
+			var rg: Array = range(_n * _n).filter(func(c): return pz.regions[c] == pz.regions[0])
+			out.append({"cells": rg, "text": "This region holds 1 to %d once%s." % [_n, " (it wraps around the edge)" if pz.rule == "toroidal" else ""]})
 
-	if out.is_empty() or pz.variant == "classic":
-		var box: Array = [0, 1, 2, 9, 10, 11, 18, 19, 20]
+	if out.is_empty() or pz.rule == "classic":
+		var box: Array = range(_n * _n).filter(func(c): return pz.regions[c] == pz.regions[0])
 		var shown := " ".join(PackedStringArray(box.map(func(c): return Board.glyph_for(pz, sol[c]))))
 		match pz.variant:
 			"color": out.append({"cells": box, "text": "Every row, column and box holds each of the nine colours once."})
 			"alphabet", "wordoku", "symbol", "roman":
 				out.append({"cells": box, "text": "Every row, column and box holds each of the nine once: %s." % shown})
-			_: out.append({"cells": box, "text": "Every row, column and box holds 1 to 9 once: %s." % shown})
+			_: out.append({"cells": box, "text": "Every row, column and box holds 1 to %d once: %s." % [_n, shown]})
 	return out.slice(0, 6)
 
 
 static func _orth(i: int) -> Array:
-	var r := i / 9
-	var c := i % 9
+	var r := i / _n
+	var c := i % _n
 	var out: Array = []
-	if r > 0: out.append(i - 9)
-	if r < 8: out.append(i + 9)
+	if r > 0: out.append(i - _n)
+	if r < _n - 1: out.append(i + _n)
 	if c > 0: out.append(i - 1)
-	if c < 8: out.append(i + 1)
+	if c < _n - 1: out.append(i + 1)
 	return out
 
 
 ## "5 or 7", or just "2" for 1 / "8" for 9.
 static func _consecutive_of(d: int) -> String:
 	if d == 1: return "2"
-	if d == 9: return "8"
+	if d == _n: return str(_n - 1)
 	return "%d or %d" % [d - 1, d + 1]
 
 

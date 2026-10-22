@@ -171,6 +171,8 @@ const MAGIC_LINES := [[30, 31, 32], [39, 40, 41], [48, 49, 50], [30, 39, 48], [3
 	[30, 40, 50], [32, 40, 48]]
 
 var rng := RandomNumberGenerator.new()
+var _n := 9      # grid size of the puzzle being built (6 for Mini)
+var _nc := 81    # its cell count
 var _budget := 0
 var _wrap := false   # toroidal: neighbours wrap around the edges while building regions
 var _boost := 1.0    # expert: clue counts are multiplied by this
@@ -180,13 +182,14 @@ static func make(variant: String, difficulty: String, seed_value: int) -> Puzzle
 	var g := Generator.new()
 	g.rng.seed = seed_value
 	var need := 0.0
-	if (difficulty == "expert" and not EXPERT_GOAL.has(variant)) or difficulty == "master":
+	var rule := variant.trim_prefix("mini_")
+	if (difficulty == "expert" and not EXPERT_GOAL.has(rule)) or difficulty == "master":
 		need = float(grade_bar(variant)[0 if difficulty == "expert" else 1])
 	var best: Puzzle = null
 	var best_grade := -1.0
 	for t in (GRADE_TRIES if need > 0.0 else 1):
 		var pz: Puzzle = null
-		for attempt in int(ATTEMPTS.get(variant, 8)):
+		for attempt in int(ATTEMPTS.get(rule, 8)):
 			pz = g._attempt(variant, difficulty)
 			if pz:
 				break
@@ -227,9 +230,19 @@ static func grade(pz: Puzzle) -> float:
 	return float(s.last_nodes()) / float(pz.givens.count(0) + 1)
 
 
-func _attempt(variant: String, difficulty: String) -> Puzzle:
+## Given digits for a level: TARGETS, scaled to the cell count for Mini (6x6) variants.
+static func target(variant: String, difficulty: String) -> int:
+	var rule := variant.trim_prefix("mini_")
+	var t: int = TARGETS.get(rule, TARGETS.classic)[difficulty]
+	return t if rule == variant else int(round(t * 36.0 / 81.0))
+
+
+func _attempt(id: String, difficulty: String) -> Puzzle:
 	var pz := Puzzle.new()
-	pz.variant = variant
+	pz.variant = id
+	var variant := pz.rule   # the rules (Mini puzzles use the 9x9 variant's rules on 6x6)
+	_n = pz.size
+	_nc = _n * _n
 	pz.difficulty = difficulty
 	pz.diagonals = variant == "diagonal"
 	if variant == "jigsaw":
@@ -242,7 +255,7 @@ func _attempt(variant: String, difficulty: String) -> Puzzle:
 		for ln in MAGIC_LINES:
 			pz.sums.append({"cells": ln.duplicate(), "sum": 15, "o": [], "dir": []})
 	var empty := PackedInt32Array()
-	empty.resize(81)
+	empty.resize(_nc)
 	if variant == "magic_square":   # start from one of the 8 magic squares (rotations / mirrors of one)
 		var sq := [[2, 7, 6], [9, 5, 1], [4, 3, 8]]
 		var turn := rng.randi_range(0, 3)
@@ -255,11 +268,11 @@ func _attempt(variant: String, difficulty: String) -> Puzzle:
 					var t := rr; rr = cc; cc = 2 - t
 				if flip:
 					cc = 2 - cc
-				empty[(3 + rr) * 9 + 3 + cc] = sq[r][c]
+				empty[(3 + rr) * _n + 3 + cc] = sq[r][c]
 	pz.twist_gen = variant == "twisted"
 	var sol := Solver.new(pz).solve(empty, rng, int(SOLVE_NODES.get(variant, 20000)))
 	pz.twist_gen = false
-	if sol.size() != 81:
+	if sol.size() != _nc:
 		return null
 	pz.solution = sol
 	var tier: String = CLUE_TIER.get(difficulty, difficulty)   # how many variant clues this level gets
@@ -271,7 +284,7 @@ func _attempt(variant: String, difficulty: String) -> Puzzle:
 		return null
 
 	pz.givens = sol.duplicate()
-	_reduce(pz, TARGETS.get(variant, TARGETS.classic)[difficulty], int(REDUCE_NODES.get(variant, NODE_LIMIT)))
+	_reduce(pz, target(id, difficulty), int(REDUCE_NODES.get(variant, NODE_LIMIT)))
 	return pz
 
 
@@ -284,14 +297,15 @@ func _shuffle(a: Array) -> void:
 func _reduce(pz: Puzzle, target: int, nodes := NODE_LIMIT) -> void:
 	var solver := Solver.new(pz)
 	var cells: Array = []
-	for i in 41:  # symmetric pairs (i, 80 - i)
+	var nc := pz.cell_count()
+	for i in (nc + 1) / 2:  # symmetric pairs (i, nc - 1 - i)
 		cells.append(i)
 	_shuffle(cells)
-	var count := 81
+	var count := nc
 	for c in cells:
 		if target > 0 and count <= target:
 			break
-		var o: int = 80 - c
+		var o: int = nc - 1 - c
 		var sc := pz.givens[c]
 		var so := pz.givens[o]
 		pz.givens[c] = 0
@@ -306,12 +320,12 @@ func _reduce(pz: Puzzle, target: int, nodes := NODE_LIMIT) -> void:
 # --------------------------------------------------------------- jigsaw
 
 func _jigsaw_regions() -> PackedInt32Array:
-	var reg := Puzzle.standard_regions()
+	var reg := Puzzle.standard_regions(_n)
 	var swaps := 0
 	var tries := 0
 	while swaps < 120 and tries < 6000:
 		tries += 1
-		var a := rng.randi_range(0, 80)
+		var a := rng.randi_range(0, _nc - 1)
 		var nbs := _orth(a)
 		var b: int = nbs[rng.randi_range(0, nbs.size() - 1)]
 		var ra := reg[a]
@@ -320,7 +334,7 @@ func _jigsaw_regions() -> PackedInt32Array:
 			continue
 		# a moves into rb; pick some cell x of rb adjacent to ra (not b) to move into ra
 		var cand: Array = []
-		for x in 81:
+		for x in _nc:
 			if reg[x] == rb and x != b:
 				for y in _orth(x):
 					if reg[y] == ra and y != a:
@@ -340,22 +354,22 @@ func _jigsaw_regions() -> PackedInt32Array:
 
 
 func _orth(i: int) -> Array:
-	var r := i / 9
-	var c := i % 9
+	var r := i / _n
+	var c := i % _n
 	var out: Array = []
 	if _wrap:   # toroidal: the board wraps around
-		return [((r + 8) % 9) * 9 + c, ((r + 1) % 9) * 9 + c, r * 9 + (c + 8) % 9, r * 9 + (c + 1) % 9]
-	if r > 0: out.append(i - 9)
-	if r < 8: out.append(i + 9)
+		return [((r + 8) % _n) * _n + c, ((r + 1) % _n) * _n + c, r * _n + (c + 8) % _n, r * _n + (c + 1) % _n]
+	if r > 0: out.append(i - _n)
+	if r < _n - 1: out.append(i + _n)
 	if c > 0: out.append(i - 1)
-	if c < 8: out.append(i + 1)
+	if c < _n - 1: out.append(i + 1)
 	return out
 
 
 func _connected(reg: PackedInt32Array, id: int) -> bool:
 	var start := -1
 	var total := 0
-	for i in 81:
+	for i in _nc:
 		if reg[i] == id:
 			total += 1
 			if start < 0: start = i
@@ -375,9 +389,9 @@ func _connected(reg: PackedInt32Array, id: int) -> bool:
 
 func _make_cages(pz: Puzzle, ops := false) -> void:
 	var owner := PackedInt32Array()
-	owner.resize(81)
+	owner.resize(_nc)
 	owner.fill(-1)
-	var order: Array = range(81)
+	var order: Array = range(_nc)
 	_shuffle(order)
 	var cages: Array = []
 	var sizes := [2, 2, 3, 3, 3, 4, 4, 5]
@@ -450,16 +464,16 @@ func _make_cages(pz: Puzzle, ops := false) -> void:
 # --------------------------------------------------------------- lines
 
 func _nbrs8(i: int) -> Array:
-	var r := i / 9
-	var c := i % 9
+	var r := i / _n
+	var c := i % _n
 	var out: Array = []
 	for dr in [-1, 0, 1]:
 		for dc in [-1, 0, 1]:
 			if dr == 0 and dc == 0: continue
 			var rr: int = r + dr
 			var cc: int = c + dc
-			if rr >= 0 and rr < 9 and cc >= 0 and cc < 9:
-				out.append(rr * 9 + cc)
+			if rr >= 0 and rr < _n and cc >= 0 and cc < _n:
+				out.append(rr * _n + cc)
 	return out
 
 
@@ -469,27 +483,27 @@ func _seg_key(a: int, b: int) -> String:
 
 ## A diagonal step a->b is blocked if it would cross an existing diagonal segment.
 func _crosses(a: int, b: int, segs: Dictionary) -> bool:
-	var ra := a / 9
-	var ca := a % 9
-	var rb := b / 9
-	var cb := b % 9
+	var ra := a / _n
+	var ca := a % _n
+	var rb := b / _n
+	var cb := b % _n
 	if ra == rb or ca == cb:
 		return false
-	return segs.has(_seg_key(ra * 9 + cb, rb * 9 + ca))
+	return segs.has(_seg_key(ra * _n + cb, rb * _n + ca))
 
 
 ## True if the diagonal step a->b would cross step c->d.
 func _cross_pair(a: int, b: int, c: int, d: int) -> bool:
-	if a / 9 == b / 9 or a % 9 == b % 9:
+	if a / _n == b / _n or a % _n == b % _n:
 		return false
-	var x := (a / 9) * 9 + b % 9
-	var y := (b / 9) * 9 + a % 9
+	var x := (a / _n) * _n + b % _n
+	var y := (b / _n) * _n + a % _n
 	return (c == x and d == y) or (c == y and d == x)
 
 
 ## True if the line a->b->c turns back on itself (sharper than a right angle).
 func _sharp(a: int, b: int, c: int) -> bool:
-	return (b / 9 - a / 9) * (c / 9 - b / 9) + (b % 9 - a % 9) * (c % 9 - b % 9) < 0
+	return (b / _n - a / _n) * (c / _n - b / _n) + (b % _n - a % _n) * (c % _n - b % _n) < 0
 
 
 ## True if the diagonal step a->b would cross a step of the line itself.
@@ -512,8 +526,8 @@ func _make_thermos(pz: Puzzle, n: int) -> void:
 	var tries := 0
 	while pz.thermos.size() < n and tries < 400:
 		tries += 1
-		var start := rng.randi_range(0, 80)
-		if used.has(start) or pz.solution[start] > 5:
+		var start := rng.randi_range(0, _nc - 1)
+		if used.has(start) or pz.solution[start] > _n - 4:
 			continue
 		var path: Array = [start]
 		var want := rng.randi_range(3, 6)
@@ -547,7 +561,7 @@ func _make_arrows(pz: Puzzle, n: int) -> void:
 	var tries := 0
 	while pz.arrows.size() < n and tries < 400:
 		tries += 1
-		var circle := rng.randi_range(0, 80)
+		var circle := rng.randi_range(0, _nc - 1)
 		var total: int = pz.solution[circle]
 		if used.has(circle) or total < 3:
 			continue
@@ -589,9 +603,9 @@ func _arrow_dfs(pz: Puzzle, path: Array, s: int, total: int, used: Dictionary, s
 
 func _make_edges(pz: Puzzle, kropki: bool) -> void:
 	pz.negative = true
-	for i in 81:
-		for n in [i + 1, i + 9]:
-			if n > 80 or (n == i + 1 and i % 9 == 8):
+	for i in _nc:
+		for n in [i + 1, i + _n]:
+			if n >= _nc or (n == i + 1 and i % _n == _n - 1):
 				continue
 			var a: int = pz.solution[i]
 			var b: int = pz.solution[n]
@@ -606,7 +620,7 @@ func _make_edges(pz: Puzzle, kropki: bool) -> void:
 				elif black:
 					t = "b"
 			else:
-				if a + b == 10: t = "x"
+				if a + b == 10: t = "x"   # (Mini: only 4 + 6)
 				elif a + b == 5: t = "v"
 			if t != "":
 				pz.edges[Puzzle.edge_key(i, n)] = t
@@ -616,9 +630,9 @@ func _make_edges(pz: Puzzle, kropki: bool) -> void:
 
 func _make_parity(pz: Puzzle, n: int) -> void:
 	n = _scaled(n)
-	var cells: Array = range(81)
+	var cells: Array = range(_nc)
 	_shuffle(cells)
-	for i in mini(n, 81):
+	for i in mini(n, _nc):
 		var c: int = cells[i]
 		pz.parity[c] = "e" if pz.solution[c] % 2 == 0 else "o"
 
@@ -632,7 +646,7 @@ func _make_lines(pz: Puzzle, t: String, n: int) -> void:
 	var tries := 0
 	while pz.lines.size() < n and tries < 600:
 		tries += 1
-		var start := rng.randi_range(0, 80)
+		var start := rng.randi_range(0, _nc - 1)
 		if used.has(start):
 			continue
 		var path: Array = []
@@ -710,14 +724,14 @@ func _make_outer(pz: Puzzle, t: String, sides: Array, n: int) -> void:
 	n = _scaled(n)
 	var slots: Array = []
 	for sd in sides:
-		for i in 9:
+		for i in _n:
 			slots.append([sd, i])
 	_shuffle(slots)
 	for k in mini(n, slots.size()):
 		var sd: String = slots[k][0]
 		var i: int = slots[k][1]
 		var a := PackedInt32Array()
-		for c in Solver.outer_cells(sd, i):
+		for c in Solver.outer_cells(sd, i, _n):
 			a.append(pz.solution[c])
 		var v := Solver.outer_value(t, a)
 		if t == "md":   # Missing Digit: a digit that isn't among the first three cells
@@ -732,18 +746,18 @@ func _make_little_killer(pz: Puzzle, n: int) -> void:
 	var cands: Array = []
 	var seen := {}
 	var spots: Array = []
-	for k in 9:
-		spots.append_array([[-1, k], [9, k], [k, -1], [k, 9]])
+	for k in _n:
+		spots.append_array([[-1, k], [_n, k], [k, -1], [k, _n]])
 	for o in spots:
 		for dir in [[1, 1], [1, -1], [-1, 1], [-1, -1]]:
 			var cells: Array = []
 			var r: int = o[0] + dir[0]
 			var c: int = o[1] + dir[1]
-			while r >= 0 and r <= 8 and c >= 0 and c <= 8:
-				cells.append(r * 9 + c)
+			while r >= 0 and r < _n and c >= 0 and c < _n:
+				cells.append(r * _n + c)
 				r += dir[0]
 				c += dir[1]
-			if cells.size() < 2 or cells.size() > 7:
+			if cells.size() < 2 or cells.size() > _n - 2:
 				continue
 			var digits := {}
 			var total := 0
@@ -795,7 +809,7 @@ func _pdfs(path: Array, want: int, used: Dictionary, segs: Dictionary, ok: Calla
 		if used.has(nb) or path.has(nb):
 			continue
 		if diag:
-			if nb / 9 == cur / 9 or nb % 9 == cur % 9:
+			if nb / _n == cur / _n or nb % _n == cur % _n:
 				continue
 		elif _crosses(cur, nb, segs) or _crosses_path(cur, nb, path):
 			continue
@@ -875,7 +889,7 @@ func _make_path_lines(pz: Puzzle, t: String, n: int) -> void:
 		return true
 	var en_ok := func(pp: Array) -> bool:   # entropic / modular: the last three cells all differ
 		if pp.size() < 2: return true
-		var g := func(x: int) -> int: return (x - 1) / 3 if t == "en" else x % 3
+		var g := func(x: int) -> int: return (x - 1) / (_n / 3) if t == "en" else x % 3
 		for i in range(maxi(0, pp.size() - 3), pp.size() - 1):
 			if g.call(sol[pp[i]]) == g.call(sol[pp[-1]]): return false
 		return true
@@ -931,7 +945,7 @@ func _make_path_lines(pz: Puzzle, t: String, n: int) -> void:
 		return true
 	while pz.lines.size() < n and tries < 800:
 		tries += 1
-		var start := rng.randi_range(0, 80)
+		var start := rng.randi_range(0, _nc - 1)
 		if used.has(start):
 			continue
 		var path: Array = []
@@ -994,8 +1008,8 @@ func _make_reflection(pz: Puzzle, groups: int) -> void:
 	var tries := 0
 	while g < groups and tries < 600:
 		tries += 1
-		var s1 := rng.randi_range(0, 80)
-		var s2 := rng.randi_range(0, 80)
+		var s1 := rng.randi_range(0, _nc - 1)
+		var s2 := rng.randi_range(0, _nc - 1)
 		if s1 == s2 or used.has(s1) or used.has(s2) or sol[s1] != sol[s2]:
 			continue
 		var p1: Array = [s1]
@@ -1044,9 +1058,9 @@ func _make_reflection(pz: Puzzle, groups: int) -> void:
 
 func _edge_pairs() -> Array:
 	var out: Array = []
-	for i in 81:
-		if i % 9 < 8: out.append([i, i + 1])
-		if i < 72: out.append([i, i + 9])
+	for i in _nc:
+		if i % _n < _n - 1: out.append([i, i + 1])
+		if i < _nc - _n: out.append([i, i + _n])
 	return out
 
 
@@ -1072,13 +1086,13 @@ func _make_relations(pz: Puzzle, greater: bool, n: int) -> void:
 func _make_quads(pz: Puzzle, n: int) -> void:
 	n = _scaled(n)
 	var tops: Array = []
-	for r in 8:
-		for c in 8:
-			tops.append(r * 9 + c)
+	for r in _n - 1:
+		for c in _n - 1:
+			tops.append(r * _n + c)
 	_shuffle(tops)
 	for k in mini(n, tops.size()):
 		var t: int = tops[k]
-		var ds: Array = [pz.solution[t], pz.solution[t + 1], pz.solution[t + 9], pz.solution[t + 10]]
+		var ds: Array = [pz.solution[t], pz.solution[t + 1], pz.solution[t + _n], pz.solution[t + _n + 1]]
 		_shuffle(ds)
 		var pick := ds.slice(0, rng.randi_range(2, 4))
 		pick.sort()
@@ -1089,7 +1103,7 @@ func _make_twists(pz: Puzzle) -> void:
 	var sol := pz.solution
 	for r in 8:
 		for c in 8:
-			var t := r * 9 + c
+			var t := r * _n + c
 			if absi(sol[t] - sol[t + 10]) == 1 and absi(sol[t + 1] - sol[t + 9]) == 1:
 				pz.twists.append(t)
 
@@ -1100,10 +1114,10 @@ func _make_marks(pz: Puzzle, variant: String, n: int) -> void:
 	n = _scaled(n)
 	var sol := pz.solution
 	var cand: Array = []
-	for m in 81:
+	for m in _nc:
 		var d: int = sol[m]
-		var r := m / 9
-		var c := m % 9
+		var r := m / _n
+		var c := m % _n
 		var code := ""
 		match variant:
 			"axia":
@@ -1112,7 +1126,7 @@ func _make_marks(pz: Puzzle, variant: String, n: int) -> void:
 					var rr: int = r + dir[0]
 					var c2: int = c + dir[1]
 					while rr >= 0 and rr <= 8 and c2 >= 0 and c2 <= 8:
-						if sol[rr * 9 + c2] == d:
+						if sol[rr * _n + c2] == d:
 							code = ""
 						rr += dir[0]
 						c2 += dir[1]
@@ -1136,8 +1150,8 @@ func _make_marks(pz: Puzzle, variant: String, n: int) -> void:
 					if d % q == 0: opts.append("d%d" % q)
 				if not opts.is_empty(): code = opts[rng.randi_range(0, opts.size() - 1)]
 			"index":
-				var h: bool = sol[r * 9 + d - 1] == c + 1
-				var v: bool = sol[(d - 1) * 9 + c] == r + 1
+				var h: bool = sol[r * _n + d - 1] == c + 1
+				var v: bool = sol[(d - 1) * _n + c] == r + 1
 				if h and v: code = "ihv"
 				elif h: code = "ih"
 				elif v: code = "iv"
@@ -1161,14 +1175,14 @@ func _make_slings(pz: Puzzle, n: int) -> void:
 	n = _scaled(n)
 	var sol := pz.solution
 	var cand: Array = []
-	for a in 81:
+	for a in _nc:
 		for s in _orth(a):
-			var dr: int = a / 9 - s / 9
-			var dc: int = a % 9 - s % 9
+			var dr: int = a / _n - s / _n
+			var dc: int = a % _n - s % _n
 			for dir in [[dc, dr], [-dc, -dr]]:
-				var tr: int = a / 9 + dir[0] * sol[a]
-				var tc: int = a % 9 + dir[1] * sol[a]
-				if tr >= 0 and tr <= 8 and tc >= 0 and tc <= 8 and sol[tr * 9 + tc] == sol[s]:
+				var tr: int = a / _n + dir[0] * sol[a]
+				var tc: int = a % _n + dir[1] * sol[a]
+				if tr >= 0 and tr <= 8 and tc >= 0 and tc <= 8 and sol[tr * _n + tc] == sol[s]:
 					cand.append({"s": s, "a": a, "dir": dir})
 	_shuffle(cand)
 	var used := {}
@@ -1187,7 +1201,7 @@ func _make_vertices(pz: Puzzle, n: int) -> void:
 	n = _scaled(n)
 	var sol := pz.solution
 	var cand: Array = []
-	for t in 81:
+	for t in _nc:
 		var nb := _nbrs8(t)
 		for i in nb.size():
 			for j in range(i + 1, nb.size()):
@@ -1225,7 +1239,7 @@ func _make_pills(pz: Puzzle, n: int) -> void:
 	var tries := 0
 	while pz.lines.size() < n and tries < 800:
 		tries += 1
-		var a := rng.randi_range(0, 80)
+		var a := rng.randi_range(0, _nc - 1)
 		var nbs := _orth(a)
 		var b: int = nbs[rng.randi_range(0, nbs.size() - 1)]
 		if used.has(a) or used.has(b):
@@ -1250,7 +1264,7 @@ func _make_pills(pz: Puzzle, n: int) -> void:
 func _make_fortress(pz: Puzzle, n: int) -> void:
 	n = _scaled(n)
 	var sol := pz.solution
-	var order: Array = range(81)
+	var order: Array = range(_nc)
 	_shuffle(order)
 	var grey := {}
 	for c in order:
@@ -1271,7 +1285,7 @@ func _make_minmax(pz: Puzzle, n: int) -> void:
 	n = _scaled(n)
 	var sol := pz.solution
 	var cand: Array = []
-	for c in 81:
+	for c in _nc:
 		var lo := true
 		var hi := true
 		for nb in _orth(c):
@@ -1298,7 +1312,7 @@ func _make_clones(pz: Puzzle, n: int) -> void:
 	var tries := 0
 	while pz.clones.size() < n and tries < 3000:
 		tries += 1
-		var a := rng.randi_range(0, 80)
+		var a := rng.randi_range(0, _nc - 1)
 		var dr := rng.randi_range(-8, 8)
 		var dc := rng.randi_range(-8, 8)
 		if dr == 0 and dc == 0:
@@ -1310,11 +1324,11 @@ func _make_clones(pz: Puzzle, n: int) -> void:
 			var c: int = frontier.pop_at(rng.randi_range(0, frontier.size() - 1))
 			if shape.has(c) or used.has(c):
 				continue
-			var r: int = c / 9 + dr
-			var k: int = c % 9 + dc
+			var r: int = c / _n + dr
+			var k: int = c % _n + dc
 			if r < 0 or r > 8 or k < 0 or k > 8:
 				continue
-			var t: int = r * 9 + k
+			var t: int = r * _n + k
 			if used.has(t) or sol[t] != sol[c] or shape.has(t):
 				continue
 			shape.append(c)
@@ -1322,7 +1336,7 @@ func _make_clones(pz: Puzzle, n: int) -> void:
 				frontier.append(nb)
 		if shape.size() < 2:
 			continue
-		var b: Array = shape.map(func(c): return (c / 9 + dr) * 9 + c % 9 + dc)
+		var b: Array = shape.map(func(c): return (c / _n + dr) * _n + c % _n + dc)
 		var overlap := false
 		for c in b:
 			if shape.has(c): overlap = true
@@ -1414,7 +1428,7 @@ func _make_clues(pz: Puzzle, variant: String, tier: String) -> void:
 ## Expert with the fewest given digits: more and more clues on the same solution until the clues
 ## (almost) solve the grid alone; keeps the try with the fewest digits.
 func _attempt_fewest(pz: Puzzle, variant: String) -> Puzzle:
-	var goal: int = EXPERT_GOAL[variant]
+	var goal: int = EXPERT_GOAL[variant]   # (the rule, also for Mini)
 	var best: Puzzle = null
 	var keep_sums: Array = pz.sums.duplicate(true)   # magic-square lines are part of the setup, not clues
 	for boost in EXPERT_BOOSTS:
@@ -1454,7 +1468,7 @@ func _clear_clues(pz: Puzzle) -> void:
 
 
 func _scaled(n: int) -> int:
-	return int(ceil(n * _boost))
+	return int(ceil(n * _boost * _nc / 81.0))   # Mini grids get fewer clues for their 36 cells
 
 
 
@@ -1489,7 +1503,7 @@ func _make_areas(pz: Puzzle, n: int) -> void:
 	var tries := 0
 	while pz.areas.size() < n and tries < 2000:
 		tries += 1
-		var start := rng.randi_range(0, 80)
+		var start := rng.randi_range(0, _nc - 1)
 		if used.has(start):
 			continue
 		var par: int = sol[start] % 2

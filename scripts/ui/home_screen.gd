@@ -43,7 +43,7 @@ func setup(_params: Dictionary) -> void:
 	chips.add_theme_constant_override("v_separation", 8)
 	var all_groups: Array = [["all", "All", []]] + Variants.CATEGORIES
 	for g in all_groups:
-		var n: int = Variants.LIST.size() if g[0] == "all" else g[2].size()
+		var n: int = Variants.all_list().size() if g[0] == "all" else g[2].size()
 		var b := UI.button("%s %d" % [g[1], n], "ChipButton")
 		b.toggle_mode = true
 		var key: String = g[0]

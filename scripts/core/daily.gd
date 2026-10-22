@@ -32,10 +32,10 @@ static func weekday(date: String) -> int:
 	return (wd + 6) % 7
 
 
-## Every variant once per cycle of Variants.CORE.size() days, in a shuffled order per cycle;
+## Every variant once per cycle of Variants.standard().size() days (the 9x9 variants), in a shuffled order per cycle;
 ## never the same variant two days in a row across cycles.
 static func variant(date: String) -> String:
-	var n: int = Variants.CORE.size()
+	var n: int = Variants.standard().size()
 	var idx := day_index(date)
 	var cycle := int(floor(float(idx) / n))
 	var order := _cycle_order(cycle)
@@ -43,7 +43,7 @@ static func variant(date: String) -> String:
 
 
 static func _cycle_order(cycle: int) -> Array:
-	var order: Array = Variants.CORE.duplicate()
+	var order: Array = Variants.standard()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = absi(hash("logicwiz-daily-cycle-%d" % cycle))
 	for i in range(order.size() - 1, 0, -1):

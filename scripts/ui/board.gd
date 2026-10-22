@@ -54,6 +54,7 @@ static func glyph_for(pz: Puzzle, d: int) -> String:
 const SHADED := {"center_dot": [10, 13, 16, 37, 40, 43, 64, 67, 70], "asterisk": Solver.ASTERISK, "girandola": Solver.GIRANDOLA}
 ## Margin around the grid (in cells) when clues sit outside it.
 const OUTER_MARGIN := 0.8
+var _n := 9   # grid size of the shown puzzle (6 for Mini)
 const C_DIAG := Color(0.165, 0.31, 1.0, 0.22)
 
 
@@ -94,7 +95,7 @@ static func solved_example(variant: String, avoid_id := "") -> Session:
 	if pz == null:
 		return null
 	var s := Session.new(pz)
-	for c in 81:
+	for c in pz.cell_count():
 		s.values[c] = pz.solution[c]
 	return s
 
@@ -138,9 +139,10 @@ func _layout() -> void:
 	var margin := 0.0
 	if session and (not session.puzzle.outer.is_empty() or not session.puzzle.sums.is_empty()):
 		margin = OUTER_MARGIN
+	_n = session.puzzle.size if session else 9
 	var s := floorf(minf(size.x, size.y))
-	_cell = floorf(s / (9.0 + margin * 2.0))
-	var grid := _cell * 9.0
+	_cell = floorf(s / (_n + margin * 2.0))
+	var grid := _cell * _n
 	var m := floorf(margin * _cell)
 	var full := grid + m * 2.0
 	var off := ((size - Vector2(full, full)) / 2.0).floor() + Vector2(m, m)
@@ -150,18 +152,18 @@ func _layout() -> void:
 
 
 func cell_rect(c: int) -> Rect2:
-	return Rect2(_rect.position + Vector2(c % 9, c / 9) * _cell, Vector2(_cell, _cell))
+	return Rect2(_rect.position + Vector2(c % _n, c / _n) * _cell, Vector2(_cell, _cell))
 
 
 func cell_center(c: int) -> Vector2:
-	return _rect.position + (Vector2(c % 9, c / 9) + Vector2(0.5, 0.5)) * _cell
+	return _rect.position + (Vector2(c % _n, c / _n) + Vector2(0.5, 0.5)) * _cell
 
 
 func cell_at(pos: Vector2) -> int:
 	if not _rect.has_point(pos):
 		return -1
 	var local := (pos - _rect.position) / _cell
-	return clampi(int(local.y), 0, 8) * 9 + clampi(int(local.x), 0, 8)
+	return clampi(int(local.y), 0, _n - 1) * _n + clampi(int(local.x), 0, _n - 1)
 
 
 # ------------------------------------------------------------------ input
@@ -184,7 +186,7 @@ func _gui_input(event: InputEvent) -> void:
 				# Double-click selects all cells with the same digit.
 				var d := session.values[c]
 				selected = []
-				for i in 81:
+				for i in _n * _n:
 					if session.values[i] == d:
 						selected.append(i)
 			elif additive:
@@ -214,10 +216,10 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func move_cursor(dx: int, dy: int, extend := false) -> void:
-	var c: int = selected[-1] if not selected.is_empty() else 40
-	var r := wrapi(c / 9 + dy, 0, 9)
-	var k := wrapi(c % 9 + dx, 0, 9)
-	var n := r * 9 + k
+	var c: int = selected[-1] if not selected.is_empty() else (_n * _n) / 2
+	var r := wrapi(c / _n + dy, 0, _n)
+	var k := wrapi(c % _n + dx, 0, _n)
+	var n := r * _n + k
 	if extend:
 		if not selected.has(n): selected.append(n)
 	else:
@@ -244,7 +246,7 @@ func _draw() -> void:
 	draw_rect(_rect, UI.SURFACE)
 
 	# Player colours (multiple colours split the cell into vertical stripes)
-	for c in 81:
+	for c in _n * _n:
 		var km := session.colors[c]
 		if km == 0: continue
 		var cols: Array = []
@@ -289,11 +291,11 @@ func _draw() -> void:
 	var peers := {}
 	if cursor >= 0 and GameState.settings.highlight_peers and selected.size() == 1:
 		for u in session.solver.cell_units[cursor]:
-			if u >= 27 + (2 if pz.diagonals else 0):
+			if u >= 3 * _n + (2 if pz.diagonals else 0):
 				continue  # skip cage units
 			for o in session.solver.units[u]:
 				peers[o] = true
-	for c in 81:
+	for c in _n * _n:
 		var r := cell_rect(c)
 		var col := Color(0, 0, 0, 0)
 		if peers.has(c):
@@ -307,7 +309,7 @@ func _draw() -> void:
 		if flash_t > 0.0 and flash_cells.has(c):
 			col = col.lerp(Color(UI.DANGER, 0.55), clampf(flash_t, 0.0, 1.0) * (0.6 + 0.4 * sin(flash_t * 12.0)))
 		if celebrate_t >= 0.0:
-			var dist := float(c / 9 + c % 9) / 16.0
+			var dist := float(c / _n + c % _n) / (2.0 * _n - 2.0)
 			var w := clampf(1.0 - absf(celebrate_t * 1.2 - dist - 0.15) * 4.0, 0.0, 1.0)
 			col = col.lerp(Color(UI.GOLD, 0.45), w)
 		if col.a > 0.0:
@@ -411,7 +413,7 @@ func _draw() -> void:
 
 	# Thin grid
 	var thin := Color(UI.INK, 0.16)
-	for i in range(1, 9):
+	for i in range(1, _n):
 		var x := _rect.position.x + i * cell
 		var y := _rect.position.y + i * cell
 		draw_line(Vector2(x, _rect.position.y), Vector2(x, _rect.end.y), thin, 1.0)
@@ -419,11 +421,11 @@ func _draw() -> void:
 
 	# Region borders
 	var thick := maxf(2.0, roundf(cell * 0.045))
-	for c in (81 if pz.uses_boxes() or pz.variant != "kenken" else 0):
+	for c in (_n * _n if pz.uses_boxes() or pz.rule != "kenken" else 0):
 		var r := cell_rect(c)
-		if c % 9 < 8 and pz.regions[c] != pz.regions[c + 1]:
+		if c % _n < _n - 1 and pz.regions[c] != pz.regions[c + 1]:
 			draw_line(Vector2(r.end.x, r.position.y - thick / 2), Vector2(r.end.x, r.end.y + thick / 2), UI.INK, thick)
-		if c / 9 < 8 and pz.regions[c] != pz.regions[c + 9]:
+		if c / _n < _n - 1 and pz.regions[c] != pz.regions[c + _n]:
 			draw_line(Vector2(r.position.x - thick / 2, r.end.y), Vector2(r.end.x + thick / 2, r.end.y), UI.INK, thick)
 	if pz.variant == "toroidal":
 		# the board wraps: the outer edge is thick only where the region changes across the wrap
@@ -506,7 +508,7 @@ func _draw() -> void:
 	# Digits & notes
 	var big := int(cell * 0.56)
 	var small := int(cell * 0.21)
-	for c in 81:
+	for c in _n * _n:
 		var v := session.values[c]
 		var center := cell_center(c)
 		if v != 0:
@@ -560,7 +562,7 @@ func _draw() -> void:
 					_draw_digit(UI.font_sans, d, center + off, small, _note_color(c, d, UI.INK_MUTED), true)
 
 	if not emphasis.is_empty():
-		for c in 81:
+		for c in _n * _n:
 			if not emphasis.has(c):
 				draw_rect(cell_rect(c), Color(UI.SURFACE, 0.62))
 		for c in emphasis:
@@ -629,7 +631,7 @@ func _draw_centered(f: Font, s: String, center: Vector2, fs: int, col: Color) ->
 
 func _draw_cages(pz: Puzzle, cage_label: Dictionary) -> void:
 	var owner := PackedInt32Array()
-	owner.resize(81)
+	owner.resize(_n * _n)
 	owner.fill(-1)
 	for i in pz.cages.size():
 		for c in pz.cages[i].cells:
@@ -639,11 +641,11 @@ func _draw_cages(pz: Puzzle, cage_label: Dictionary) -> void:
 	var w := maxf(1.0, _cell * 0.022)
 	var dash := maxf(3.0, _cell * 0.07)
 	var same := func(c: int, dr: int, dc: int) -> bool:
-		var r := c / 9 + dr
-		var k := c % 9 + dc
-		if r < 0 or r > 8 or k < 0 or k > 8: return false
-		return owner[r * 9 + k] == owner[c]
-	for c in 81:
+		var r := c / _n + dr
+		var k := c % _n + dc
+		if r < 0 or r >= _n or k < 0 or k >= _n: return false
+		return owner[r * _n + k] == owner[c]
+	for c in _n * _n:
 		if owner[c] < 0: continue
 		var r := cell_rect(c)
 		var x0 := r.position.x; var y0 := r.position.y; var x1 := r.end.x; var y1 := r.end.y

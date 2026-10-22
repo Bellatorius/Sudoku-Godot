@@ -294,12 +294,14 @@ func _show_mode(m: String) -> void:
 
 func _refresh_pad() -> void:
 	var m := _shown_mode
+	var n := session.puzzle.size if session else 9
 	for d in range(1, 10):
 		var b: Button = pad_btns[d - 1]
 		var cnt: Label = pad_counts[d - 1]
+		b.visible = d <= n or m == "color"   # Mini: pad 1-6 (the colour palette keeps all 9)
 		cnt.visible = session != null and m != "color"
 		if cnt.visible:
-			cnt.text = str(maxi(0, 9 - session.digit_count(d)))
+			cnt.text = str(maxi(0, n - session.digit_count(d)))
 		var colour_digits := session != null and session.puzzle.variant == "color"   # Color Sudoku: the digits are colours
 		b.text = str(d) if session == null else Board.glyph_for(session.puzzle, d)
 		if colour_digits and m != "color":
@@ -319,7 +321,7 @@ func _refresh_pad() -> void:
 			b.remove_theme_color_override("font_color")
 			var long := b.text.length() >= 3   # Roman numerals
 			b.add_theme_font_size_override("font_size", (26 if m == "normal" else 18) - (8 if long else 0))
-			b.disabled = session != null and m == "normal" and session.digit_count(d) >= 9
+			b.disabled = session != null and m == "normal" and session.digit_count(d) >= n
 
 
 # ------------------------------------------------------------------ lifecycle
@@ -447,6 +449,8 @@ func _go_back() -> void:
 func _digit(d: int, m: String) -> void:
 	if session == null or paused or board.selected.is_empty():
 		return
+	if d > session.puzzle.size and m != "color":   # Mini: digits 1-6 only (all 9 colours)
+		return
 	var before := session.values.duplicate()
 	session.input_digit(board.selected, d, m)
 	if m != "normal" or session.solved:
@@ -497,7 +501,7 @@ func _check() -> void:
 		return
 	# Nothing of the player's own to check yet (givens and hinted digits don't count): don't use one up.
 	var placed := 0
-	for c in 81:
+	for c in session.values.size():
 		if session.values[c] != 0 and not session.is_given(c) and not session.hinted[c]:
 			placed += 1
 	if placed == 0:
@@ -1038,19 +1042,21 @@ func _build_opponent() -> void:
 func _draw_opponent() -> void:
 	if session == null:
 		return
-	var c := floorf(float(OPP_W) / 9.0)
-	var r := Rect2(Vector2.ZERO, Vector2(c * 9.0, c * 9.0))
+	var n := session.puzzle.size
+	var nc := n * n
+	var c := floorf(float(OPP_W) / n)
+	var r := Rect2(Vector2.ZERO, Vector2(c * n, c * n))
 	opp_board.draw_rect(r, UI.SURFACE)
-	var revealed := _opp_values.length() == 81
+	var revealed := _opp_values.length() == nc
 	var fs := int(c * 0.6)
-	for i in 81:
-		var cr := Rect2(Vector2(i % 9, i / 9) * c, Vector2(c, c))
-		var bad := _opp_bad.length() == 81 and _opp_bad[i] == "1"
+	for i in nc:
+		var cr := Rect2(Vector2(i % n, i / n) * c, Vector2(c, c))
+		var bad := _opp_bad.length() == nc and _opp_bad[i] == "1"
 		if session.is_given(i):
 			opp_board.draw_rect(cr, Color(UI.INK, 0.10))
 		elif bad:
 			opp_board.draw_rect(cr.grow(-2), Color(UI.DANGER, 0.75 if not revealed else 0.3))
-		elif _opp_cells.length() == 81 and _opp_cells[i] == "1" and not revealed:
+		elif _opp_cells.length() == nc and _opp_cells[i] == "1" and not revealed:
 			opp_board.draw_rect(cr.grow(-2), Color(UI.ACCENT, 0.55))
 		# the puzzle's own digits are known to both players, so they're never hidden
 		var digit := str(session.puzzle.givens[i]) if session.is_given(i) else (_opp_values[i] if revealed else "0")
@@ -1061,15 +1067,15 @@ func _draw_opponent() -> void:
 			var sz := f.get_string_size(digit, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 			opp_board.draw_string(f, cr.get_center() + Vector2(-sz.x / 2.0, (f.get_ascent(fs) - f.get_descent(fs)) / 2.0),
 				digit, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)
-	for i in range(1, 9):
+	for i in range(1, n):
 		opp_board.draw_line(Vector2(i * c, 0), Vector2(i * c, r.size.y), Color(UI.INK, 0.15), 1.0)
 		opp_board.draw_line(Vector2(0, i * c), Vector2(r.size.x, i * c), Color(UI.INK, 0.15), 1.0)
 	var regions := session.puzzle.regions
-	for i in 81:
-		var cr := Rect2(Vector2(i % 9, i / 9) * c, Vector2(c, c))
-		if i % 9 < 8 and regions[i] != regions[i + 1]:
+	for i in nc:
+		var cr := Rect2(Vector2(i % n, i / n) * c, Vector2(c, c))
+		if i % n < n - 1 and regions[i] != regions[i + 1]:
 			opp_board.draw_line(Vector2(cr.end.x, cr.position.y), Vector2(cr.end.x, cr.end.y), UI.INK, 2.0)
-		if i / 9 < 8 and regions[i] != regions[i + 9]:
+		if i / n < n - 1 and regions[i] != regions[i + n]:
 			opp_board.draw_line(Vector2(cr.position.x, cr.end.y), Vector2(cr.end.x, cr.end.y), UI.INK, 2.0)
 	opp_board.draw_rect(r, UI.INK, false, 2.0)
 
@@ -1100,7 +1106,7 @@ func _show_countdown() -> void:
 
 func _filled_cells() -> String:
 	var out := ""
-	for i in 81:
+	for i in session.values.size():
 		out += "1" if session.values[i] != 0 and not session.is_given(i) else "0"
 	return out
 
@@ -1119,7 +1125,7 @@ func _send_progress() -> void:
 ## "1" for every cell of mine that breaks a rule (the same red cells I see).
 func _bad_cells() -> String:
 	var out := ""
-	for i in 81:
+	for i in session.values.size():
 		out += "1" if session.values[i] != 0 and not session.is_given(i) and session.conflicts[i] else "0"
 	return out
 
@@ -1127,7 +1133,7 @@ func _bad_cells() -> String:
 ## Race over: send my whole grid so the opponent's fog lifts.
 func _send_reveal() -> void:
 	var vals := ""
-	for i in 81:
+	for i in session.values.size():
 		vals += str(session.values[i])
 	Net.send({"t": "grid", "values": vals, "bad": _bad_cells()})
 
@@ -1145,10 +1151,10 @@ func _on_net_message(msg: Dictionary) -> void:
 			if session:
 				var empty := 0
 				var filled := 0
-				for i in 81:
+				for i in session.values.size():
 					if not session.is_given(i):
 						empty += 1
-						if _opp_cells.length() == 81 and _opp_cells[i] == "1":
+						if _opp_cells.length() == session.values.size() and _opp_cells[i] == "1":
 							filled += 1
 				opp_pct.text = "%d%% filled" % (100 * filled / maxi(1, empty))
 			opp_board.queue_redraw()

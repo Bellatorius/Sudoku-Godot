@@ -1,6 +1,8 @@
 class_name Puzzle
 extends RefCounted
-## A 9x9 puzzle definition. Cells are indexed 0..80 (row * 9 + col).
+## A 9x9 (or 6x6 Mini) puzzle definition. Cells are indexed 0..size*size-1 (row * size + col).
+## Mini variants have ids "mini_<rule>" (e.g. mini_killer): size 6, 2x3 boxes, digits 1-6, and the
+## rules of <rule> (`rule`), which the solver / generator / board use instead of the id.
 ##
 ## JSON format (used by puzzle packs in res://puzzles/*.json):
 ## {
@@ -47,7 +49,18 @@ extends RefCounted
 ## Rules without clues (Non-consecutive, Anti-King, Anti-Knight) come from the variant id alone.
 
 var id := ""
-var variant := "classic"
+var variant := "classic":
+	set(v):
+		variant = v
+		rule = v.trim_prefix("mini_")
+		var n := 6 if v.begins_with("mini_") else 9
+		if n != size:
+			size = n
+			givens.resize(n * n)
+			solution.resize(n * n)
+			regions = standard_regions(n)
+var rule := "classic"   # the variant's rules: the id without "mini_"
+var size := 9           # grid size N (cells N*N, digits 1..N)
 var difficulty := "medium"
 var givens := PackedInt32Array()
 var solution := PackedInt32Array()
@@ -79,12 +92,23 @@ func _init() -> void:
 	regions = standard_regions()
 
 
-static func standard_regions() -> PackedInt32Array:
+## Box id per cell: 3x3 boxes on 9x9, 2-row x 3-column boxes on 6x6.
+static func standard_regions(n := 9) -> PackedInt32Array:
 	var r := PackedInt32Array()
-	r.resize(81)
-	for i in 81:
-		r[i] = (i / 27) * 3 + (i % 9) / 3
+	r.resize(n * n)
+	var bh := box_h(n)
+	for i in n * n:
+		r[i] = (i / n / bh) * (n / 3) + (i % n) / 3
 	return r
+
+
+## Box height in rows (boxes are always 3 columns wide).
+static func box_h(n: int) -> int:
+	return 3 if n == 9 else 2
+
+
+func cell_count() -> int:
+	return size * size
 
 
 static func edge_key(a: int, b: int) -> String:
@@ -92,7 +116,7 @@ static func edge_key(a: int, b: int) -> String:
 
 
 func uses_boxes() -> bool:
-	return not variant in ["jigsaw", "toroidal", "kenken"]
+	return not rule in ["jigsaw", "toroidal", "kenken"]
 
 
 func given_count() -> int:
@@ -103,10 +127,10 @@ func given_count() -> int:
 	return n
 
 
-static func _str_to_arr(s: String) -> PackedInt32Array:
+static func _str_to_arr(s: String, n := 81) -> PackedInt32Array:
 	var a := PackedInt32Array()
-	a.resize(81)
-	for i in mini(81, s.length()):
+	a.resize(n)
+	for i in mini(n, s.length()):
 		var ch := s[i]
 		a[i] = 0 if (ch == "." or ch == "0") else int(ch)
 	return a
@@ -124,7 +148,7 @@ func to_dict() -> Dictionary:
 		"id": id, "variant": variant, "difficulty": difficulty,
 		"givens": _arr_to_str(givens), "solution": _arr_to_str(solution),
 	}
-	if variant == "jigsaw" or variant == "toroidal":
+	if rule == "jigsaw" or rule == "toroidal":
 		d.regions = _arr_to_str(regions)
 	if diagonals:
 		d.diagonals = true
@@ -163,11 +187,12 @@ static func from_dict(d: Dictionary) -> Puzzle:
 	p.id = str(d.get("id", ""))
 	p.variant = str(d.get("variant", "classic"))
 	p.difficulty = str(d.get("difficulty", "medium"))
-	p.givens = _str_to_arr(str(d.get("givens", "")))
-	p.solution = _str_to_arr(str(d.get("solution", "")))
+	var nc := p.cell_count()
+	p.givens = _str_to_arr(str(d.get("givens", "")), nc)
+	p.solution = _str_to_arr(str(d.get("solution", "")), nc)
 	if d.has("regions"):
-		p.regions = _str_to_arr(str(d.regions))
-	p.diagonals = bool(d.get("diagonals", p.variant == "diagonal"))
+		p.regions = _str_to_arr(str(d.regions), nc)
+	p.diagonals = bool(d.get("diagonals", p.rule == "diagonal"))
 	for c in d.get("cages", []):
 		var cg := {"cells": _ints(c.cells), "sum": int(c.sum)}
 		if c.has("op"):
@@ -213,7 +238,7 @@ static func from_dict(d: Dictionary) -> Puzzle:
 	# Hand-made puzzles may omit the solution — solve it now.
 	if p.solution.count(0) > 0:
 		var sol := Solver.new(p).solve(p.givens)
-		if sol.size() == 81:
+		if sol.size() == nc:
 			p.solution = sol
 	return p
 
