@@ -89,7 +89,9 @@ tools/build_daily.gd   extend daily.json: `-- part <YYYY-MM-DD> <days>` (paralle
 tools/build_examples.gd  rebuild puzzles/examples.json (one solved-example puzzle per variant for the rules ⓘ); rerun after adding a variant.
 tools/shots.tscn       dev screenshot harness → user://shots/*.png (needs a display / xvfb)
 ```
-Saves: slot keys are `"<variant>:<difficulty>"` or `"daily:YYYY-MM-DD"`. Pack puzzle ids start with `pack-`.
+Save folder is pinned: project setting `custom_user_dir_name="LogicWizSudoku"` (Windows %APPDATA%\LogicWizSudoku), so a
+rename never loses progress; `GameState._move_old_saves()` copies saves from the old Godot default folder once. Steam
+Auto-Cloud syncs *.json there (docs/steam/STEAM_SETUP.md 3b). Saves: slot keys are `"<variant>:<difficulty>"` or `"daily:YYYY-MM-DD"`. Pack puzzle ids start with `pack-`.
 Dark mode: colours in `UI` are vars filled from the LIGHT/DARK palettes. `UI.set_dark()` rebuilds the Theme in place and
 emits `palette_changed`, and Main then rebuilds the nav and re-opens the current screen. Use UI colour vars, not hard-coded
 colours. The nav "Continue" button resumes `GameState.last_unfinished()`; each save is stamped with `saved_at`.

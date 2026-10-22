@@ -40,6 +40,7 @@ var _packs := {}
 
 
 func _ready() -> void:
+	_move_old_saves()
 	settings.merge(_read(SETTINGS_PATH), true)
 	var s := _read(STATS_PATH)
 	for k in s:
@@ -129,6 +130,24 @@ func store_game(slot: String, state: Dictionary) -> void:
 	state["saved_at"] = Time.get_unix_time_from_system()
 	saves[slot] = state
 	_write(SAVES_PATH, saves)
+
+
+## Saves live in a fixed folder (project setting custom_user_dir_name = "LogicWizSudoku", on Windows
+## %APPDATA%/LogicWizSudoku) so renaming the game never loses progress, and Steam Auto-Cloud can sync it.
+## Builds before that used Godot's default folder named after the game: copy those files over once.
+func _move_old_saves() -> void:
+	if FileAccess.file_exists(STATS_PATH) or FileAccess.file_exists(SETTINGS_PATH):
+		return
+	for base in ["Godot", "godot"]:
+		var old := OS.get_data_dir().path_join(base).path_join("app_userdata").path_join("Logic Wiz- Sudoku Variants")
+		var dir := DirAccess.open(old)
+		if dir == null:
+			continue
+		for fn in dir.get_files():
+			if fn.ends_with(".json"):
+				DirAccess.copy_absolute(old.path_join(fn), ProjectSettings.globalize_path("user://" + fn))
+		print("Moved saves from ", old)
+		return
 
 
 func load_game(slot: String) -> Dictionary:

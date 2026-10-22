@@ -81,6 +81,19 @@ Daily leaderboards (`daily_YYYY-MM-DD`) are created by the game itself; nothing 
 The icons are made by `tools/achievement_icons.tscn`. Change `ICONS` there and run
 `godot --path . res://tools/achievement_icons.tscn` to redraw them.
 
+## 3b. Steam Cloud: progress follows the player to any PC (after you have the App ID)
+The game keeps all progress in 3 small files in a fixed folder: `%APPDATA%\LogicWizSudoku\`
+(`settings.json`, `stats.json`, `saves.json`). Steam Auto-Cloud copies that folder to Steam's servers; no code needed.
+1. Steamworks → **App Admin** → your game → **Cloud** tab.
+2. **Byte quota per user**: `10000000` (10 MB). **Number of files allowed per user**: `50`. Click **Save**.
+3. Tick **Enable Auto-Cloud support**. Under **Root Paths** click **Add Root**:
+   - Root: `WinAppDataRoaming`  ·  Subdirectory: `LogicWizSudoku`  ·  Pattern: `*.json`  ·  OS: `Windows`  ·  Recursive: no
+   - (Only if you ship Mac/Linux later: add the same with roots `MacAppSupport` / `LinuxXdgDataHome`.)
+4. Click **Save**, then **Publish** tab → **Prepare for Publishing** → **Publish to Steam**.
+5. Test: play on one PC, close the game (Steam shows "Cloud status: up to date" in the Library), then start it on
+   another PC with the same Steam account: the stats and streaks are there.
+Players can switch Steam Cloud off per game in Steam; it is on by default.
+
 ## 4. Before release (later)
 - **Store page assets:**
   - header capsule 920×430,
