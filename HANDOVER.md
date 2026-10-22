@@ -117,6 +117,11 @@ list); "Continue" always resumes the latest. The generator is only used after th
 - **Not yet verified by the user on Windows** after the latest update (Shift/Ctrl/colour). Ask them how it went.
 
 ## Open items / suggested next steps
+0. **Unattended pipeline (2026-10-23)**: `.github/workflows/pipeline.yml` runs `tools/pipeline.py` every 20 min; state +
+   log in `pipeline/state.json`. Stages levels → top → final → done (see the script header); it merges, commits the packs
+   to main and starts the next runs by itself, then disables itself and writes `pipeline/report.txt` (counts per level).
+   After it's done: `git pull`, check the report, open a few picture puzzles, make the repo PRIVATE again.
+   If a stage fails: read the Pipeline run log on GitHub, fix, and run "Pipeline" by hand (workflow_dispatch).
 0. **GitHub pack builds in flight (2026-10-22)**, repo Bellatorius/Sudoku-Godot (made PUBLIC temporarily for free
    Actions minutes: make it PRIVATE again when done). Merged and committed so far: all 6 levels for the 42 originals,
    beginner-hard for the 41 newer variants (old easy/medium/hard checked unchanged), grade bars in puzzles/grades.json.
