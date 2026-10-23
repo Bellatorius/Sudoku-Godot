@@ -1,0 +1,36 @@
+{
+  "brand": "Sudoku Variants",
+  "tagline": "One grid, 83 ways to play",
+  "brief": "A Steam puzzle game with 83 sudoku variants (killer, thermo, arrow, kropki and more), daily puzzles and 1v1 races. The logo should feel calm and elegant, clever and playful, bold and modern, and work as a 16 px icon.",
+  "adjectives": ["calm", "elegant", "clever", "playful", "bold", "modern"],
+  "criteria": "Success: a hidden idea players discover (the 9), recognisable at 16 px, works in one colour, matches the game's paper/ink/blue look.",
+  "mockups": ["app-icon", "website", "social", "favicon-tab", "sticker", "tshirt"],
+  "nav": ["Variants", "Daily", "Multiplayer"],
+  "brand_color": "#2a4fff",
+  "greyscale": false,
+  "final": true,
+  "deck_title": "final identity",
+  "designer": "Bellatorius",
+  "concepts": [
+    {
+      "name": "Nine Smile",
+      "symbol": "../master/nine-smile-face.svg",
+      "lockup": "../lockups/sudoku-variants-horizontal-color.svg",
+      "stacked": "../lockups/sudoku-variants-stacked-2line-color.svg",
+      "symbol_on_tile": "../master/nine-smile-face-white.svg",
+      "symbol_on_dark": "../master/nine-smile-face-white.svg",
+      "lockup_on_dark": "../lockups/sudoku-variants-horizontal-reversed.svg",
+      "stacked_on_dark": "../lockups/sudoku-variants-stacked-2line-reversed.svg",
+      "lockup_on_tile": "../lockups/sudoku-variants-horizontal-white.svg",
+      "idea": "A face in a sudoku cell: the right eye is a 9, and the 9's tail is the smile.",
+      "rationale": [
+        "The 9 is the hidden idea: the number every sudoku is built on",
+        "Friendly at a glance, clever on a second look",
+        "Round 9 echoes the DM Serif letters in the name",
+        "Reads at 16 px; a hand-drawn pixel cut is used for favicons"
+      ]
+    }
+  ],
+  "recommendation": "Use the blue tile as the game icon, the horizontal lockup on the title screen and store page, and the one-colour cell version wherever only one colour is available.",
+  "next_steps": ["Set the blue tile as the Godot project and Windows export icon", "Upload the Steam images in Steamworks", "Trademark search before launch"]
+}

@@ -1,0 +1,6 @@
+1	Burst	The centre box explodes in place into 4 dominoes and a cell, one variant each.
+2	Fly Out	The centre box is empty: its 5 variant pieces fly out to the top right, like your image.
+3	Jigsaw Fly	The same, with jigsaw pieces: the puzzle comes apart into variants.
+4	Lift	The centre box lifts out of the grid as a stack of 5 variant cards.
+5	Slices	The centre box slides out as 5 coloured strips: 5 rules from one box.
+6	Radial	The centre box bursts in every direction; its 5 pieces land on the boxes around it.

@@ -1,0 +1,24 @@
+1	Nine Bot	The original: square eyes, the right one a square 9 whose tail is the mouth.
+2	Round Bot	Softer: round eyes and a round 9.
+3	Wink Bot	Winking: the left eye is a short bar.
+4	Happy Bot	Happy: the left eye closes into a ^.
+5	Grin Bot	A wide open grin with a row of teeth.
+6	Calm Bot	A flat, calm mouth.
+7	Smile Bot	A rounder smile under square eyes.
+8	Grille Bot	A speaker-grille mouth: very robot.
+9	Zigzag Bot	A zigzag mouth, like a German-whispers line.
+10	Surprised Bot	An O mouth: did I just solve that?
+11	Two Antennas	Two antennas, like ears.
+12	Bolt Bot	A lightning antenna: fast solving.
+13	Spring Bot	A springy antenna, bouncy and playful.
+14	No Antenna	Just the face, cleanest at small sizes.
+15	Nine Antenna	The antenna is a tiny 9 too.
+16	Ring Eye Bot	The left eye is an open square, matching the 9.
+17	Pupil Bot	A pupil in the left eye: it's looking at you.
+18	Love Bot	A heart left eye: loves puzzles.
+19	Head Bot	The face inside a square robot head.
+20	Round Head Bot	The face inside a round head.
+21	TV Bot	The face on an old TV with legs.
+22	Ear Bolt Bot	Bolts on the sides of the head.
+23	Headphones Bot	Headphones on: ready for a multiplayer race.
+24	Cat Bot	A robot cat: square ears on the head.

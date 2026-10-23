@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="t"><title id="t">Sudoku Variants 150e</title>
+<circle cx="128.00" cy="128.00" r="118" fill="#e8a020"/><g transform="translate(128 128) scale(0.62) rotate(0) translate(-128 -128)"><circle cx="128.00" cy="78.00" r="36" fill="none" stroke="#0e0e12" stroke-width="14"/><circle cx="128.00" cy="168.00" r="52" fill="none" stroke="#0e0e12" stroke-width="14"/><circle cx="116.00" cy="72.00" r="6" fill="#0e0e12"/><circle cx="140.00" cy="72.00" r="6" fill="#0e0e12"/><path d="M126 84L150 90L126 94Z" fill="#0e0e12"/><path d="M78 150L40 124M178 150L216 124" fill="none" stroke="#0e0e12" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>

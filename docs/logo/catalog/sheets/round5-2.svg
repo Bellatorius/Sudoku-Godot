@@ -1,0 +1,405 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1548 1584" width="1548" height="1584">
+<rect width="1548" height="1584" fill="#f8f7f2"/>
+<text x="24" y="58" font-family="Segoe UI, Arial" font-size="34" font-weight="700" fill="#0e0e12">Sudoku Variants - round 5 (2/4)</text>
+<text x="24" y="90" font-family="Segoe UI, Arial" font-size="17" fill="#5a5a6e">Symbols only; each pairs with the Sudoku Variants wordmark. Small copies at true 32 px and 16 px.</text>
+<rect x="32" y="110" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="54" y="128" width="170" height="170" viewBox="0 0 256 256">
+<path d="M30.0 30.0L90.0 30.0A60 60 0 0 1 30.0 90.0ZM158.0 30.0L158.0 90.0A60 60 0 0 1 98.0 30.0ZM166.0 30.0L226.0 30.0A60 60 0 0 1 166.0 90.0ZM30.0 158.0L30.0 98.0A60 60 0 0 1 90.0 158.0ZM158.0 158.0L98.0 158.0A60 60 0 0 1 158.0 98.0ZM166.0 158.0L166.0 98.0A60 60 0 0 1 226.0 158.0ZM30.0 166.0L90.0 166.0A60 60 0 0 1 30.0 226.0ZM158.0 166.0L158.0 226.0A60 60 0 0 1 98.0 166.0ZM166.0 166.0L226.0 166.0A60 60 0 0 1 166.0 226.0Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="246" y="170" width="32" height="32" viewBox="0 0 256 256">
+<path d="M30.0 30.0L90.0 30.0A60 60 0 0 1 30.0 90.0ZM158.0 30.0L158.0 90.0A60 60 0 0 1 98.0 30.0ZM166.0 30.0L226.0 30.0A60 60 0 0 1 166.0 90.0ZM30.0 158.0L30.0 98.0A60 60 0 0 1 90.0 158.0ZM158.0 158.0L98.0 158.0A60 60 0 0 1 158.0 98.0ZM166.0 158.0L166.0 98.0A60 60 0 0 1 226.0 158.0ZM30.0 166.0L90.0 166.0A60 60 0 0 1 30.0 226.0ZM158.0 166.0L158.0 226.0A60 60 0 0 1 98.0 166.0ZM166.0 166.0L226.0 166.0A60 60 0 0 1 166.0 226.0Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="254" y="230" width="16" height="16" viewBox="0 0 256 256">
+<path d="M30.0 30.0L90.0 30.0A60 60 0 0 1 30.0 90.0ZM158.0 30.0L158.0 90.0A60 60 0 0 1 98.0 30.0ZM166.0 30.0L226.0 30.0A60 60 0 0 1 166.0 90.0ZM30.0 158.0L30.0 98.0A60 60 0 0 1 90.0 158.0ZM158.0 158.0L98.0 158.0A60 60 0 0 1 158.0 98.0ZM166.0 158.0L166.0 98.0A60 60 0 0 1 226.0 158.0ZM30.0 166.0L90.0 166.0A60 60 0 0 1 30.0 226.0ZM158.0 166.0L158.0 226.0A60 60 0 0 1 98.0 166.0ZM166.0 166.0L226.0 166.0A60 60 0 0 1 166.0 226.0Z" fill="#0e0e12"/>
+
+</svg>
+<text x="50" y="332" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">53 · Truchet</text>
+<text x="50" y="356" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">Quarter circles in nine cells form</text>
+<text x="50" y="375" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">a woven pattern.</text>
+<rect x="332" y="110" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="354" y="128" width="170" height="170" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="86.00" cy="170.00" r="26" fill="#0e0e12"/><path d="M86 170L174 82" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="546" y="170" width="32" height="32" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="86.00" cy="170.00" r="26" fill="#0e0e12"/><path d="M86 170L174 82" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="554" y="230" width="16" height="16" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="86.00" cy="170.00" r="26" fill="#0e0e12"/><path d="M86 170L174 82" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<text x="350" y="332" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">54 · Thermo Line</text>
+<text x="350" y="356" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A sudoku thermometer climbs across</text>
+<text x="350" y="375" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">the cell.</text>
+<rect x="632" y="110" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="654" y="128" width="170" height="170" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84.00" cy="172.00" r="26" fill="#0e0e12"/><path d="M84 172V84H174" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="846" y="170" width="32" height="32" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84.00" cy="172.00" r="26" fill="#0e0e12"/><path d="M84 172V84H174" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="854" y="230" width="16" height="16" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84.00" cy="172.00" r="26" fill="#0e0e12"/><path d="M84 172V84H174" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<text x="650" y="332" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">55 · Bent Thermo</text>
+<text x="650" y="356" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A thermometer turns a corner inside</text>
+<text x="650" y="375" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">the cell.</text>
+<rect x="932" y="110" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="954" y="128" width="170" height="170" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="88.00" cy="88.00" r="24" fill="none" stroke="#0e0e12" stroke-width="12"/><path d="M105 105L176 176M150 176H176V150" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="1146" y="170" width="32" height="32" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="88.00" cy="88.00" r="24" fill="none" stroke="#0e0e12" stroke-width="12"/><path d="M105 105L176 176M150 176H176V150" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="1154" y="230" width="16" height="16" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="88.00" cy="88.00" r="24" fill="none" stroke="#0e0e12" stroke-width="12"/><path d="M105 105L176 176M150 176H176V150" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<text x="950" y="332" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">56 · Arrow Clue</text>
+<text x="950" y="356" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">An arrow-sudoku circle with its</text>
+<text x="950" y="375" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">arrow.</text>
+<rect x="1232" y="110" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="1254" y="128" width="170" height="170" viewBox="0 0 256 256">
+<path d="M42 64H106A16 16 0 0 1 122 80V176A16 16 0 0 1 106 192H42A16 16 0 0 1 26 176V80A16 16 0 0 1 42 64Z" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 9"/><path d="M150 64H214A16 16 0 0 1 230 80V176A16 16 0 0 1 214 192H150A16 16 0 0 1 134 176V80A16 16 0 0 1 150 64Z" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 9"/><path d="M44.08 104.68 43.68 104.28 57.519999999999996 83.48H41.199999999999996V79.32000000000001H58.8V81.92L49.36 104.68Z" fill="#0e0e12"/><path d="M151.8 104.98V104.58L153.36 104.10000000000001Q154.88 103.58 154.88 102.06V82.7L151.64000000000001 83.14V82.62Q154.0 82.14 156.18 81.25999999999999Q158.36 80.38 160.28 79.22L160.8 79.58L160.64000000000001 85.30000000000001V102.06Q160.64000000000001 103.62 162.16 104.06L163.8 104.58V104.98ZM167.44 86.34 167.72 80.66Q168.92000000000002 79.98 170.70000000000002 79.5Q172.48000000000002 79.02000000000001 174.72 79.02000000000001Q177.92000000000002 79.02000000000001 179.88 79.92000000000002Q181.84 80.82000000000001 182.76 82.38Q183.68 83.94 183.68 85.9Q183.68 88.66 181.0 91.28Q178.32 93.9 173.68 97.06Q172.8 97.7 171.60000000000002 98.62Q170.4 99.54 169.36 100.42H184.36V104.98H166.76000000000002V101.62Q168.20000000000002 100.22 169.58 98.84Q170.96 97.46000000000001 172.20000000000002 96.22Q175.08 93.26 176.5 90.96000000000001Q177.92000000000002 88.66 177.92000000000002 86.02000000000001Q177.92000000000002 83.26 176.92000000000002 81.56Q175.92000000000002 79.86 173.92000000000002 79.86Q172.68 79.86 171.62 80.48Q170.56 81.10000000000001 169.76000000000002 82.62L167.84 86.34Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="1446" y="170" width="32" height="32" viewBox="0 0 256 256">
+<path d="M42 64H106A16 16 0 0 1 122 80V176A16 16 0 0 1 106 192H42A16 16 0 0 1 26 176V80A16 16 0 0 1 42 64Z" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 9"/><path d="M150 64H214A16 16 0 0 1 230 80V176A16 16 0 0 1 214 192H150A16 16 0 0 1 134 176V80A16 16 0 0 1 150 64Z" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 9"/><path d="M44.08 104.68 43.68 104.28 57.519999999999996 83.48H41.199999999999996V79.32000000000001H58.8V81.92L49.36 104.68Z" fill="#0e0e12"/><path d="M151.8 104.98V104.58L153.36 104.10000000000001Q154.88 103.58 154.88 102.06V82.7L151.64000000000001 83.14V82.62Q154.0 82.14 156.18 81.25999999999999Q158.36 80.38 160.28 79.22L160.8 79.58L160.64000000000001 85.30000000000001V102.06Q160.64000000000001 103.62 162.16 104.06L163.8 104.58V104.98ZM167.44 86.34 167.72 80.66Q168.92000000000002 79.98 170.70000000000002 79.5Q172.48000000000002 79.02000000000001 174.72 79.02000000000001Q177.92000000000002 79.02000000000001 179.88 79.92000000000002Q181.84 80.82000000000001 182.76 82.38Q183.68 83.94 183.68 85.9Q183.68 88.66 181.0 91.28Q178.32 93.9 173.68 97.06Q172.8 97.7 171.60000000000002 98.62Q170.4 99.54 169.36 100.42H184.36V104.98H166.76000000000002V101.62Q168.20000000000002 100.22 169.58 98.84Q170.96 97.46000000000001 172.20000000000002 96.22Q175.08 93.26 176.5 90.96000000000001Q177.92000000000002 88.66 177.92000000000002 86.02000000000001Q177.92000000000002 83.26 176.92000000000002 81.56Q175.92000000000002 79.86 173.92000000000002 79.86Q172.68 79.86 171.62 80.48Q170.56 81.10000000000001 169.76000000000002 82.62L167.84 86.34Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="1454" y="230" width="16" height="16" viewBox="0 0 256 256">
+<path d="M42 64H106A16 16 0 0 1 122 80V176A16 16 0 0 1 106 192H42A16 16 0 0 1 26 176V80A16 16 0 0 1 42 64Z" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 9"/><path d="M150 64H214A16 16 0 0 1 230 80V176A16 16 0 0 1 214 192H150A16 16 0 0 1 134 176V80A16 16 0 0 1 150 64Z" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 9"/><path d="M44.08 104.68 43.68 104.28 57.519999999999996 83.48H41.199999999999996V79.32000000000001H58.8V81.92L49.36 104.68Z" fill="#0e0e12"/><path d="M151.8 104.98V104.58L153.36 104.10000000000001Q154.88 103.58 154.88 102.06V82.7L151.64000000000001 83.14V82.62Q154.0 82.14 156.18 81.25999999999999Q158.36 80.38 160.28 79.22L160.8 79.58L160.64000000000001 85.30000000000001V102.06Q160.64000000000001 103.62 162.16 104.06L163.8 104.58V104.98ZM167.44 86.34 167.72 80.66Q168.92000000000002 79.98 170.70000000000002 79.5Q172.48000000000002 79.02000000000001 174.72 79.02000000000001Q177.92000000000002 79.02000000000001 179.88 79.92000000000002Q181.84 80.82000000000001 182.76 82.38Q183.68 83.94 183.68 85.9Q183.68 88.66 181.0 91.28Q178.32 93.9 173.68 97.06Q172.8 97.7 171.60000000000002 98.62Q170.4 99.54 169.36 100.42H184.36V104.98H166.76000000000002V101.62Q168.20000000000002 100.22 169.58 98.84Q170.96 97.46000000000001 172.20000000000002 96.22Q175.08 93.26 176.5 90.96000000000001Q177.92000000000002 88.66 177.92000000000002 86.02000000000001Q177.92000000000002 83.26 176.92000000000002 81.56Q175.92000000000002 79.86 173.92000000000002 79.86Q172.68 79.86 171.62 80.48Q170.56 81.10000000000001 169.76000000000002 82.62L167.84 86.34Z" fill="#0e0e12"/>
+
+</svg>
+<text x="1250" y="332" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">57 · Twin Cages</text>
+<text x="1250" y="356" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">Two killer cages side by side, each</text>
+<text x="1250" y="375" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">with its total.</text>
+<rect x="32" y="400" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="54" y="418" width="170" height="170" viewBox="0 0 256 256">
+<path d="M42 78H102A20 20 0 0 1 122 98V158A20 20 0 0 1 102 178H42A20 20 0 0 1 22 158V98A20 20 0 0 1 42 78ZM154 78H214A20 20 0 0 1 234 98V158A20 20 0 0 1 214 178H154A20 20 0 0 1 134 158V98A20 20 0 0 1 154 78Z" fill="#0e0e12"/><circle cx="128.00" cy="128.00" r="34" fill="#ffffff"/><path d="M126.24 149.216 112.544 111.072Q112.09599999999999 109.792 111.35999999999999 109.056Q110.624 108.32 109.344 107.936L107.80799999999999 107.424V106.78399999999999H126.24V107.424L124.256 108.0Q122.78399999999999 108.384 122.624 109.344Q122.464 110.304 122.91199999999999 111.712L132.384 139.808L141.92 111.648Q142.432 110.176 142.39999999999998 109.21600000000001Q142.368 108.256 140.896 107.872L139.232 107.424V106.78399999999999H148.192V107.424L146.464 107.936Q145.248 108.256 144.736 109.056Q144.224 109.856 143.776 111.136L130.976 149.216Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="246" y="460" width="32" height="32" viewBox="0 0 256 256">
+<path d="M42 78H102A20 20 0 0 1 122 98V158A20 20 0 0 1 102 178H42A20 20 0 0 1 22 158V98A20 20 0 0 1 42 78ZM154 78H214A20 20 0 0 1 234 98V158A20 20 0 0 1 214 178H154A20 20 0 0 1 134 158V98A20 20 0 0 1 154 78Z" fill="#0e0e12"/><circle cx="128.00" cy="128.00" r="34" fill="#ffffff"/><path d="M126.24 149.216 112.544 111.072Q112.09599999999999 109.792 111.35999999999999 109.056Q110.624 108.32 109.344 107.936L107.80799999999999 107.424V106.78399999999999H126.24V107.424L124.256 108.0Q122.78399999999999 108.384 122.624 109.344Q122.464 110.304 122.91199999999999 111.712L132.384 139.808L141.92 111.648Q142.432 110.176 142.39999999999998 109.21600000000001Q142.368 108.256 140.896 107.872L139.232 107.424V106.78399999999999H148.192V107.424L146.464 107.936Q145.248 108.256 144.736 109.056Q144.224 109.856 143.776 111.136L130.976 149.216Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="254" y="520" width="16" height="16" viewBox="0 0 256 256">
+<path d="M42 78H102A20 20 0 0 1 122 98V158A20 20 0 0 1 102 178H42A20 20 0 0 1 22 158V98A20 20 0 0 1 42 78ZM154 78H214A20 20 0 0 1 234 98V158A20 20 0 0 1 214 178H154A20 20 0 0 1 134 158V98A20 20 0 0 1 154 78Z" fill="#0e0e12"/><circle cx="128.00" cy="128.00" r="34" fill="#ffffff"/><path d="M126.24 149.216 112.544 111.072Q112.09599999999999 109.792 111.35999999999999 109.056Q110.624 108.32 109.344 107.936L107.80799999999999 107.424V106.78399999999999H126.24V107.424L124.256 108.0Q122.78399999999999 108.384 122.624 109.344Q122.464 110.304 122.91199999999999 111.712L132.384 139.808L141.92 111.648Q142.432 110.176 142.39999999999998 109.21600000000001Q142.368 108.256 140.896 107.872L139.232 107.424V106.78399999999999H148.192V107.424L146.464 107.936Q145.248 108.256 144.736 109.056Q144.224 109.856 143.776 111.136L130.976 149.216Z" fill="#0e0e12"/>
+
+</svg>
+<text x="50" y="622" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">58 · V Between</text>
+<text x="50" y="646" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">Two cells with a V clue on their</text>
+<text x="50" y="665" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">shared edge.</text>
+<rect x="332" y="400" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="354" y="418" width="170" height="170" viewBox="0 0 256 256">
+<circle cx="78.00" cy="128.00" r="50" fill="#0e0e12"/><circle cx="178.00" cy="128.00" r="43" fill="none" stroke="#0e0e12" stroke-width="14"/>
+
+</svg>
+<svg x="546" y="460" width="32" height="32" viewBox="0 0 256 256">
+<circle cx="78.00" cy="128.00" r="50" fill="#0e0e12"/><circle cx="178.00" cy="128.00" r="43" fill="none" stroke="#0e0e12" stroke-width="14"/>
+
+</svg>
+<svg x="554" y="520" width="16" height="16" viewBox="0 0 256 256">
+<circle cx="78.00" cy="128.00" r="50" fill="#0e0e12"/><circle cx="178.00" cy="128.00" r="43" fill="none" stroke="#0e0e12" stroke-width="14"/>
+
+</svg>
+<text x="350" y="622" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">59 · Kropki Pair</text>
+<text x="350" y="646" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A black and a white kropki dot side</text>
+<text x="350" y="665" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">by side.</text>
+<rect x="632" y="400" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="654" y="418" width="170" height="170" viewBox="0 0 256 256">
+<path d="M24 128H232" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="56.00" cy="128.00" r="24" fill="#0e0e12"/><circle cx="128.00" cy="128.00" r="20" fill="#ffffff" stroke="#0e0e12" stroke-width="8"/><circle cx="200.00" cy="128.00" r="24" fill="#0e0e12"/>
+
+</svg>
+<svg x="846" y="460" width="32" height="32" viewBox="0 0 256 256">
+<path d="M24 128H232" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="56.00" cy="128.00" r="24" fill="#0e0e12"/><circle cx="128.00" cy="128.00" r="20" fill="#ffffff" stroke="#0e0e12" stroke-width="8"/><circle cx="200.00" cy="128.00" r="24" fill="#0e0e12"/>
+
+</svg>
+<svg x="854" y="520" width="16" height="16" viewBox="0 0 256 256">
+<path d="M24 128H232" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="56.00" cy="128.00" r="24" fill="#0e0e12"/><circle cx="128.00" cy="128.00" r="20" fill="#ffffff" stroke="#0e0e12" stroke-width="8"/><circle cx="200.00" cy="128.00" r="24" fill="#0e0e12"/>
+
+</svg>
+<text x="650" y="622" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">60 · Kropki Chain</text>
+<text x="650" y="646" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">Black, white, black dots strung on</text>
+<text x="650" y="665" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">a line.</text>
+<rect x="932" y="400" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="954" y="418" width="170" height="170" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 128C84 64 108 64 128 128S172 192 196 128" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="1146" y="460" width="32" height="32" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 128C84 64 108 64 128 128S172 192 196 128" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="1154" y="520" width="16" height="16" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 128C84 64 108 64 128 128S172 192 196 128" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<text x="950" y="622" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">61 · Whisper Wave</text>
+<text x="950" y="646" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A German-whispers line waves</text>
+<text x="950" y="665" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">through the cell.</text>
+<rect x="1232" y="400" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="1254" y="418" width="170" height="170" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="6"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M72 108H184A20 20 0 0 1 204 128V128A20 20 0 0 1 184 148H72A20 20 0 0 1 52 128V128A20 20 0 0 1 72 108Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="1446" y="460" width="32" height="32" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="6"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M72 108H184A20 20 0 0 1 204 128V128A20 20 0 0 1 184 148H72A20 20 0 0 1 52 128V128A20 20 0 0 1 72 108Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="1454" y="520" width="16" height="16" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="6"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M72 108H184A20 20 0 0 1 204 128V128A20 20 0 0 1 184 148H72A20 20 0 0 1 52 128V128A20 20 0 0 1 72 108Z" fill="#0e0e12"/>
+
+</svg>
+<text x="1250" y="622" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">62 · Renban Pill</text>
+<text x="1250" y="646" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A renban pill lies across three</text>
+<text x="1250" y="665" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">cells.</text>
+<rect x="32" y="690" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="54" y="708" width="170" height="170" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M96 160L160 96" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84.00" cy="172.00" r="22" fill="#ffffff" stroke="#0e0e12" stroke-width="10"/><circle cx="172.00" cy="84.00" r="22" fill="#ffffff" stroke="#0e0e12" stroke-width="10"/>
+
+</svg>
+<svg x="246" y="750" width="32" height="32" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M96 160L160 96" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84.00" cy="172.00" r="22" fill="#ffffff" stroke="#0e0e12" stroke-width="10"/><circle cx="172.00" cy="84.00" r="22" fill="#ffffff" stroke="#0e0e12" stroke-width="10"/>
+
+</svg>
+<svg x="254" y="810" width="16" height="16" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M96 160L160 96" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84.00" cy="172.00" r="22" fill="#ffffff" stroke="#0e0e12" stroke-width="10"/><circle cx="172.00" cy="84.00" r="22" fill="#ffffff" stroke="#0e0e12" stroke-width="10"/>
+
+</svg>
+<text x="50" y="912" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">63 · Between Line</text>
+<text x="50" y="936" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A line with a circle at each end:</text>
+<text x="50" y="955" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">the between-line clue.</text>
+<rect x="332" y="690" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="354" y="708" width="170" height="170" viewBox="0 0 256 256">
+<circle cx="128.00" cy="128.00" r="88" fill="none" stroke="#0e0e12" stroke-width="16"/><circle cx="102.00" cy="102.00" r="15" fill="#0e0e12"/><circle cx="154.00" cy="102.00" r="15" fill="#0e0e12"/><circle cx="102.00" cy="154.00" r="15" fill="#0e0e12"/><circle cx="154.00" cy="154.00" r="15" fill="#0e0e12"/>
+
+</svg>
+<svg x="546" y="750" width="32" height="32" viewBox="0 0 256 256">
+<circle cx="128.00" cy="128.00" r="88" fill="none" stroke="#0e0e12" stroke-width="16"/><circle cx="102.00" cy="102.00" r="15" fill="#0e0e12"/><circle cx="154.00" cy="102.00" r="15" fill="#0e0e12"/><circle cx="102.00" cy="154.00" r="15" fill="#0e0e12"/><circle cx="154.00" cy="154.00" r="15" fill="#0e0e12"/>
+
+</svg>
+<svg x="554" y="810" width="16" height="16" viewBox="0 0 256 256">
+<circle cx="128.00" cy="128.00" r="88" fill="none" stroke="#0e0e12" stroke-width="16"/><circle cx="102.00" cy="102.00" r="15" fill="#0e0e12"/><circle cx="154.00" cy="102.00" r="15" fill="#0e0e12"/><circle cx="102.00" cy="154.00" r="15" fill="#0e0e12"/><circle cx="154.00" cy="154.00" r="15" fill="#0e0e12"/>
+
+</svg>
+<text x="350" y="912" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">64 · Quad Clue</text>
+<text x="350" y="936" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A quadruple circle holding four</text>
+<text x="350" y="955" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">small candidates.</text>
+<rect x="632" y="690" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="654" y="708" width="170" height="170" viewBox="0 0 256 256">
+<path d="M182.0 30.0H214.0A12 12 0 0 1 226.0 42.0V74.0A12 12 0 0 1 214.0 86.0H182.0A12 12 0 0 1 170.0 74.0V42.0A12 12 0 0 1 182.0 30.0ZM112.0 100.0H144.0A12 12 0 0 1 156.0 112.0V144.0A12 12 0 0 1 144.0 156.0H112.0A12 12 0 0 1 100.0 144.0V112.0A12 12 0 0 1 112.0 100.0ZM182.0 100.0H214.0A12 12 0 0 1 226.0 112.0V144.0A12 12 0 0 1 214.0 156.0H182.0A12 12 0 0 1 170.0 144.0V112.0A12 12 0 0 1 182.0 100.0ZM42.0 170.0H74.0A12 12 0 0 1 86.0 182.0V214.0A12 12 0 0 1 74.0 226.0H42.0A12 12 0 0 1 30.0 214.0V182.0A12 12 0 0 1 42.0 170.0ZM112.0 170.0H144.0A12 12 0 0 1 156.0 182.0V214.0A12 12 0 0 1 144.0 226.0H112.0A12 12 0 0 1 100.0 214.0V182.0A12 12 0 0 1 112.0 170.0ZM182.0 170.0H214.0A12 12 0 0 1 226.0 182.0V214.0A12 12 0 0 1 214.0 226.0H182.0A12 12 0 0 1 170.0 214.0V182.0A12 12 0 0 1 182.0 170.0Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="846" y="750" width="32" height="32" viewBox="0 0 256 256">
+<path d="M182.0 30.0H214.0A12 12 0 0 1 226.0 42.0V74.0A12 12 0 0 1 214.0 86.0H182.0A12 12 0 0 1 170.0 74.0V42.0A12 12 0 0 1 182.0 30.0ZM112.0 100.0H144.0A12 12 0 0 1 156.0 112.0V144.0A12 12 0 0 1 144.0 156.0H112.0A12 12 0 0 1 100.0 144.0V112.0A12 12 0 0 1 112.0 100.0ZM182.0 100.0H214.0A12 12 0 0 1 226.0 112.0V144.0A12 12 0 0 1 214.0 156.0H182.0A12 12 0 0 1 170.0 144.0V112.0A12 12 0 0 1 182.0 100.0ZM42.0 170.0H74.0A12 12 0 0 1 86.0 182.0V214.0A12 12 0 0 1 74.0 226.0H42.0A12 12 0 0 1 30.0 214.0V182.0A12 12 0 0 1 42.0 170.0ZM112.0 170.0H144.0A12 12 0 0 1 156.0 182.0V214.0A12 12 0 0 1 144.0 226.0H112.0A12 12 0 0 1 100.0 214.0V182.0A12 12 0 0 1 112.0 170.0ZM182.0 170.0H214.0A12 12 0 0 1 226.0 182.0V214.0A12 12 0 0 1 214.0 226.0H182.0A12 12 0 0 1 170.0 214.0V182.0A12 12 0 0 1 182.0 170.0Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="854" y="810" width="16" height="16" viewBox="0 0 256 256">
+<path d="M182.0 30.0H214.0A12 12 0 0 1 226.0 42.0V74.0A12 12 0 0 1 214.0 86.0H182.0A12 12 0 0 1 170.0 74.0V42.0A12 12 0 0 1 182.0 30.0ZM112.0 100.0H144.0A12 12 0 0 1 156.0 112.0V144.0A12 12 0 0 1 144.0 156.0H112.0A12 12 0 0 1 100.0 144.0V112.0A12 12 0 0 1 112.0 100.0ZM182.0 100.0H214.0A12 12 0 0 1 226.0 112.0V144.0A12 12 0 0 1 214.0 156.0H182.0A12 12 0 0 1 170.0 144.0V112.0A12 12 0 0 1 182.0 100.0ZM42.0 170.0H74.0A12 12 0 0 1 86.0 182.0V214.0A12 12 0 0 1 74.0 226.0H42.0A12 12 0 0 1 30.0 214.0V182.0A12 12 0 0 1 42.0 170.0ZM112.0 170.0H144.0A12 12 0 0 1 156.0 182.0V214.0A12 12 0 0 1 144.0 226.0H112.0A12 12 0 0 1 100.0 214.0V182.0A12 12 0 0 1 112.0 170.0ZM182.0 170.0H214.0A12 12 0 0 1 226.0 182.0V214.0A12 12 0 0 1 214.0 226.0H182.0A12 12 0 0 1 170.0 214.0V182.0A12 12 0 0 1 182.0 170.0Z" fill="#0e0e12"/>
+
+</svg>
+<text x="650" y="912" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">65 · Skyline</text>
+<text x="650" y="936" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">Skyscraper sudoku: towers of one,</text>
+<text x="650" y="955" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">two and three cells.</text>
+<rect x="932" y="690" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="954" y="708" width="170" height="170" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M72 80V128H184V176" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128.00" cy="128.00" r="18" fill="#0e0e12"/>
+
+</svg>
+<svg x="1146" y="750" width="32" height="32" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M72 80V128H184V176" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128.00" cy="128.00" r="18" fill="#0e0e12"/>
+
+</svg>
+<svg x="1154" y="810" width="16" height="16" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M72 80V128H184V176" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128.00" cy="128.00" r="18" fill="#0e0e12"/>
+
+</svg>
+<text x="950" y="912" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">66 · Zipper</text>
+<text x="950" y="936" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A zipper line folds through the</text>
+<text x="950" y="955" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">cell around its centre dot.</text>
+<rect x="1232" y="690" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="1254" y="708" width="170" height="170" viewBox="0 0 256 256">
+<path d="M30.00 30.00L78.00 30.00L78.00 78.00L126.00 78.00L126.00 126.00L30.00 126.00Z" fill="#0e0e12" stroke="#0e0e12" stroke-width="12" stroke-linejoin="round"/><path d="M128.00 128.00L176.00 128.00L176.00 176.00L224.00 176.00L224.00 224.00L128.00 224.00Z" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="1446" y="750" width="32" height="32" viewBox="0 0 256 256">
+<path d="M30.00 30.00L78.00 30.00L78.00 78.00L126.00 78.00L126.00 126.00L30.00 126.00Z" fill="#0e0e12" stroke="#0e0e12" stroke-width="12" stroke-linejoin="round"/><path d="M128.00 128.00L176.00 128.00L176.00 176.00L224.00 176.00L224.00 224.00L128.00 224.00Z" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="1454" y="810" width="16" height="16" viewBox="0 0 256 256">
+<path d="M30.00 30.00L78.00 30.00L78.00 78.00L126.00 78.00L126.00 126.00L30.00 126.00Z" fill="#0e0e12" stroke="#0e0e12" stroke-width="12" stroke-linejoin="round"/><path d="M128.00 128.00L176.00 128.00L176.00 176.00L224.00 176.00L224.00 224.00L128.00 224.00Z" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<text x="1250" y="912" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">67 · Clone</text>
+<text x="1250" y="936" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">Two identical shapes, one solid,</text>
+<text x="1250" y="955" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">one open: the clone rule.</text>
+<rect x="32" y="980" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="54" y="998" width="170" height="170" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="5"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128.00" cy="128.00" r="30" fill="#ffffff"/><path d="M105.887 144.983V144.443L107.993 143.79500000000002Q110.045 143.09300000000002 110.045 141.041V114.905L105.671 115.49900000000001V114.797Q108.857 114.149 111.8 112.961Q114.743 111.773 117.335 110.20700000000001L118.037 110.69300000000001L117.821 118.415V141.041Q117.821 143.147 119.873 143.741L122.087 144.443V144.983ZM136.451 145.793Q133.31900000000002 145.793 130.86200000000002 145.226Q128.405 144.659 126.515 143.363L126.893 136.559H127.433L129.917 140.987Q130.997 142.931 132.56300000000002 143.822Q134.12900000000002 144.713 136.019 144.713Q142.229 144.713 142.229 135.263Q142.229 130.997 140.582 128.78300000000002Q138.935 126.569 135.695 126.569Q134.183 126.569 132.69799999999998 126.974Q131.213 127.379 129.971 128.02700000000002L128.999 127.433L130.187 110.74700000000001H149.08700000000002V116.903H131.267L130.511 126.245Q131.75300000000001 125.327 133.859 124.517Q135.965 123.70700000000001 138.287 123.70700000000001Q141.797 123.70700000000001 144.524 124.94900000000001Q147.251 126.191 148.79000000000002 128.594Q150.329 130.997 150.329 134.507Q150.329 138.125 148.52 140.663Q146.711 143.201 143.579 144.497Q140.447 145.793 136.451 145.793Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="246" y="1040" width="32" height="32" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="5"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128.00" cy="128.00" r="30" fill="#ffffff"/><path d="M105.887 144.983V144.443L107.993 143.79500000000002Q110.045 143.09300000000002 110.045 141.041V114.905L105.671 115.49900000000001V114.797Q108.857 114.149 111.8 112.961Q114.743 111.773 117.335 110.20700000000001L118.037 110.69300000000001L117.821 118.415V141.041Q117.821 143.147 119.873 143.741L122.087 144.443V144.983ZM136.451 145.793Q133.31900000000002 145.793 130.86200000000002 145.226Q128.405 144.659 126.515 143.363L126.893 136.559H127.433L129.917 140.987Q130.997 142.931 132.56300000000002 143.822Q134.12900000000002 144.713 136.019 144.713Q142.229 144.713 142.229 135.263Q142.229 130.997 140.582 128.78300000000002Q138.935 126.569 135.695 126.569Q134.183 126.569 132.69799999999998 126.974Q131.213 127.379 129.971 128.02700000000002L128.999 127.433L130.187 110.74700000000001H149.08700000000002V116.903H131.267L130.511 126.245Q131.75300000000001 125.327 133.859 124.517Q135.965 123.70700000000001 138.287 123.70700000000001Q141.797 123.70700000000001 144.524 124.94900000000001Q147.251 126.191 148.79000000000002 128.594Q150.329 130.997 150.329 134.507Q150.329 138.125 148.52 140.663Q146.711 143.201 143.579 144.497Q140.447 145.793 136.451 145.793Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="254" y="1100" width="16" height="16" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="5"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128.00" cy="128.00" r="30" fill="#ffffff"/><path d="M105.887 144.983V144.443L107.993 143.79500000000002Q110.045 143.09300000000002 110.045 141.041V114.905L105.671 115.49900000000001V114.797Q108.857 114.149 111.8 112.961Q114.743 111.773 117.335 110.20700000000001L118.037 110.69300000000001L117.821 118.415V141.041Q117.821 143.147 119.873 143.741L122.087 144.443V144.983ZM136.451 145.793Q133.31900000000002 145.793 130.86200000000002 145.226Q128.405 144.659 126.515 143.363L126.893 136.559H127.433L129.917 140.987Q130.997 142.931 132.56300000000002 143.822Q134.12900000000002 144.713 136.019 144.713Q142.229 144.713 142.229 135.263Q142.229 130.997 140.582 128.78300000000002Q138.935 126.569 135.695 126.569Q134.183 126.569 132.69799999999998 126.974Q131.213 127.379 129.971 128.02700000000002L128.999 127.433L130.187 110.74700000000001H149.08700000000002V116.903H131.267L130.511 126.245Q131.75300000000001 125.327 133.859 124.517Q135.965 123.70700000000001 138.287 123.70700000000001Q141.797 123.70700000000001 144.524 124.94900000000001Q147.251 126.191 148.79000000000002 128.594Q150.329 130.997 150.329 134.507Q150.329 138.125 148.52 140.663Q146.711 143.201 143.579 144.497Q140.447 145.793 136.451 145.793Z" fill="#0e0e12"/>
+
+</svg>
+<text x="50" y="1202" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">68 · Fifteen</text>
+<text x="50" y="1226" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A magic square&#x27;s total, 15, in the</text>
+<text x="50" y="1245" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">centre of the grid.</text>
+<rect x="332" y="980" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="354" y="998" width="170" height="170" viewBox="0 0 256 256">
+<path d="M26.828999999999997 146.386V145.80599999999998L29.090999999999998 145.10999999999999Q31.294999999999998 144.356 31.294999999999998 142.152V114.07999999999998L26.596999999999998 114.71799999999999V113.964Q30.019 113.268 33.18 111.99199999999999Q36.341 110.716 39.125 109.03399999999999L39.879 109.55599999999998L39.647 117.85V142.152Q39.647 144.414 41.851 145.052L44.229 145.80599999999998V146.386ZM60.062999999999995 147.256Q56.583 147.256 53.538 145.284Q50.492999999999995 143.31199999999998 48.637 139.07799999999997Q46.781 134.844 46.781 128.058Q46.781 121.214 48.637 116.951Q50.492999999999995 112.68799999999999 53.538 110.716Q56.583 108.744 60.062999999999995 108.744Q63.54299999999999 108.744 66.588 110.716Q69.633 112.68799999999999 71.518 116.951Q73.40299999999999 121.214 73.40299999999999 128.058Q73.40299999999999 134.844 71.518 139.07799999999997Q69.633 143.31199999999998 66.588 145.284Q63.54299999999999 147.256 60.062999999999995 147.256ZM60.062999999999995 146.096Q61.51299999999999 146.096 62.52799999999999 145.34199999999998Q63.54299999999999 144.588 64.18099999999998 142.61599999999999Q64.81899999999999 140.644 65.109 137.135Q65.399 133.626 65.399 128.058Q65.399 122.49 65.109 118.923Q64.81899999999999 115.356 64.18099999999998 113.38399999999999Q63.54299999999999 111.41199999999999 62.52799999999999 110.65799999999999Q61.51299999999999 109.904 60.062999999999995 109.904Q58.613 109.904 57.598 110.65799999999999Q56.583 111.41199999999999 55.94499999999999 113.35499999999999Q55.306999999999995 115.298 55.016999999999996 118.865Q54.727 122.43199999999999 54.727 128.058Q54.727 133.626 55.016999999999996 137.164Q55.306999999999995 140.702 55.94499999999999 142.64499999999998Q56.583 144.588 57.598 145.34199999999998Q58.613 146.096 60.062999999999995 146.096Z" fill="#0e0e12"/><path d="M103.0 107.0H129.0A8 8 0 0 1 137.0 115.0V141.0A8 8 0 0 1 129.0 149.0H103.0A8 8 0 0 1 95.0 141.0V115.0A8 8 0 0 1 103.0 107.0ZM153.0 107.0H179.0A8 8 0 0 1 187.0 115.0V141.0A8 8 0 0 1 179.0 149.0H153.0A8 8 0 0 1 145.0 141.0V115.0A8 8 0 0 1 153.0 107.0ZM203.0 107.0H229.0A8 8 0 0 1 237.0 115.0V141.0A8 8 0 0 1 229.0 149.0H203.0A8 8 0 0 1 195.0 141.0V115.0A8 8 0 0 1 203.0 107.0Z" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="546" y="1040" width="32" height="32" viewBox="0 0 256 256">
+<path d="M26.828999999999997 146.386V145.80599999999998L29.090999999999998 145.10999999999999Q31.294999999999998 144.356 31.294999999999998 142.152V114.07999999999998L26.596999999999998 114.71799999999999V113.964Q30.019 113.268 33.18 111.99199999999999Q36.341 110.716 39.125 109.03399999999999L39.879 109.55599999999998L39.647 117.85V142.152Q39.647 144.414 41.851 145.052L44.229 145.80599999999998V146.386ZM60.062999999999995 147.256Q56.583 147.256 53.538 145.284Q50.492999999999995 143.31199999999998 48.637 139.07799999999997Q46.781 134.844 46.781 128.058Q46.781 121.214 48.637 116.951Q50.492999999999995 112.68799999999999 53.538 110.716Q56.583 108.744 60.062999999999995 108.744Q63.54299999999999 108.744 66.588 110.716Q69.633 112.68799999999999 71.518 116.951Q73.40299999999999 121.214 73.40299999999999 128.058Q73.40299999999999 134.844 71.518 139.07799999999997Q69.633 143.31199999999998 66.588 145.284Q63.54299999999999 147.256 60.062999999999995 147.256ZM60.062999999999995 146.096Q61.51299999999999 146.096 62.52799999999999 145.34199999999998Q63.54299999999999 144.588 64.18099999999998 142.61599999999999Q64.81899999999999 140.644 65.109 137.135Q65.399 133.626 65.399 128.058Q65.399 122.49 65.109 118.923Q64.81899999999999 115.356 64.18099999999998 113.38399999999999Q63.54299999999999 111.41199999999999 62.52799999999999 110.65799999999999Q61.51299999999999 109.904 60.062999999999995 109.904Q58.613 109.904 57.598 110.65799999999999Q56.583 111.41199999999999 55.94499999999999 113.35499999999999Q55.306999999999995 115.298 55.016999999999996 118.865Q54.727 122.43199999999999 54.727 128.058Q54.727 133.626 55.016999999999996 137.164Q55.306999999999995 140.702 55.94499999999999 142.64499999999998Q56.583 144.588 57.598 145.34199999999998Q58.613 146.096 60.062999999999995 146.096Z" fill="#0e0e12"/><path d="M103.0 107.0H129.0A8 8 0 0 1 137.0 115.0V141.0A8 8 0 0 1 129.0 149.0H103.0A8 8 0 0 1 95.0 141.0V115.0A8 8 0 0 1 103.0 107.0ZM153.0 107.0H179.0A8 8 0 0 1 187.0 115.0V141.0A8 8 0 0 1 179.0 149.0H153.0A8 8 0 0 1 145.0 141.0V115.0A8 8 0 0 1 153.0 107.0ZM203.0 107.0H229.0A8 8 0 0 1 237.0 115.0V141.0A8 8 0 0 1 229.0 149.0H203.0A8 8 0 0 1 195.0 141.0V115.0A8 8 0 0 1 203.0 107.0Z" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="554" y="1100" width="16" height="16" viewBox="0 0 256 256">
+<path d="M26.828999999999997 146.386V145.80599999999998L29.090999999999998 145.10999999999999Q31.294999999999998 144.356 31.294999999999998 142.152V114.07999999999998L26.596999999999998 114.71799999999999V113.964Q30.019 113.268 33.18 111.99199999999999Q36.341 110.716 39.125 109.03399999999999L39.879 109.55599999999998L39.647 117.85V142.152Q39.647 144.414 41.851 145.052L44.229 145.80599999999998V146.386ZM60.062999999999995 147.256Q56.583 147.256 53.538 145.284Q50.492999999999995 143.31199999999998 48.637 139.07799999999997Q46.781 134.844 46.781 128.058Q46.781 121.214 48.637 116.951Q50.492999999999995 112.68799999999999 53.538 110.716Q56.583 108.744 60.062999999999995 108.744Q63.54299999999999 108.744 66.588 110.716Q69.633 112.68799999999999 71.518 116.951Q73.40299999999999 121.214 73.40299999999999 128.058Q73.40299999999999 134.844 71.518 139.07799999999997Q69.633 143.31199999999998 66.588 145.284Q63.54299999999999 147.256 60.062999999999995 147.256ZM60.062999999999995 146.096Q61.51299999999999 146.096 62.52799999999999 145.34199999999998Q63.54299999999999 144.588 64.18099999999998 142.61599999999999Q64.81899999999999 140.644 65.109 137.135Q65.399 133.626 65.399 128.058Q65.399 122.49 65.109 118.923Q64.81899999999999 115.356 64.18099999999998 113.38399999999999Q63.54299999999999 111.41199999999999 62.52799999999999 110.65799999999999Q61.51299999999999 109.904 60.062999999999995 109.904Q58.613 109.904 57.598 110.65799999999999Q56.583 111.41199999999999 55.94499999999999 113.35499999999999Q55.306999999999995 115.298 55.016999999999996 118.865Q54.727 122.43199999999999 54.727 128.058Q54.727 133.626 55.016999999999996 137.164Q55.306999999999995 140.702 55.94499999999999 142.64499999999998Q56.583 144.588 57.598 145.34199999999998Q58.613 146.096 60.062999999999995 146.096Z" fill="#0e0e12"/><path d="M103.0 107.0H129.0A8 8 0 0 1 137.0 115.0V141.0A8 8 0 0 1 129.0 149.0H103.0A8 8 0 0 1 95.0 141.0V115.0A8 8 0 0 1 103.0 107.0ZM153.0 107.0H179.0A8 8 0 0 1 187.0 115.0V141.0A8 8 0 0 1 179.0 149.0H153.0A8 8 0 0 1 145.0 141.0V115.0A8 8 0 0 1 153.0 107.0ZM203.0 107.0H229.0A8 8 0 0 1 237.0 115.0V141.0A8 8 0 0 1 229.0 149.0H203.0A8 8 0 0 1 195.0 141.0V115.0A8 8 0 0 1 203.0 107.0Z" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<text x="350" y="1202" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">69 · Sandwich Clue</text>
+<text x="350" y="1226" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A clue outside the row: the</text>
+<text x="350" y="1245" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">sandwich total.</text>
+<rect x="632" y="980" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="654" y="998" width="170" height="170" viewBox="0 0 256 256">
+<path d="M116.7 62V226M171.3 62V226M62 116.7H226M62 171.3H226" stroke="#0e0e12" stroke-width="5"/><path d="M86 62H202A24 24 0 0 1 226 86V202A24 24 0 0 1 202 226H86A24 24 0 0 1 62 202V86A24 24 0 0 1 86 62Z" fill="none" stroke="#0e0e12" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="89.33" cy="32.00" r="10" fill="#0e0e12"/><circle cx="32.00" cy="89.33" r="10" fill="#0e0e12"/><circle cx="144.00" cy="32.00" r="10" fill="#0e0e12"/><circle cx="32.00" cy="144.00" r="10" fill="#0e0e12"/><circle cx="198.67" cy="32.00" r="10" fill="#0e0e12"/><circle cx="32.00" cy="198.67" r="10" fill="#0e0e12"/>
+
+</svg>
+<svg x="846" y="1040" width="32" height="32" viewBox="0 0 256 256">
+<path d="M116.7 62V226M171.3 62V226M62 116.7H226M62 171.3H226" stroke="#0e0e12" stroke-width="5"/><path d="M86 62H202A24 24 0 0 1 226 86V202A24 24 0 0 1 202 226H86A24 24 0 0 1 62 202V86A24 24 0 0 1 86 62Z" fill="none" stroke="#0e0e12" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="89.33" cy="32.00" r="10" fill="#0e0e12"/><circle cx="32.00" cy="89.33" r="10" fill="#0e0e12"/><circle cx="144.00" cy="32.00" r="10" fill="#0e0e12"/><circle cx="32.00" cy="144.00" r="10" fill="#0e0e12"/><circle cx="198.67" cy="32.00" r="10" fill="#0e0e12"/><circle cx="32.00" cy="198.67" r="10" fill="#0e0e12"/>
+
+</svg>
+<svg x="854" y="1100" width="16" height="16" viewBox="0 0 256 256">
+<path d="M116.7 62V226M171.3 62V226M62 116.7H226M62 171.3H226" stroke="#0e0e12" stroke-width="5"/><path d="M86 62H202A24 24 0 0 1 226 86V202A24 24 0 0 1 202 226H86A24 24 0 0 1 62 202V86A24 24 0 0 1 86 62Z" fill="none" stroke="#0e0e12" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="89.33" cy="32.00" r="10" fill="#0e0e12"/><circle cx="32.00" cy="89.33" r="10" fill="#0e0e12"/><circle cx="144.00" cy="32.00" r="10" fill="#0e0e12"/><circle cx="32.00" cy="144.00" r="10" fill="#0e0e12"/><circle cx="198.67" cy="32.00" r="10" fill="#0e0e12"/><circle cx="32.00" cy="198.67" r="10" fill="#0e0e12"/>
+
+</svg>
+<text x="650" y="1202" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">70 · Margins</text>
+<text x="650" y="1226" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">Clue dots outside the grid, like</text>
+<text x="650" y="1245" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">outside-clue variants.</text>
+<rect x="932" y="980" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="954" y="998" width="170" height="170" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 128H96" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 128H150" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 15"/><path d="M168 128H196" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="butt" stroke-linejoin="round"/><circle cx="168.00" cy="128.00" r="0" fill="#0e0e12"/>
+
+</svg>
+<svg x="1146" y="1040" width="32" height="32" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 128H96" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 128H150" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 15"/><path d="M168 128H196" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="butt" stroke-linejoin="round"/><circle cx="168.00" cy="128.00" r="0" fill="#0e0e12"/>
+
+</svg>
+<svg x="1154" y="1100" width="16" height="16" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 128H96" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 128H150" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 15"/><path d="M168 128H196" fill="none" stroke="#0e0e12" stroke-width="18" stroke-linecap="butt" stroke-linejoin="round"/><circle cx="168.00" cy="128.00" r="0" fill="#0e0e12"/>
+
+</svg>
+<text x="950" y="1202" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">71 · Entropic</text>
+<text x="950" y="1226" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">One line in three moods: solid,</text>
+<text x="950" y="1245" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">dashed and dotted.</text>
+<rect x="1232" y="980" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="1254" y="998" width="170" height="170" viewBox="0 0 256 256">
+<path d="M30 128H226" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="52.00" cy="128.00" r="22" fill="#0e0e12"/><path d="M92 106H120A8 8 0 0 1 128 114V142A8 8 0 0 1 120 150H92A8 8 0 0 1 84 142V114A8 8 0 0 1 92 106Z" fill="#0e0e12"/><circle cx="154.00" cy="128.00" r="22" fill="#0e0e12"/><path d="M192 106H220A8 8 0 0 1 228 114V142A8 8 0 0 1 220 150H192A8 8 0 0 1 184 142V114A8 8 0 0 1 192 106Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="1446" y="1040" width="32" height="32" viewBox="0 0 256 256">
+<path d="M30 128H226" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="52.00" cy="128.00" r="22" fill="#0e0e12"/><path d="M92 106H120A8 8 0 0 1 128 114V142A8 8 0 0 1 120 150H92A8 8 0 0 1 84 142V114A8 8 0 0 1 92 106Z" fill="#0e0e12"/><circle cx="154.00" cy="128.00" r="22" fill="#0e0e12"/><path d="M192 106H220A8 8 0 0 1 228 114V142A8 8 0 0 1 220 150H192A8 8 0 0 1 184 142V114A8 8 0 0 1 192 106Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="1454" y="1100" width="16" height="16" viewBox="0 0 256 256">
+<path d="M30 128H226" fill="none" stroke="#0e0e12" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="52.00" cy="128.00" r="22" fill="#0e0e12"/><path d="M92 106H120A8 8 0 0 1 128 114V142A8 8 0 0 1 120 150H92A8 8 0 0 1 84 142V114A8 8 0 0 1 92 106Z" fill="#0e0e12"/><circle cx="154.00" cy="128.00" r="22" fill="#0e0e12"/><path d="M192 106H220A8 8 0 0 1 228 114V142A8 8 0 0 1 220 150H192A8 8 0 0 1 184 142V114A8 8 0 0 1 192 106Z" fill="#0e0e12"/>
+
+</svg>
+<text x="1250" y="1202" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">72 · Parity Beads</text>
+<text x="1250" y="1226" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A line of beads that alternate</text>
+<text x="1250" y="1245" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">circle, square: parity.</text>
+<rect x="32" y="1270" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="54" y="1288" width="170" height="170" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M84 172L172 84" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M80.00 148.00L108.00 176.00L80.00 204.00L52.00 176.00Z" fill="#0e0e12"/><path d="M176.00 52.00L204.00 80.00L176.00 108.00L148.00 80.00Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="246" y="1330" width="32" height="32" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M84 172L172 84" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M80.00 148.00L108.00 176.00L80.00 204.00L52.00 176.00Z" fill="#0e0e12"/><path d="M176.00 52.00L204.00 80.00L176.00 108.00L148.00 80.00Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="254" y="1390" width="16" height="16" viewBox="0 0 256 256">
+<path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M84 172L172 84" fill="none" stroke="#0e0e12" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M80.00 148.00L108.00 176.00L80.00 204.00L52.00 176.00Z" fill="#0e0e12"/><path d="M176.00 52.00L204.00 80.00L176.00 108.00L148.00 80.00Z" fill="#0e0e12"/>
+
+</svg>
+<text x="50" y="1492" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">73 · Lockout</text>
+<text x="50" y="1516" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A lockout line with diamonds at</text>
+<text x="50" y="1535" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">both ends.</text>
+<rect x="332" y="1270" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="354" y="1288" width="170" height="170" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="5"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="96.67" cy="96.67" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/><circle cx="96.67" cy="159.33" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/><circle cx="159.33" cy="96.67" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/><circle cx="159.33" cy="159.33" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/>
+
+</svg>
+<svg x="546" y="1330" width="32" height="32" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="5"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="96.67" cy="96.67" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/><circle cx="96.67" cy="159.33" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/><circle cx="159.33" cy="96.67" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/><circle cx="159.33" cy="159.33" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/>
+
+</svg>
+<svg x="554" y="1390" width="16" height="16" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="5"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="96.67" cy="96.67" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/><circle cx="96.67" cy="159.33" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/><circle cx="159.33" cy="96.67" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/><circle cx="159.33" cy="159.33" r="15" fill="#ffffff" stroke="#0e0e12" stroke-width="7"/>
+
+</svg>
+<text x="350" y="1492" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">74 · Four Quads</text>
+<text x="350" y="1516" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">Quad circles on all four inner</text>
+<text x="350" y="1535" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">corners of the grid.</text>
+<rect x="632" y="1270" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="654" y="1288" width="170" height="170" viewBox="0 0 256 256">
+<path d="M68 28H188A40 40 0 0 1 228 68V188A40 40 0 0 1 188 228H68A40 40 0 0 1 28 188V68A40 40 0 0 1 68 28Z" fill="#0e0e12"/><path d="M76 60H180A16 16 0 0 1 196 76V180A16 16 0 0 1 180 196H76A16 16 0 0 1 60 180V76A16 16 0 0 1 76 60Z" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="16 12"/>
+
+</svg>
+<svg x="846" y="1330" width="32" height="32" viewBox="0 0 256 256">
+<path d="M68 28H188A40 40 0 0 1 228 68V188A40 40 0 0 1 188 228H68A40 40 0 0 1 28 188V68A40 40 0 0 1 68 28Z" fill="#0e0e12"/><path d="M76 60H180A16 16 0 0 1 196 76V180A16 16 0 0 1 180 196H76A16 16 0 0 1 60 180V76A16 16 0 0 1 76 60Z" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="16 12"/>
+
+</svg>
+<svg x="854" y="1390" width="16" height="16" viewBox="0 0 256 256">
+<path d="M68 28H188A40 40 0 0 1 228 68V188A40 40 0 0 1 188 228H68A40 40 0 0 1 28 188V68A40 40 0 0 1 68 28Z" fill="#0e0e12"/><path d="M76 60H180A16 16 0 0 1 196 76V180A16 16 0 0 1 180 196H76A16 16 0 0 1 60 180V76A16 16 0 0 1 76 60Z" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="16 12"/>
+
+</svg>
+<text x="650" y="1492" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">75 · Killer Tile</text>
+<text x="650" y="1516" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A solid cell with a killer cage cut</text>
+<text x="650" y="1535" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">into it.</text>
+<rect x="932" y="1270" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="954" y="1288" width="170" height="170" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="5"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 128C90 64 166 192 222 128" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="1146" y="1330" width="32" height="32" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="5"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 128C90 64 166 192 222 128" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<svg x="1154" y="1390" width="16" height="16" viewBox="0 0 256 256">
+<path d="M96.7 34V222M159.3 34V222M34 96.7H222M34 159.3H222" stroke="#0e0e12" stroke-width="5"/><path d="M62 34H194A28 28 0 0 1 222 62V194A28 28 0 0 1 194 222H62A28 28 0 0 1 34 194V62A28 28 0 0 1 62 34Z" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 128C90 64 166 192 222 128" fill="none" stroke="#0e0e12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
+<text x="950" y="1492" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">76 · Wavy Region</text>
+<text x="950" y="1516" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">A jigsaw region border that curves</text>
+<text x="950" y="1535" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">instead of stepping.</text>
+<rect x="1232" y="1270" width="284" height="276" rx="14" fill="#fff" stroke="#e6e4dc"/>
+<svg x="1254" y="1288" width="170" height="170" viewBox="0 0 256 256">
+<path d="M42.0 65.0H74.0A12 12 0 0 1 86.0 77.0V109.0A12 12 0 0 1 74.0 121.0H42.0A12 12 0 0 1 30.0 109.0V77.0A12 12 0 0 1 42.0 65.0ZM112.0 65.0H144.0A12 12 0 0 1 156.0 77.0V109.0A12 12 0 0 1 144.0 121.0H112.0A12 12 0 0 1 100.0 109.0V77.0A12 12 0 0 1 112.0 65.0ZM182.0 65.0H214.0A12 12 0 0 1 226.0 77.0V109.0A12 12 0 0 1 214.0 121.0H182.0A12 12 0 0 1 170.0 109.0V77.0A12 12 0 0 1 182.0 65.0ZM42.0 135.0H74.0A12 12 0 0 1 86.0 147.0V179.0A12 12 0 0 1 74.0 191.0H42.0A12 12 0 0 1 30.0 179.0V147.0A12 12 0 0 1 42.0 135.0ZM112.0 135.0H144.0A12 12 0 0 1 156.0 147.0V179.0A12 12 0 0 1 144.0 191.0H112.0A12 12 0 0 1 100.0 179.0V147.0A12 12 0 0 1 112.0 135.0ZM182.0 135.0H214.0A12 12 0 0 1 226.0 147.0V179.0A12 12 0 0 1 214.0 191.0H182.0A12 12 0 0 1 170.0 179.0V147.0A12 12 0 0 1 182.0 135.0Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="1446" y="1330" width="32" height="32" viewBox="0 0 256 256">
+<path d="M42.0 65.0H74.0A12 12 0 0 1 86.0 77.0V109.0A12 12 0 0 1 74.0 121.0H42.0A12 12 0 0 1 30.0 109.0V77.0A12 12 0 0 1 42.0 65.0ZM112.0 65.0H144.0A12 12 0 0 1 156.0 77.0V109.0A12 12 0 0 1 144.0 121.0H112.0A12 12 0 0 1 100.0 109.0V77.0A12 12 0 0 1 112.0 65.0ZM182.0 65.0H214.0A12 12 0 0 1 226.0 77.0V109.0A12 12 0 0 1 214.0 121.0H182.0A12 12 0 0 1 170.0 109.0V77.0A12 12 0 0 1 182.0 65.0ZM42.0 135.0H74.0A12 12 0 0 1 86.0 147.0V179.0A12 12 0 0 1 74.0 191.0H42.0A12 12 0 0 1 30.0 179.0V147.0A12 12 0 0 1 42.0 135.0ZM112.0 135.0H144.0A12 12 0 0 1 156.0 147.0V179.0A12 12 0 0 1 144.0 191.0H112.0A12 12 0 0 1 100.0 179.0V147.0A12 12 0 0 1 112.0 135.0ZM182.0 135.0H214.0A12 12 0 0 1 226.0 147.0V179.0A12 12 0 0 1 214.0 191.0H182.0A12 12 0 0 1 170.0 179.0V147.0A12 12 0 0 1 182.0 135.0Z" fill="#0e0e12"/>
+
+</svg>
+<svg x="1454" y="1390" width="16" height="16" viewBox="0 0 256 256">
+<path d="M42.0 65.0H74.0A12 12 0 0 1 86.0 77.0V109.0A12 12 0 0 1 74.0 121.0H42.0A12 12 0 0 1 30.0 109.0V77.0A12 12 0 0 1 42.0 65.0ZM112.0 65.0H144.0A12 12 0 0 1 156.0 77.0V109.0A12 12 0 0 1 144.0 121.0H112.0A12 12 0 0 1 100.0 109.0V77.0A12 12 0 0 1 112.0 65.0ZM182.0 65.0H214.0A12 12 0 0 1 226.0 77.0V109.0A12 12 0 0 1 214.0 121.0H182.0A12 12 0 0 1 170.0 109.0V77.0A12 12 0 0 1 182.0 65.0ZM42.0 135.0H74.0A12 12 0 0 1 86.0 147.0V179.0A12 12 0 0 1 74.0 191.0H42.0A12 12 0 0 1 30.0 179.0V147.0A12 12 0 0 1 42.0 135.0ZM112.0 135.0H144.0A12 12 0 0 1 156.0 147.0V179.0A12 12 0 0 1 144.0 191.0H112.0A12 12 0 0 1 100.0 179.0V147.0A12 12 0 0 1 112.0 135.0ZM182.0 135.0H214.0A12 12 0 0 1 226.0 147.0V179.0A12 12 0 0 1 214.0 191.0H182.0A12 12 0 0 1 170.0 179.0V147.0A12 12 0 0 1 182.0 135.0Z" fill="#0e0e12"/>
+
+</svg>
+<text x="1250" y="1492" font-family="Segoe UI, Arial" font-size="19" font-weight="700" fill="#0e0e12">77 · Mini Box</text>
+<text x="1250" y="1516" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">Six cells, two by three: the Mini</text>
+<text x="1250" y="1535" font-family="Segoe UI, Arial" font-size="14.5" fill="#5a5a6e">6x6 box.</text>
+</svg>

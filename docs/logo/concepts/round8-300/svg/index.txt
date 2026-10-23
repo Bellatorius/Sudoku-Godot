@@ -1,0 +1,60 @@
+128	Nine Smile	The face you liked: the right eye is a 9 and its tail is the smile.
+129	Nine Wink	The same face, winking: the left eye closes.
+130	Nine Grin	A big open grin hanging from the 9.
+131	Nine Cat	The Nine Smile with cat ears.
+132	Nine Bot	A robot: square eyes, the right one a square 9 whose tail is the mouth.
+133	Nine Bubble	The Nine Smile inside a speech bubble: chat with your rival.
+134	Peek	Two kropki-dot eyes peek over a wall of cells.
+135	Sleepy Cat	A cat-cell with closed eyes, dozing over a puzzle.
+136	Bunny	A cell with two long ears.
+137	Owl	Kropki eyes, one black, one white, on a wise owl.
+138	Bear	A bear-cell with round ears.
+139	Frog	A frog: two eye bumps and a wide smile.
+140	V Fox	A fox face whose shape is a V.
+141	Pixel Smile	A smiley face drawn in cells.
+142	Hatchling	A chick breaking out of a cracked egg: a fresh puzzle.
+143	Eight Glasses	A sideways 8 becomes a pair of glasses.
+144	Three Cat	A cat whose mouth is a sideways 3.
+145	Four Boat	The digit 4 is the sail and mast of a boat.
+146	Six Snail	A snail whose shell is a 6: slow and steady.
+147	Two Swan	The digit 2 is a swan on the water.
+148	One Pencil	The digit 1 is a pencil, for your notes.
+149	Nine Balloon	A 9 whose head is a balloon and whose tail is the string.
+150	Eight Snowman	An 8 dressed as a snowman.
+151	One Candle	The digit 1 as a candle, lighting up the puzzle.
+152	V Gull	A V that is also a gull in flight.
+153	V Heart	A heart whose point is a V.
+154	S Snake	An S that is also a snake.
+155	S Yin-Yang	An S splits a circle; the two small dots are a black and a white kropki dot.
+156	Grid House	A house with a sudoku window: the home of puzzles.
+157	Grid Cookie	A waffle cookie with a bite taken out.
+158	Grid Gift	A grid wrapped as a present: a new puzzle every day.
+159	Chocolate	A chocolate bar of cells with one piece broken off.
+160	Fortress	Cells stacked into a castle: the fortress variant.
+161	Lollipop	A thermometer that is also a lollipop.
+162	Kropki Paw	A paw print whose toes are black and white kropki dots.
+163	Patchwork	Nine cells, nine different patterns: one grid, many variants.
+164	Steam S Mug	A mug whose steam curls into an S: a puzzle with your morning coffee.
+165	Grid Glasses	Glasses with a sudoku grid in each lens.
+166	Trophy	A trophy with a grid on its cup: achievements.
+167	Grid Turtle	A turtle with a sudoku grid on its shell.
+168	Kropki Ladybug	A ladybug whose spots are kropki dots.
+169	Rocket	A rocket with cell windows: blast through the levels.
+170	Grid Balloon	A hot-air balloon painted with a grid.
+171	V Cone	An ice-cream cone (a V) with a kropki-dot scoop.
+172	Whirl	Nested squares turning inward: a puzzle that pulls you in.
+173	Rings	Nine linked rings in a 3x3: every cell connects.
+174	Puzzle Box	A box whose lid is a 3x3 grid.
+175	Lock Ls	Two pieces lock into one square: an L and a box.
+176	Mondrian	A square cut into uneven regions, solid and open: jigsaw regions.
+177	Bricks	Cells laid like bricks: build the solution one digit at a time.
+178	Card Fan	Three puzzle cards fanned out: pick your variant.
+179	Stack	A stack of three cells: many puzzles, one after another.
+180	Pixel Heart	A heart drawn in cells.
+181	Shift	A circle cut into three bands; the middle one slides: a variant.
+182	Thermo Sprout	A branching thermometer that grows like a sprout.
+183	Palindrome	A line that mirrors itself across the middle.
+184	Sandwich Bun	Sandwich sudoku, drawn as an actual sandwich.
+185	Cage Chat	A speech bubble drawn as a killer cage, total in its corner.
+186	V O'Clock	A clock whose hands make a V: the timer.
+187	Zipper	A zipper: the zipper-line variant, closing the puzzle.

@@ -1,0 +1,12 @@
+1	Pixel Nine Bot	16x16. The Nine Bot as a sprite: square eye, the 9, its tail the mouth.	16	16
+2	Pixel Bot, no antenna	16x16. Just the face: the cleanest favicon.	16	16
+3	Pixel Wink	16x16. Winking.	16	16
+4	Pixel Happy	16x16. Happy: the left eye is a ^.	16	16
+5	Pixel Grin	16x16. A big open grin.	16	16
+6	Pixel Head Bot	16x16. The face inside a robot head.	16	16
+7	Pixel Headphones	16x16. Headphones on, for multiplayer.	16	16
+8	Pixel Cat Bot	16x16. A robot cat with pixel ears.	16	16
+9	Pixel TV Bot	16x16. A little TV with legs and two antennas.	16	16
+10	Tiny Bot	12x12. The smallest version that still reads.	12	12
+11	Big Pixel Bot	24x24. The same face with two-pixel lines: for large icons and store art.	24	24
+12	Pixel Bot, full body	16x24. A standing mascot: a sudoku grid on its chest.	16	24
