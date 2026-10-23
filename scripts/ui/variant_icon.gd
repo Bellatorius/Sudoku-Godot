@@ -13,19 +13,22 @@ func _init(id := "classic", px := 34) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
-## 1 = the original line-art icons (kept for rollback), 2 = tiny boards showing each variant's clue.
-const STYLE := 2
+## 1 = the original line-art icons, 2 = tiny boards showing each clue, 3 = bold symbols like 1 but one per
+## variant and without crossing lines (the user's choice). All three stay available.
+const STYLE := 3
 ## Variants that keep the original icon even with STYLE 2 (the user picks per variant).
 const OLD_STYLE: Array = []
 var style := 0   # 0 = STYLE / OLD_STYLE decide; 1 or 2 forces one (comparison sheet)
 
 
 func _draw() -> void:
-	var st := style if style != 0 else (1 if STYLE == 1 or OLD_STYLE.has(variant.trim_prefix("mini_")) else 2)
+	var st := style if style != 0 else (1 if OLD_STYLE.has(variant.trim_prefix("mini_")) else STYLE)
 	if st == 1:
 		_draw_v1()
-	else:
+	elif st == 2:
 		_draw_v2()
+	else:
+		_draw_v3()
 
 
 func _draw_v1() -> void:
@@ -640,3 +643,350 @@ func _heart(ctr: Vector2) -> void:
 func _arrow_head(tip: Vector2, dir: Vector2, sz: float, col: Color) -> void:
 	var side := Vector2(-dir.y, dir.x)
 	draw_polyline(PackedVector2Array([tip - dir * sz + side * sz * 0.8, tip, tip - dir * sz - side * sz * 0.8]), col, maxf(1.5, _cs * 0.07), true)
+
+
+# ----------------------------------------------------------------- style 3: bold symbols
+# One-colour line art like style 1, but a distinct symbol for every variant and no crossing lines
+# (no X, +, # or crosshair: the user asked for no crosses anywhere in the game).
+
+var _s := 0.0
+var _off := Vector2.ZERO
+var _w := 0.0
+
+
+func _p(x: float, y: float) -> Vector2:
+	return _off + Vector2(x, y) * _s
+
+
+func _pl(pts: Array, col := Color(0, 0, 0, 0), wk := 1.0) -> void:
+	var pv := PackedVector2Array()
+	for v in pts:
+		pv.append(_p(v.x, v.y))
+	var c := color if col.a == 0.0 else col
+	draw_polyline(pv, c, _w * wk, true)
+	for v in [pv[0], pv[-1]]:
+		draw_circle(v, _w * wk * 0.5, c, true, -1.0, true)
+
+
+func _box(x: float, y: float, w: float, h: float, fill := false, col := Color(0, 0, 0, 0), radius := 0.06) -> void:
+	var c := color if col.a == 0.0 else col
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = c if fill else Color(0, 0, 0, 0)
+	sb.border_color = c
+	if not fill:
+		sb.set_border_width_all(int(maxf(1.0, _w * 0.8)))
+	sb.set_corner_radius_all(int(_s * radius))
+	sb.anti_aliasing = true
+	draw_style_box(sb, Rect2(_p(x, y), Vector2(w, h) * _s))
+
+
+func _ringp(x: float, y: float, r: float, col := Color(0, 0, 0, 0), wk := 1.0) -> void:
+	draw_arc(_p(x, y), r * _s, 0, TAU, 40, color if col.a == 0.0 else col, _w * wk, true)
+
+
+func _discp(x: float, y: float, r: float, col := Color(0, 0, 0, 0)) -> void:
+	draw_circle(_p(x, y), r * _s, color if col.a == 0.0 else col, true, -1.0, true)
+
+
+func _tx(t: String, x: float, y: float, k := 0.36, col := Color(0, 0, 0, 0)) -> void:
+	var f: Font = UI.font_sans_bold
+	var fs := maxi(6, int(_s * k))
+	var sz := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
+	var at := _p(x, y) + Vector2(-sz.x / 2.0, (f.get_ascent(fs) - f.get_descent(fs)) / 2.0)
+	draw_string(f, at, t, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, color if col.a == 0.0 else col)
+
+
+func _head(x: float, y: float, dir: Vector2, k := 0.16, col := Color(0, 0, 0, 0)) -> void:
+	var tip := _p(x, y)
+	var d := dir.normalized()
+	var side := Vector2(-d.y, d.x)
+	var sz := k * _s
+	var c := color if col.a == 0.0 else col
+	draw_polyline(PackedVector2Array([tip - d * sz + side * sz * 0.85, tip, tip - d * sz - side * sz * 0.85]), c, _w, true)
+
+
+func _dash_poly(pts: Array) -> void:
+	for i in pts.size() - 1:
+		draw_dashed_line(_p(pts[i].x, pts[i].y), _p(pts[i + 1].x, pts[i + 1].y), color, _w * 0.8, _s * 0.09, true, true)
+
+
+func _draw_v3() -> void:
+	_s = minf(size.x, size.y)
+	_off = (size - Vector2(_s, _s)) / 2.0
+	_w = maxf(1.6, _s * 0.075)
+	var V := func(x: float, y: float) -> Vector2: return Vector2(x, y)
+	var lc: Dictionary = Board.LINE_COLORS
+	var vid := variant.trim_prefix("mini_")
+	match vid:
+		# --- regions
+		"classic":   # nine cells
+			_box(0.12, 0.12, 0.76, 0.76)
+			for i in 9:
+				_discp(0.3 + (i % 3) * 0.2, 0.3 + (i / 3) * 0.2, 0.045)
+		"jigsaw":   # an odd-shaped region
+			_pl([V.call(0.14, 0.14), V.call(0.6, 0.14), V.call(0.6, 0.4), V.call(0.86, 0.4), V.call(0.86, 0.86), V.call(0.4, 0.86),
+				V.call(0.4, 0.6), V.call(0.14, 0.6), V.call(0.14, 0.14)])
+		"toroidal":   # a ring: the grid wraps round
+			_ringp(0.5, 0.5, 0.34); _ringp(0.5, 0.5, 0.13)
+		"diagonal":
+			_box(0.14, 0.14, 0.72, 0.72); _pl([V.call(0.24, 0.24), V.call(0.76, 0.76)])
+		"anti_diagonal":   # one diagonal, few digits on it
+			_box(0.14, 0.14, 0.72, 0.72); _pl([V.call(0.24, 0.76), V.call(0.76, 0.24)])
+			_discp(0.5, 0.5, 0.07)
+		"windoku":   # an extra window inside the grid
+			_box(0.12, 0.12, 0.76, 0.76); _box(0.34, 0.34, 0.32, 0.32, true)
+		"universal":   # the same spot in every box
+			for b in 4:
+				var bx := 0.13 + (b % 2) * 0.4
+				var by := 0.13 + (b / 2) * 0.4
+				_box(bx, by, 0.34, 0.34)
+				_discp(bx + 0.1, by + 0.1, 0.045)
+		"center_dot":
+			_box(0.14, 0.14, 0.72, 0.72); _discp(0.5, 0.5, 0.1)
+		"asterisk":   # scattered extra region
+			_box(0.12, 0.12, 0.76, 0.76)
+			for p in [[0.5, 0.26], [0.27, 0.42], [0.73, 0.42], [0.36, 0.72], [0.64, 0.72]]:
+				_discp(p[0], p[1], 0.06)
+		"girandola":   # a spiral
+			var pts: Array = []
+			for i in 40:
+				var a := i * 0.42
+				var r := 0.04 + i * 0.0085
+				pts.append(V.call(0.5 + cos(a) * r, 0.5 + sin(a) * r))
+			_pl(pts)
+		"argyle":   # diamonds
+			_pl([V.call(0.3, 0.2), V.call(0.48, 0.5), V.call(0.3, 0.8), V.call(0.12, 0.5), V.call(0.3, 0.2)])
+			_pl([V.call(0.7, 0.2), V.call(0.88, 0.5), V.call(0.7, 0.8), V.call(0.52, 0.5), V.call(0.7, 0.2)])
+		"magic_square":
+			_box(0.14, 0.14, 0.72, 0.72); _tx("15", 0.5, 0.5, 0.34)
+		# --- lines
+		"thermo":   # a thermometer with its scale
+			_discp(0.5, 0.78, 0.14); _pl([V.call(0.5, 0.74), V.call(0.5, 0.16)], Color(0, 0, 0, 0), 1.6)
+			for k in 3:
+				_pl([V.call(0.62, 0.26 + k * 0.13), V.call(0.72, 0.26 + k * 0.13)], Color(0, 0, 0, 0), 0.7)
+		"slow_thermo":   # rises, but may stay level
+			_discp(0.2, 0.78, 0.13)
+			_pl([V.call(0.2, 0.78), V.call(0.45, 0.6), V.call(0.62, 0.6), V.call(0.84, 0.22)], lc.st, 1.4)
+		"german_whispers":
+			_pl([V.call(0.1, 0.7), V.call(0.3, 0.3), V.call(0.5, 0.7), V.call(0.7, 0.3), V.call(0.9, 0.7)], lc.gw, 1.3)
+		"dutch_whispers":
+			_pl([V.call(0.1, 0.62), V.call(0.3, 0.38), V.call(0.5, 0.62), V.call(0.7, 0.38), V.call(0.9, 0.62)], lc.dw, 1.3)
+		"renban":   # a fat bar of consecutive digits
+			_pl([V.call(0.16, 0.5), V.call(0.84, 0.5)], lc.rb, 3.2)
+			for k in 3:
+				_discp(0.28 + k * 0.22, 0.5, 0.045)
+		"palindrome":   # mirrored around the middle
+			_pl([V.call(0.12, 0.5), V.call(0.88, 0.5)], lc.pal, 1.4)
+			_discp(0.22, 0.5, 0.07); _discp(0.78, 0.5, 0.07)
+			_ringp(0.5, 0.5, 0.08)
+		"between":
+			_pl([V.call(0.26, 0.5), V.call(0.74, 0.5)], lc.bt, 0.8)
+			_ringp(0.17, 0.5, 0.11); _ringp(0.83, 0.5, 0.11); _discp(0.5, 0.5, 0.06)
+		"lockout":
+			_pl([V.call(0.28, 0.5), V.call(0.72, 0.5)], lc.lo, 0.8)
+			_box(0.07, 0.39, 0.22, 0.22); _box(0.71, 0.39, 0.22, 0.22)
+		"zipper":   # zip teeth
+			_pl([V.call(0.5, 0.12), V.call(0.5, 0.88)], lc.zp, 0.9)
+			for k in 5:
+				var y := 0.2 + k * 0.15
+				_pl([V.call(0.5, y), V.call(0.3 if k % 2 == 0 else 0.7, y)], lc.zp, 1.0)
+		"bishop":   # a bishop's mitre
+			_pl([V.call(0.5, 0.12), V.call(0.72, 0.42), V.call(0.62, 0.66), V.call(0.38, 0.66), V.call(0.28, 0.42), V.call(0.5, 0.12)])
+			_pl([V.call(0.56, 0.3), V.call(0.46, 0.42)], Color(0, 0, 0, 0), 0.8)
+			_pl([V.call(0.26, 0.84), V.call(0.74, 0.84)])
+		"reflection":   # two lines mirrored across a dashed line
+			_pl([V.call(0.18, 0.2), V.call(0.38, 0.5), V.call(0.18, 0.8)], lc.rf)
+			_pl([V.call(0.82, 0.2), V.call(0.62, 0.5), V.call(0.82, 0.8)], lc.rf)
+			_dash_poly([V.call(0.5, 0.1), V.call(0.5, 0.9)])
+		"region_sum":   # equal sums in two boxes
+			_box(0.08, 0.26, 0.36, 0.48); _box(0.56, 0.26, 0.36, 0.48)
+			_pl([V.call(0.16, 0.5), V.call(0.36, 0.5)], lc.rs, 1.3); _pl([V.call(0.64, 0.5), V.call(0.84, 0.5)], lc.rs, 1.3)
+		"entropic":   # low, middle, high
+			_discp(0.2, 0.5, 0.06, lc.en); _discp(0.47, 0.5, 0.1, lc.en); _discp(0.78, 0.5, 0.15, lc.en)
+		"modular":
+			_pl([V.call(0.1, 0.5), V.call(0.9, 0.5)], lc.mo, 0.8)
+			_tx("0", 0.2, 0.3, 0.26); _tx("1", 0.5, 0.3, 0.26); _tx("2", 0.8, 0.3, 0.26)
+			_discp(0.2, 0.5, 0.06); _discp(0.5, 0.5, 0.06); _discp(0.8, 0.5, 0.06)
+		"parity_lines":   # odd and even take turns
+			_pl([V.call(0.1, 0.5), V.call(0.9, 0.5)], lc.pa, 0.8)
+			for k in 4:
+				if k % 2 == 0: _discp(0.16 + k * 0.23, 0.5, 0.08)
+				else: _ringp(0.16 + k * 0.23, 0.5, 0.07, Color(0, 0, 0, 0), 0.8)
+		"nabner":   # far apart digits
+			_pl([V.call(0.1, 0.5), V.call(0.9, 0.5)], lc.nb, 1.0)
+			_discp(0.14, 0.5, 0.07); _discp(0.86, 0.5, 0.07)
+		"ten_lines":
+			_pl([V.call(0.08, 0.5), V.call(0.92, 0.5)], lc.tn, 1.2)
+			_box(0.3, 0.32, 0.4, 0.36, true, UI.SURFACE, 0.18); _box(0.3, 0.32, 0.4, 0.36, false, Color(0, 0, 0, 0), 0.18)
+			_tx("10", 0.5, 0.5, 0.26)
+		"double_arrow":
+			_pl([V.call(0.27, 0.5), V.call(0.73, 0.5)], lc.da, 0.8)
+			_ringp(0.17, 0.5, 0.1); _ringp(0.83, 0.5, 0.1)
+		"pill_arrow":
+			_box(0.1, 0.12, 0.46, 0.24, false, Color(0, 0, 0, 0), 0.12)
+			_pl([V.call(0.45, 0.36), V.call(0.45, 0.62), V.call(0.8, 0.86)], UI.ARROW)
+			_head(0.8, 0.86, Vector2(1, 0.7))
+		"product_lines":
+			_pl([V.call(0.1, 0.5), V.call(0.4, 0.5)], lc.pr, 1.2); _pl([V.call(0.6, 0.5), V.call(0.9, 0.5)], lc.pr, 1.2)
+			_pl([V.call(0.5, 0.2), V.call(0.5, 0.8)], Color(0, 0, 0, 0), 0.7)
+			_discp(0.25, 0.5, 0.06); _discp(0.75, 0.5, 0.06)
+		"difference_lines":   # equal steps
+			_pl([V.call(0.12, 0.8), V.call(0.38, 0.6), V.call(0.62, 0.4), V.call(0.88, 0.2)], lc.df, 1.2)
+		"ratio_lines":   # each step doubles
+			_pl([V.call(0.1, 0.5), V.call(0.9, 0.5)], lc.rt, 0.8)
+			_discp(0.18, 0.5, 0.04); _discp(0.42, 0.5, 0.07); _discp(0.74, 0.5, 0.13)
+		# --- sums & arrows
+		"killer":   # a dashed cage with its sum
+			_dash_poly([V.call(0.16, 0.16), V.call(0.84, 0.16), V.call(0.84, 0.5), V.call(0.5, 0.5), V.call(0.5, 0.84), V.call(0.16, 0.84), V.call(0.16, 0.16)])
+			_tx("12", 0.33, 0.33, 0.26)
+		"little_killer":   # a sum along a diagonal
+			_tx("9", 0.17, 0.17, 0.3)
+			_pl([V.call(0.32, 0.32), V.call(0.84, 0.84)], Color(0, 0, 0, 0), 0.9)
+			_head(0.84, 0.84, Vector2(1, 1))
+		"arrow":   # circle = sum of the arrow
+			_ringp(0.24, 0.5, 0.15)
+			_pl([V.call(0.39, 0.5), V.call(0.62, 0.5), V.call(0.84, 0.28)], UI.ARROW)
+			_head(0.84, 0.28, Vector2(1, -1))
+		"kenken":   # cage with an operation
+			_dash_poly([V.call(0.14, 0.2), V.call(0.86, 0.2), V.call(0.86, 0.8), V.call(0.14, 0.8), V.call(0.14, 0.2)])
+			_tx("12÷", 0.5, 0.5, 0.3)
+		# --- outside clues
+		"sandwich":   # filling between two slices
+			_pl([V.call(0.12, 0.32), V.call(0.3, 0.2), V.call(0.7, 0.2), V.call(0.88, 0.32), V.call(0.12, 0.32)])
+			_pl([V.call(0.14, 0.5), V.call(0.86, 0.5)], Color(0, 0, 0, 0), 1.3)
+			_pl([V.call(0.12, 0.68), V.call(0.88, 0.68), V.call(0.8, 0.8), V.call(0.2, 0.8), V.call(0.12, 0.68)])
+		"skyscraper":   # towers of different heights
+			_box(0.12, 0.42, 0.22, 0.46); _box(0.4, 0.14, 0.22, 0.74); _box(0.68, 0.56, 0.2, 0.32)
+		"xsum":   # first digit tells how many to add
+			_tx("Σ", 0.24, 0.5, 0.42)
+			_box(0.46, 0.38, 0.14, 0.24, true); _box(0.66, 0.38, 0.14, 0.24); _box(0.84, 0.38, 0.1, 0.24)
+		"ascending":   # rising steps
+			_pl([V.call(0.12, 0.84), V.call(0.12, 0.64), V.call(0.38, 0.64), V.call(0.38, 0.42), V.call(0.62, 0.42), V.call(0.62, 0.2), V.call(0.88, 0.2)])
+		"running":   # neighbours one apart
+			_tx("4", 0.2, 0.5, 0.3); _tx("5", 0.5, 0.5, 0.3); _tx("6", 0.8, 0.5, 0.3)
+			_pl([V.call(0.14, 0.76), V.call(0.86, 0.76)], Color(0, 0, 0, 0), 0.7)
+		"frame":   # the outer three cells
+			_box(0.3, 0.14, 0.58, 0.72); _pl([V.call(0.3, 0.5), V.call(0.56, 0.5)], Color(0, 0, 0, 0), 0.7)
+			_tx("15", 0.13, 0.5, 0.24)
+		"numbered_rooms":   # a numbered door
+			_box(0.28, 0.12, 0.44, 0.76, false, Color(0, 0, 0, 0), 0.04); _discp(0.62, 0.52, 0.04); _tx("4", 0.5, 0.3, 0.26)
+		"rossini":   # three going up
+			_discp(0.2, 0.74, 0.07); _discp(0.45, 0.54, 0.07); _discp(0.7, 0.34, 0.07)
+			_pl([V.call(0.62, 0.18), V.call(0.88, 0.18)], Color(0, 0, 0, 0), 0.9); _head(0.88, 0.18, Vector2.RIGHT, 0.12)
+		"battlefield":   # two armies meet
+			_pl([V.call(0.1, 0.5), V.call(0.42, 0.5)]); _head(0.42, 0.5, Vector2.RIGHT)
+			_pl([V.call(0.9, 0.5), V.call(0.58, 0.5)]); _head(0.58, 0.5, Vector2.LEFT)
+		"missing_digit":
+			_box(0.18, 0.18, 0.64, 0.64); _tx("?", 0.5, 0.5, 0.44)
+		# --- dots & signs
+		"kropki":
+			_box(0.06, 0.38, 0.24, 0.24); _box(0.38, 0.38, 0.24, 0.24); _box(0.7, 0.38, 0.24, 0.24)
+			draw_circle(_p(0.34, 0.5), _s * 0.06, UI.SURFACE, true, -1.0, true); _ringp(0.34, 0.5, 0.06, Color(0, 0, 0, 0), 0.6)
+			_discp(0.66, 0.5, 0.07)
+		"xv":
+			_tx("V", 0.36, 0.5, 0.46); _tx("10", 0.74, 0.62, 0.24)
+		"consecutive":
+			_box(0.12, 0.3, 0.32, 0.4); _box(0.56, 0.3, 0.32, 0.4)
+			_box(0.465, 0.36, 0.07, 0.28, true, Color(0, 0, 0, 0), 0.02)
+		"twisted":   # four cells, a mark where they meet
+			for b in 4:
+				_box(0.12 + (b % 2) * 0.44, 0.12 + (b / 2) * 0.44, 0.32, 0.32)
+			_box(0.44, 0.44, 0.12, 0.12, true, Color(0, 0, 0, 0), 0.02)
+		"greater_than":
+			_box(0.06, 0.3, 0.32, 0.4); _box(0.62, 0.3, 0.32, 0.4); _tx(">", 0.5, 0.5, 0.36)
+		"couples":
+			_box(0.06, 0.3, 0.32, 0.4); _box(0.62, 0.3, 0.32, 0.4); _tx("~", 0.5, 0.48, 0.42)
+		"sum_product_dots":
+			_box(0.06, 0.3, 0.32, 0.4); _box(0.62, 0.3, 0.32, 0.4)
+			draw_circle(_p(0.5, 0.5), _s * 0.13, UI.SURFACE, true, -1.0, true); _ringp(0.5, 0.5, 0.13, Color(0, 0, 0, 0), 0.6)
+			_tx("7", 0.5, 0.5, 0.2)
+		"ratio_dots":
+			_box(0.06, 0.3, 0.32, 0.4); _box(0.62, 0.3, 0.32, 0.4)
+			_box(0.36, 0.4, 0.28, 0.2, true, UI.SURFACE, 0.1); _box(0.36, 0.4, 0.28, 0.2, false, Color(0, 0, 0, 0), 0.1)
+			_tx("1:2", 0.5, 0.5, 0.16)
+		"difference_dots":
+			_box(0.06, 0.3, 0.32, 0.4); _box(0.62, 0.3, 0.32, 0.4)
+			_pl([V.call(0.42, 0.5), V.call(0.58, 0.5)])
+		"quadruple":   # a circle of digits at a corner
+			_ringp(0.5, 0.5, 0.3); _tx("12", 0.5, 0.5, 0.26)
+		# --- cell marks
+		"even_odd":
+			_discp(0.3, 0.5, 0.16); _box(0.56, 0.34, 0.32, 0.32)
+		"axia":   # corner marks around a cell
+			for d in [[0.2, 0.2, 1, 1], [0.8, 0.2, -1, 1], [0.2, 0.8, 1, -1], [0.8, 0.8, -1, -1]]:
+				_pl([V.call(d[0], d[1] + d[3] * 0.16), V.call(d[0], d[1]), V.call(d[0] + d[2] * 0.16, d[1])], Color(0, 0, 0, 0), 0.9)
+			_discp(0.5, 0.5, 0.07)
+		"friendly":   # heart outline
+			var pts: Array = []
+			for i in 41:
+				var a := TAU * i / 40.0
+				pts.append(V.call(0.5 + 0.022 * 16.0 * pow(sin(a), 3), 0.46 - 0.022 * (13.0 * cos(a) - 5.0 * cos(2 * a) - 2.0 * cos(3 * a) - cos(4 * a))))
+			_pl(pts)
+		"index":
+			_box(0.08, 0.34, 0.84, 0.32, false, Color(0, 0, 0, 0), 0.04)
+			_pl([V.call(0.22, 0.5), V.call(0.78, 0.5)], Color(0, 0, 0, 0), 0.8)
+			_head(0.78, 0.5, Vector2.RIGHT, 0.1); _head(0.22, 0.5, Vector2.LEFT, 0.1)
+		"pulse":   # a heartbeat
+			_pl([V.call(0.08, 0.55), V.call(0.32, 0.55), V.call(0.42, 0.25), V.call(0.54, 0.78), V.call(0.64, 0.55), V.call(0.92, 0.55)])
+		"slingshot":
+			_pl([V.call(0.26, 0.18), V.call(0.5, 0.52), V.call(0.74, 0.18)])
+			_pl([V.call(0.5, 0.52), V.call(0.5, 0.86)])
+		"vertex":
+			_pl([V.call(0.18, 0.22), V.call(0.5, 0.78), V.call(0.82, 0.22)]); _discp(0.5, 0.78, 0.08)
+		"fortress":   # a tower
+			_pl([V.call(0.22, 0.86), V.call(0.22, 0.22), V.call(0.34, 0.22), V.call(0.34, 0.34), V.call(0.44, 0.34), V.call(0.44, 0.22),
+				V.call(0.56, 0.22), V.call(0.56, 0.34), V.call(0.66, 0.34), V.call(0.66, 0.22), V.call(0.78, 0.22), V.call(0.78, 0.86)])
+		"min_max":
+			_pl([V.call(0.3, 0.2), V.call(0.44, 0.42), V.call(0.16, 0.42), V.call(0.3, 0.2)])
+			_pl([V.call(0.7, 0.8), V.call(0.84, 0.58), V.call(0.56, 0.58), V.call(0.7, 0.8)])
+		"clone":   # two matching shapes
+			_box(0.08, 0.2, 0.3, 0.3, true); _box(0.08, 0.5, 0.15, 0.24, true)
+			_box(0.58, 0.2, 0.3, 0.3); _box(0.58, 0.5, 0.15, 0.24)
+		"prime_composite":
+			_box(0.18, 0.18, 0.64, 0.64); _tx("P", 0.5, 0.5, 0.42)
+		"parity_regions":   # an even area
+			_pl([V.call(0.14, 0.3), V.call(0.5, 0.14), V.call(0.86, 0.3), V.call(0.8, 0.8), V.call(0.3, 0.86), V.call(0.14, 0.3)])
+			_tx("E", 0.5, 0.52, 0.34)
+		"forbidden_digit":   # "not here"
+			_ringp(0.5, 0.5, 0.32); _pl([V.call(0.29, 0.71), V.call(0.71, 0.29)])
+		"divisibility":
+			_tx("÷", 0.5, 0.48, 0.6)
+		# --- letters & symbols
+		"alphabet": _tx("A", 0.5, 0.5, 0.58)
+		"wordoku":
+			_box(0.14, 0.14, 0.72, 0.72); _tx("W", 0.5, 0.5, 0.42)
+		"symbol": _tx("★", 0.5, 0.52, 0.6)
+		"color":
+			_discp(0.38, 0.4, 0.2, Color(UI.CELL_COLORS[1], 1.0)); _discp(0.62, 0.4, 0.2, Color(UI.CELL_COLORS[3], 0.85)); _discp(0.5, 0.62, 0.2, Color(UI.CELL_COLORS[6], 0.85))
+		"roman": _tx("IV", 0.5, 0.5, 0.5)
+		# --- chess & global
+		"king":   # crown with three balls
+			_pl([V.call(0.16, 0.76), V.call(0.16, 0.36), V.call(0.33, 0.56), V.call(0.5, 0.3), V.call(0.67, 0.56), V.call(0.84, 0.36), V.call(0.84, 0.76), V.call(0.16, 0.76)])
+			_discp(0.16, 0.3, 0.05); _discp(0.5, 0.24, 0.05); _discp(0.84, 0.3, 0.05)
+		"queen":   # crown with five points
+			_pl([V.call(0.1, 0.76), V.call(0.1, 0.34), V.call(0.3, 0.56), V.call(0.4, 0.26), V.call(0.5, 0.56), V.call(0.6, 0.26), V.call(0.7, 0.56), V.call(0.9, 0.34), V.call(0.9, 0.76), V.call(0.1, 0.76)])
+		"knight":   # horse head
+			_pl([V.call(0.32, 0.86), V.call(0.36, 0.56), V.call(0.22, 0.48), V.call(0.3, 0.3), V.call(0.48, 0.16), V.call(0.62, 0.18),
+				V.call(0.78, 0.4), V.call(0.74, 0.86), V.call(0.32, 0.86)])
+			_discp(0.47, 0.32, 0.035)
+		"miracle":   # a star
+			var st: Array = []
+			for i in 11:
+				var a := -PI / 2.0 + PI * i / 5.0
+				var r := 0.38 if i % 2 == 0 else 0.16
+				st.append(V.call(0.5 + cos(a) * r, 0.54 + sin(a) * r))
+			_pl(st)
+		"non_consecutive":
+			_tx("1", 0.2, 0.5, 0.3); _tx("3", 0.5, 0.5, 0.3); _tx("5", 0.8, 0.5, 0.3)
+		"dutch_flatmates":   # a 5 between its flatmates
+			_box(0.3, 0.06, 0.4, 0.26); _box(0.3, 0.37, 0.4, 0.26, true); _box(0.3, 0.68, 0.4, 0.26)
+			_tx("5", 0.5, 0.5, 0.2, UI.SURFACE)
+		_:
+			_box(0.14, 0.14, 0.72, 0.72)
+	if variant.begins_with("mini_"):
+		var bc := _off + Vector2(_s, _s) * 0.86
+		draw_circle(bc, _s * 0.2, UI.ACCENT, true, -1.0, true)
+		var bf: Font = UI.font_sans_bold
+		var bfs := int(_s * 0.26)
+		var bsz := bf.get_string_size("6", HORIZONTAL_ALIGNMENT_LEFT, -1, bfs)
+		draw_string(bf, bc + Vector2(-bsz.x / 2, bfs * 0.36), "6", HORIZONTAL_ALIGNMENT_LEFT, -1, bfs, Color.WHITE)
