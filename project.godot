@@ -14,7 +14,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Logic Wiz: Sudoku Variants"
+config/name="Sudoku Variants"
 config/description="40+ Sudoku variants with clean, paper-like design."
 config/version="0.1.0"
 config/use_custom_user_dir=true

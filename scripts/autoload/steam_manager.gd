@@ -13,7 +13,7 @@ const ACHIEVEMENTS := {
 	"FIRST_SOLVE":    "First Steps — solve your first puzzle",
 	"SOLVE_10":       "Getting Warm — solve 10 puzzles",
 	"SOLVE_50":       "Puzzle Addict — solve 50 puzzles",
-	"SOLVE_100":      "Logic Wizard — solve 100 puzzles",
+	"SOLVE_100":      "Sudoku Wizard — solve 100 puzzles",
 	"ALL_CORE":       "Variety Pack — solve every core variant",
 	"HARD_SOLVE":     "Hard Boiled — solve a Hard puzzle",
 	"HARD_NO_HINTS":  "Unassisted — solve a Hard puzzle without hints",

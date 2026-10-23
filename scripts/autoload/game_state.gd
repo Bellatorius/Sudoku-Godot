@@ -133,7 +133,7 @@ func store_game(slot: String, state: Dictionary) -> void:
 
 
 ## Saves live in a fixed folder (project setting custom_user_dir_name = "LogicWizSudoku", on Windows
-## %APPDATA%/LogicWizSudoku) so renaming the game never loses progress, and Steam Auto-Cloud can sync it.
+## %APPDATA%/LogicWizSudoku) so renaming the game (Logic Wiz → Sudoku Variants) never loses progress, and Steam Auto-Cloud can sync it.
 ## Builds before that used Godot's default folder named after the game: copy those files over once.
 func _move_old_saves() -> void:
 	if FileAccess.file_exists(STATS_PATH) or FileAccess.file_exists(SETTINGS_PATH):

@@ -71,7 +71,7 @@ func setup(_params: Dictionary) -> void:
 
 	for k in pages:
 		col.add_child(pages[k])
-	col.add_child(UI.label("Logic Wiz: Sudoku Variants v%s" % ProjectSettings.get_setting("application/config/version"), 13, UI.INK_FAINT))
+	col.add_child(UI.label("Sudoku Variants v%s" % ProjectSettings.get_setting("application/config/version"), 13, UI.INK_FAINT))
 	show.call(_tab if pages.has(_tab) else "gameplay")
 
 

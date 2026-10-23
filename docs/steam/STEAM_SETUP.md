@@ -1,4 +1,4 @@
-# Steam setup (Logic Wiz – Sudoku Variants)
+# Steam setup (Sudoku Variants)
 
 Written 2026-10-22. The game still uses **480** (Valve's "Spacewar" test app) until you have your own App ID.
 
@@ -39,7 +39,7 @@ Daily leaderboards (`daily_YYYY-MM-DD`) are created by the game itself; nothing 
 | 1 | `FIRST_SOLVE` | First Steps | Solve your first puzzle. | achievements/FIRST_SOLVE.png | achievements/FIRST_SOLVE_locked.png |
 | 2 | `SOLVE_10` | Getting Warm | Solve 10 puzzles. | achievements/SOLVE_10.png | achievements/SOLVE_10_locked.png |
 | 3 | `SOLVE_50` | Puzzle Addict | Solve 50 puzzles. | achievements/SOLVE_50.png | achievements/SOLVE_50_locked.png |
-| 4 | `SOLVE_100` | Logic Wizard | Solve 100 puzzles. | achievements/SOLVE_100.png | achievements/SOLVE_100_locked.png |
+| 4 | `SOLVE_100` | Sudoku Wizard | Solve 100 puzzles. | achievements/SOLVE_100.png | achievements/SOLVE_100_locked.png |
 | 5 | `ALL_CORE` | Variety Pack | Solve every core variant. | achievements/ALL_CORE.png | achievements/ALL_CORE_locked.png |
 | 6 | `HARD_SOLVE` | Hard Boiled | Solve a Hard puzzle. | achievements/HARD_SOLVE.png | achievements/HARD_SOLVE_locked.png |
 | 7 | `HARD_NO_HINTS` | Unassisted | Solve a Hard puzzle without hints. | achievements/HARD_NO_HINTS.png | achievements/HARD_NO_HINTS_locked.png |

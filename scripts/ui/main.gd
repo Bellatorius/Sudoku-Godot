@@ -103,7 +103,7 @@ func _build_nav() -> Control:
 	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dot.draw.connect(func(): dot.draw_circle(Vector2(5, 5), 5, UI.ACCENT, true, -1.0, true))
 	lh.add_child(dot)
-	var name_l := UI.label("Logic Wiz", 26, UI.INK, UI.font_serif)
+	var name_l := UI.label("Sudoku Variants", 26, UI.INK, UI.font_serif)
 	name_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lh.add_child(name_l)
 	logo.custom_minimum_size = Vector2(150, 44)
