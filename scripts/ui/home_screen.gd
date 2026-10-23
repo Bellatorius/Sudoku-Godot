@@ -17,7 +17,7 @@ func setup(_params: Dictionary) -> void:
 	var col: VBoxContainer = parts[1]
 	add_child(scroll)
 
-	var title := UI.heading("Sudoku Variants — 60+ Logic Puzzle Types", 46)
+	var title := UI.heading("One grid. Endless rules.", 50)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(title)
