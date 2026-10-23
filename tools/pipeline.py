@@ -112,8 +112,10 @@ def merge_picture_table(types):
         json.dump(table, f, indent=1)
 
 
-def dispatch_packs(level, variants, tag):
-    sh("gh", "workflow", "run", "build_packs.yml", "--repo", REPO, "-f", "level=" + level, "-f", "per_shard=100",
+def dispatch_packs(level, variants, tag, shards=5):
+    """500 puzzles per variant, split into `shards` jobs (more shards for slow variants: jobs stop at 6 h)."""
+    sh("gh", "workflow", "run", "build_packs.yml", "--repo", REPO, "-f", "level=" + level,
+       "-f", "per_shard=%d" % (500 // shards), "-f", "shards=" + json.dumps(list(range(shards))),
        "-f", "variants=" + json.dumps(variants, separators=(",", ":")), "-f", "tag=" + tag)
     return find_run("build_packs.yml", "packs %s %s" % (level, tag))
 
@@ -198,7 +200,8 @@ def main():
         godot("-s", "tools/build_packs.gd", "--", "merge")
         godot("-s", "tools/build_grades.gd", "--", *tn)
         log(st, "expert/master for picture + Mini merged, Ten Lines / Double Arrow beginner-hard merged")
-        st["final_runs"] = [dispatch_packs("expert", tn, "tn"), dispatch_packs("master", tn, "tn")]
+        # Ten Lines puzzles take ~1 min each and expert / master try several per puzzle: 20 jobs of 25
+        st["final_runs"] = [dispatch_packs("expert", tn, "tn", 20), dispatch_packs("master", tn, "tn", 20)]
         sh("gh", "workflow", "run", "build_daily.yml", "--repo", REPO)
         st["final_runs"].append(find_run("build_daily.yml", "daily calendar"))
         st["stage"] = "final"

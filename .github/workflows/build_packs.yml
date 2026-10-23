@@ -19,6 +19,10 @@ on:
         description: "Puzzles per shard (5 shards per variant)"
         required: true
         default: "100"
+      shards:
+        description: 'Shard numbers as a JSON list (more shards = shorter jobs for slow variants)'
+        required: false
+        default: "[0, 1, 2, 3, 4]"
       variants:
         description: 'Variants as a JSON list, e.g. ["killer","thermo"]. Empty = the original 42.'
         required: false
@@ -32,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         variant: ${{ fromJSON(inputs.variants != '' && inputs.variants || '["classic", "killer", "thermo", "arrow", "jigsaw", "diagonal", "kropki", "xv", "non_consecutive", "king", "knight", "even_odd", "german_whispers", "renban", "sandwich", "skyscraper", "little_killer", "palindrome", "between", "consecutive", "greater_than", "dutch_whispers", "slow_thermo", "quadruple", "universal", "windoku", "xsum", "zipper", "lockout", "twisted", "bishop", "ascending", "axia", "couples", "dutch_flatmates", "friendly", "index", "pulse", "reflection", "running", "slingshot", "vertex"]') }}
-        shard: [0, 1, 2, 3, 4]
+        shard: ${{ fromJSON(inputs.shards != '' && inputs.shards || '[0, 1, 2, 3, 4]') }}
     steps:
       - uses: actions/checkout@v4
       - name: Get Godot 4.7.2
