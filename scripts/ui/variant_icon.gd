@@ -15,10 +15,14 @@ func _init(id := "classic", px := 34) -> void:
 
 ## 1 = the original line-art icons (kept for rollback), 2 = tiny boards showing each variant's clue.
 const STYLE := 2
+## Variants that keep the original icon even with STYLE 2 (the user picks per variant).
+const OLD_STYLE: Array = []
+var style := 0   # 0 = STYLE / OLD_STYLE decide; 1 or 2 forces one (comparison sheet)
 
 
 func _draw() -> void:
-	if STYLE == 1:
+	var st := style if style != 0 else (1 if STYLE == 1 or OLD_STYLE.has(variant.trim_prefix("mini_")) else 2)
+	if st == 1:
 		_draw_v1()
 	else:
 		_draw_v2()
