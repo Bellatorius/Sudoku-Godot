@@ -1,0 +1,100 @@
+28	Missing Tile	Eight cells and one gap: the cell you're about to solve.
+29	Lifted Tile	One cell lifts out of the grid, like a digit being placed.
+30	Slide Row	The middle row slides half a cell: same grid, shifted rule.
+31	Growing Tiles	Cells grow from small to large across the block.
+32	Squircle Split	One rounded square cut into nine cells.
+33	Disc Grid	A circle cut into nine cells by the grid lines.
+34	Ring Centre	Eight cells around a ring: the centre is the open question.
+35	Checker Outline	Solid and open cells alternate, givens and blanks.
+36	L Selection	An L of selected cells, like a multi-select in the game.
+37	One to Nine	Nine dots sized 1 to 9 in reading order.
+38	Tally Nine	Nine tally strokes in three groups of three.
+39	Raised Cell	Open cells, one solid cell raised with its outline left behind.
+40	Turning Tiles	Each cell turns a little more: nine steps of a variation.
+41	Stencil Grid	A solid plate with nine cell windows punched out.
+42	Punch Card	Nine windows in a plate; the centre one is round.
+43	Linked Cells	Nine cells joined by bridges along the path of an S.
+44	Pixel 9	The digit 9 drawn in cells, like a scoreboard.
+45	Pixel S	The letter S drawn in cells.
+46	Pixel V	The letter V drawn in cells.
+47	Diagonal Fill	The main diagonal is solid: the diagonal-sudoku rule.
+48	Porthole	The grid seen through a round window.
+49	Tri-Grid	A triangle cut into nine smaller triangles.
+50	Honeycomb	Nine hexagon cells: sudoku on a honeycomb.
+51	Isometric Board	The 3x3 board seen in perspective, lying on a table.
+52	Pinwheel	Four dominoes spin around a centre cell.
+53	Truchet	Quarter circles in nine cells form a woven pattern.
+54	Thermo Line	A sudoku thermometer climbs across the cell.
+55	Bent Thermo	A thermometer turns a corner inside the cell.
+56	Arrow Clue	An arrow-sudoku circle with its arrow.
+57	Twin Cages	Two killer cages side by side, each with its total.
+58	V Between	Two cells with a V clue on their shared edge.
+59	Kropki Pair	A black and a white kropki dot side by side.
+60	Kropki Chain	Black, white, black dots strung on a line.
+61	Whisper Wave	A German-whispers line waves through the cell.
+62	Renban Pill	A renban pill lies across three cells.
+63	Between Line	A line with a circle at each end: the between-line clue.
+64	Quad Clue	A quadruple circle holding four small candidates.
+65	Skyline	Skyscraper sudoku: towers of one, two and three cells.
+66	Zipper	A zipper line folds through the cell around its centre dot.
+67	Clone	Two identical shapes, one solid, one open: the clone rule.
+68	Fifteen	A magic square's total, 15, in the centre of the grid.
+69	Sandwich Clue	A clue outside the row: the sandwich total.
+70	Margins	Clue dots outside the grid, like outside-clue variants.
+71	Entropic	One line in three moods: solid, dashed and dotted.
+72	Parity Beads	A line of beads that alternate circle, square: parity.
+73	Lockout	A lockout line with diamonds at both ends.
+74	Four Quads	Quad circles on all four inner corners of the grid.
+75	Killer Tile	A solid cell with a killer cage cut into it.
+76	Wavy Region	A jigsaw region border that curves instead of stepping.
+77	Mini Box	Six cells, two by three: the Mini 6x6 box.
+78	S Dot	A serif S on a black kropki dot.
+79	Nine Tile	A serif 9 on a solid cell.
+80	Keypad	The digits 1 to 9 in a 3x3, set in the game's serif.
+81	Segment S	An S built from display segments; it also reads as 5.
+82	Tile V	A V made of five cells.
+83	Stencil SV	Bold SV with a stencil cut through the middle.
+84	V Holds	The serif V holds a kropki dot in its arms.
+85	Eighty-One	81: the number of cells in a sudoku.
+86	One-Nine Pill	The digits you play, 1-9, in a pill.
+87	s Cell	A lowercase serif s inside a cell.
+88	Badge	SUDOKU and VARIANTS stacked in a rounded badge.
+89	S9	S and 9 side by side: Sudoku, nine by nine.
+90	Pencil 9	A big given 9 with small pencil marks in the corner.
+91	Two Givens	Two cells holding 1 and 9: first and last digit.
+92	SV Stack	S stacked over V, tight and narrow.
+93	Element Su	Su as a periodic-table element, atomic number 81.
+94	Grid Key	A key whose bow is a 3x3 grid: unlock the puzzle.
+95	Grid Lock	A padlock with a 3x3 grid for a body.
+96	Crown	A crown for the anti-king rule.
+97	Puzzle Book	An open book of puzzles, a grid on the right page.
+98	Pyramid	Cells stacked one, two, three: build up from the givens.
+99	Rosette	Eight cells around a centre cell, like a rosette.
+100	Bookmark	A bookmark with a small grid: pick up where you left off.
+101	Chat Grid	A speech bubble holding a grid: multiplayer chat.
+102	Hex Badge	A hexagonal badge around a small grid.
+103	Calendar	A calendar page with a grid: the daily puzzle.
+104	Kite	A diamond grid flying as a kite.
+105	Ticket	A ticket stub with a grid: admit one puzzle.
+106	Stamp	A postage stamp with a serif S.
+107	Grid Cat	A 3x3 grid with two ears: the grid is a cat.
+108	Tile Bird	A cell with a beak and an eye becomes a bird.
+109	Hourglass	Cells in a 3-1-3 hourglass: time to solve.
+110	Nested	Square, circle, square: a cell inside a cell.
+111	One Sharp Corner	A rounded cell with one sharp corner, where the cage total sits.
+112	Layers	Three nested cells: grid, box, cell.
+113	Bite	A cell with a bite out of one corner, and the dot that took it.
+114	Half and Half	Half square, half round: two rules in one cell.
+115	Split Cell	A cell split on the diagonal, half given, half open.
+116	Tilted Board	The grid tilted a few degrees, a board set down at an angle.
+117	Maze	Two walls turn the 3x3 into a path: solve your way through.
+118	Square and Diamond	A square cell with a diamond: the rule turned 45 degrees.
+119	Orbit	A dot circles the cell: a rule moving around the grid.
+120	Leaf Grid	Nine cells, each rounded on two corners like a leaf.
+121	Notches	Each cell has one sharp corner, turning round the block.
+122	Shaded Cell	A cell shaded with pencil hatching.
+123	Samurai	Two grids overlapping at a shared box, like Samurai sudoku.
+124	Big and Small	A big cell and a small one: 9 and 1.
+125	Frame of Eight	Eight cells frame an empty centre.
+126	Row Unit	The middle row joins into one bar: a unit of nine.
+127	Corner Mark	A cell with one mark in its corner, where a cage total goes.

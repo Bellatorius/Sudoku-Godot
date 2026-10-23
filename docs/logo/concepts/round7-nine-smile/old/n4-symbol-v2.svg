@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="t"><title id="t">Sudoku Variants symbol</title>
+<path d="M74 24H182A50 50 0 0 1 232 74V182A50 50 0 0 1 182 232H74A50 50 0 0 1 24 182V74A50 50 0 0 1 74 24Z" fill="#0e0e12"/><circle cx="90" cy="102" r="17" fill="#ffffff"/><circle cx="154" cy="102" r="22" fill="none" stroke="#ffffff" stroke-width="14"/><path d="M176 102V146C176 194 102 202 74 160" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
