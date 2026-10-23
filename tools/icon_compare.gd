@@ -28,7 +28,7 @@ func _ready() -> void:
 			add_child(l)
 			for k in 2:
 				var ic := VariantIcon.new(ids[i], 56)
-				ic.style = 1 if k == 0 else 3
+				ic.style = 1 if k == 0 else 0
 				ic.position = Vector2(x + 40, y + 36 + k * 76)
 				ic.size = Vector2(56, 56)
 				add_child(ic)

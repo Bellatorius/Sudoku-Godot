@@ -16,8 +16,9 @@ func _init(id := "classic", px := 34) -> void:
 ## 1 = the original line-art icons, 2 = tiny boards showing each clue, 3 = bold symbols like 1 but one per
 ## variant and without crossing lines (the user's choice). All three stay available.
 const STYLE := 3
-## Variants that keep the original icon even with STYLE 2 (the user picks per variant).
-const OLD_STYLE: Array = []
+## Variants that keep the original (first) icon instead of the new style (the user picks per variant).
+const OLD_STYLE: Array = ["jigsaw", "xv", "non_consecutive", "renban", "little_killer", "palindrome", "between", "lockout",
+	"couples", "dutch_flatmates", "running", "difference_lines", "ratio_lines", "parity_regions", "roman"]
 var style := 0   # 0 = STYLE / OLD_STYLE decide; 1 or 2 forces one (comparison sheet)
 
 
