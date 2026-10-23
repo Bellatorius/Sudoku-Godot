@@ -55,7 +55,6 @@ const SHADED := {"center_dot": [10, 13, 16, 37, 40, 43, 64, 67, 70], "asterisk":
 ## Margin around the grid (in cells) when clues sit outside it.
 const OUTER_MARGIN := 0.8
 var _n := 9   # grid size of the shown puzzle (6 for Mini)
-var _hover := -1          # cell under the mouse (its lines are highlighted)
 var _intro := -1.0        # seconds since a new puzzle opened: the lines draw themselves in; -1 = done
 const INTRO_STAGGER := 0.07   # delay between one line starting to draw and the next
 const INTRO_DRAW := 0.55      # how long one line takes to draw
@@ -214,11 +213,6 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 		else:
 			_dragging = false
-	if event is InputEventMouseMotion:
-		var hc := cell_at(event.position)
-		if hc != _hover:
-			_hover = hc
-			queue_redraw()
 	if event is InputEventMouseMotion and _dragging:
 		var c := cell_at(event.position)
 		if c >= 0:
@@ -230,12 +224,6 @@ func _gui_input(event: InputEvent) -> void:
 				selected.erase(c)
 				selection_changed.emit()
 				queue_redraw()
-
-
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_MOUSE_EXIT and _hover != -1:
-		_hover = -1
-		queue_redraw()
 
 
 # ------------------------------------------------------------------ line highlight + draw-in
@@ -271,36 +259,6 @@ func _partial(pts: PackedVector2Array, f: float) -> PackedVector2Array:
 			out.append(pts[i].lerp(pts[i + 1], left / maxf(d, 0.001)))
 			break
 	return out
-
-
-## The cell whose lines are highlighted: the one under the mouse, else the single selected cell.
-func _focus_cell() -> int:
-	if _hover >= 0:
-		return _hover
-	return selected[0] if selected.size() == 1 else -1
-
-
-## Shapes through the focus cell: {"t": {thermo idx}, "l": {line idx}, "a": {arrow idx}}; empty = no focus.
-func _focused_shapes() -> Dictionary:
-	var c := _focus_cell()
-	var out := {}
-	if c < 0 or session == null:
-		return out
-	var pz := session.puzzle
-	for i in pz.thermos.size():
-		if pz.thermos[i].has(c): out["t%d" % i] = true
-	for i in pz.lines.size():
-		if pz.lines[i].cells.has(c): out["l%d" % i] = true
-	for i in pz.arrows.size():
-		if pz.arrows[i].circle == c or pz.arrows[i].line.has(c): out["a%d" % i] = true
-	return out
-
-
-## Colour for a shape: full when it's focused (or nothing is), faded when another shape is focused.
-func _shape_alpha(key: String, focus: Dictionary) -> float:
-	if focus.is_empty() or focus.has(key):
-		return 1.0
-	return 0.32
 
 
 func move_cursor(dx: int, dy: int, extend := false) -> void:
@@ -438,7 +396,6 @@ func _draw() -> void:
 			draw_circle(pc, cell * 0.36, mark, true, -1.0, true)
 
 	# Line clues (colour per type), plus end circles / squares / bulbs / reflection symbols
-	var focus := _focused_shapes()
 	for li in pz.lines.size():
 		var ln: Dictionary = pz.lines[li]
 		var reveal := _reveal(pz.thermos.size() + li)
@@ -447,12 +404,7 @@ func _draw() -> void:
 		var lpts := PackedVector2Array()
 		for c in ln.cells: lpts.append(cell_center(c))
 		var lcol: Color = LINE_COLORS.get(ln.t, UI.THERMO)
-		var la := _shape_alpha("l%d" % li, focus)
 		var lw: float = cell * float(LINE_WIDTH.get(ln.t, 0.2))
-		if la >= 1.0 and not focus.is_empty():   # the focused line glows a little wider
-			draw_polyline(lpts, Color(lcol, lcol.a * 0.35), lw * 1.9, true)
-			lw *= 1.15
-		lcol.a *= la
 		var shown := _partial(lpts, reveal)
 		draw_polyline(shown, lcol, lw, true)
 		for pt in shown: draw_circle(pt, lw * 0.5, lcol, true, -1.0, true)
@@ -495,12 +447,7 @@ func _draw() -> void:
 		var pts := PackedVector2Array()
 		for c in t: pts.append(cell_center(c))
 		var tcol := UI.THERMO
-		var ta := _shape_alpha("t%d" % ti, focus)
 		var tw := cell * 0.26
-		if ta >= 1.0 and not focus.is_empty():
-			draw_polyline(pts, Color(tcol, tcol.a * 0.35), tw * 1.8, true)
-			draw_circle(pts[0], cell * 0.46, Color(tcol, tcol.a * 0.3), true, -1.0, true)
-		tcol.a *= ta
 		var shown := _partial(pts, reveal)
 		draw_polyline(shown, tcol, tw, true)
 		for pt in shown: draw_circle(pt, cell * 0.13, tcol, true, -1.0, true)
@@ -628,7 +575,7 @@ func _draw() -> void:
 		var v := session.values[c]
 		var center := cell_center(c)
 		if v != 0:
-			var f: Font = UI.font_sans_medium if session.is_given(c) else UI.font_sans
+			var f: Font = UI.font_sans_medium   # entered digits as heavy as givens (they differ by colour)
 			var col := UI.INK
 			if not session.is_given(c):
 				col = UI.HINT if session.hinted[c] else UI.ACCENT
@@ -729,7 +676,7 @@ func _draw_digit(f: Font, d: int, center: Vector2, fs: int, col: Color, given: b
 	if session.puzzle.variant != "color":
 		var g := glyph_for(session.puzzle, d)
 		var fsz := fs if g.length() < 3 else int(fs * (0.7 if g.length() == 3 else 0.58))
-		_draw_centered(f, g, center, fsz, col)
+		_draw_centered(f, g, center, fsz, col, maxi(3, int(fsz * 0.14)))
 		return
 	var r := fs * 0.42
 	draw_circle(center, r, Color(UI.CELL_COLORS[d], 1.0), true, -1.0, true)
@@ -738,11 +685,15 @@ func _draw_digit(f: Font, d: int, center: Vector2, fs: int, col: Color, given: b
 		draw_arc(center, r + 3.0, 0, TAU, 32, col, 2.0, true)
 
 
-func _draw_centered(f: Font, s: String, center: Vector2, fs: int, col: Color) -> void:
+## outline > 0: a ring of the board colour around the glyphs, so digits read clearly over lines and colours.
+func _draw_centered(f: Font, s: String, center: Vector2, fs: int, col: Color, outline := 0) -> void:
 	var sz := f.get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 	var asc := f.get_ascent(fs)
 	var desc := f.get_descent(fs)
-	draw_string(f, Vector2(center.x - sz.x / 2.0, center.y + (asc - desc) / 2.0 - fs * 0.04), s, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)
+	var at := Vector2(center.x - sz.x / 2.0, center.y + (asc - desc) / 2.0 - fs * 0.04)
+	if outline > 0:
+		draw_string_outline(f, at, s, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, outline, Color(UI.SURFACE, 0.92))
+	draw_string(f, at, s, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)
 
 
 func _draw_cages(pz: Puzzle, cage_label: Dictionary) -> void:
