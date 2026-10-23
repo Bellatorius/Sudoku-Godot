@@ -1,5 +1,5 @@
 extends Node
-## Global look & feel, mirroring logic-wiz.com:
+## Global look & feel, mirroring the reference site:
 ## warm paper background, ink text, electric-blue accent, gold highlight,
 ## DM Serif Display headings + DM Sans body, 14px rounded cards.
 

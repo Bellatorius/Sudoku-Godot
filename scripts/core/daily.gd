@@ -45,7 +45,7 @@ static func variant(date: String) -> String:
 static func _cycle_order(cycle: int) -> Array:
 	var order: Array = Variants.standard()
 	var rng := RandomNumberGenerator.new()
-	rng.seed = absi(hash("logicwiz-daily-cycle-%d" % cycle))
+	rng.seed = absi(hash("sudokuvariants-daily-cycle-%d" % cycle))
 	for i in range(order.size() - 1, 0, -1):
 		var j := rng.randi_range(0, i)
 		var t = order[i]; order[i] = order[j]; order[j] = t
@@ -59,5 +59,5 @@ static func info(date: String) -> Dictionary:
 		"date": date,
 		"variant": variant(date),
 		"difficulty": DIFFICULTY,
-		"seed": absi(hash("logicwiz-daily-" + date)),
+		"seed": absi(hash("sudokuvariants-daily-" + date)),
 	}

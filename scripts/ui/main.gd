@@ -1,5 +1,5 @@
 extends Control
-## Root: top navigation bar (like logic-wiz.com's header) + swappable screen area + toast.
+## Root: top navigation bar (like the reference site's header) + swappable screen area + toast.
 
 const SCREENS := {
 	"home": preload("res://scripts/ui/home_screen.gd"),

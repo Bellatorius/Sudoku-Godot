@@ -1,6 +1,6 @@
 # Sudoku Variants (Godot 4)
 
-A Steam-ready Sudoku variants game styled after logic-wiz.com/variants, with a warm paper
+A Steam-ready Sudoku variants game styled after a popular Sudoku variants website, with a warm paper
 background, ink text, a blue accent, DM Serif Display and DM Sans fonts, and rounded variant cards.
 
 ## Open & run

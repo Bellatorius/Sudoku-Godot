@@ -1,6 +1,6 @@
 class_name Variants
 extends RefCounted
-## Catalog of every variant shown on logic-wiz.com/variants.
+## Catalog of every variant in the game.
 ## `playable` variants have a generator + board renderer; the rest show as "Coming soon".
 
 const CORE := ["classic", "killer", "thermo", "arrow", "jigsaw", "diagonal", "kropki", "xv",
