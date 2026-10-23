@@ -163,6 +163,21 @@ def counts_report(variants):
 
 
 def main():
+    """Keeps checking every 5 minutes (GitHub's 20-minute schedule is unreliable when busy). Before the 6-hour
+    job limit it starts a fresh Pipeline run of itself, so the chain never depends on the schedule."""
+    start = time.time()
+    while True:
+        step()
+        if load()["stage"] == "done":
+            return
+        if time.time() - start > 320 * 60:
+            sh("gh", "workflow", "run", "pipeline.yml", "--repo", REPO, check=False)
+            print("handing over to a new Pipeline run", flush=True)
+            return
+        time.sleep(300)
+
+
+def step():
     st = load()
     stage = st["stage"]
     print("stage:", stage, flush=True)
