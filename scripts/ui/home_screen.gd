@@ -101,22 +101,82 @@ func _set_group(key: String) -> void:
 
 func _filter() -> void:
 	var q := search.text.strip_edges().to_lower()
+	# Search looks in every group; if the selected group has none of the matches, show them all with a note
+	# (so a typo or the wrong filter never leaves an empty page without saying why).
+	var in_group := 0
+	var anywhere := 0
+	for card in cards:
+		var v: Dictionary = card.get_meta("info")
+		if _matches(v, q):
+			anywhere += 1
+			if _group == "all" or Variants.category(v.id) == _group:
+				in_group += 1
+	var widen := q != "" and in_group == 0 and anywhere > 0
 	var shown := 0
 	for card in cards:
 		var v: Dictionary = card.get_meta("info")
-		var hit: bool = q == "" or v.name.to_lower().contains(q) or v.short.to_lower().contains(q)
-		if _group != "all" and Variants.category(v.id) != _group:
-			hit = false
+		var hit := _matches(v, q) and (widen or _group == "all" or Variants.category(v.id) == _group)
 		card.visible = hit
 		if hit: shown += 1
-	for k in sections:   # hide groups with nothing to show; the heading only matters in "All"
+	for k in sections:   # hide groups with nothing to show; the heading only matters when several groups show
 		var sec: VBoxContainer = sections[k]
 		var any := false
 		for c in sec.get_child(1).get_children():
 			if c.visible: any = true
 		sec.visible = any
-		sec.get_node("Head").visible = _group == "all"
-	empty_label.visible = shown == 0
+		sec.get_node("Head").visible = _group == "all" or widen
+	if widen:
+		var gname := ""
+		for g in Variants.CATEGORIES:
+			if g[0] == _group: gname = g[1]
+		empty_label.text = "Nothing in %s matches \"%s\". Showing matches from all groups:" % [gname, search.text.strip_edges()]
+	else:
+		empty_label.text = "No variants match \"%s\"." % search.text.strip_edges()
+	empty_label.visible = widen or shown == 0
+	if widen:   # the note goes above the results
+		empty_label.get_parent().move_child(empty_label, sections.values()[0].get_index())
+	else:
+		empty_label.get_parent().move_child(empty_label, -1)
+
+
+## Forgiving search: every typed word must match a word of the name (or appear in the description).
+## A word matches when it is contained, typed with letters left out ("termo" -> thermo), or one or two
+## letters off ("kiler", "sandwhich").
+func _matches(v: Dictionary, q: String) -> bool:
+	if q == "":
+		return true
+	var nm: String = str(v.name).to_lower()
+	if nm.contains(q) or str(v.short).to_lower().contains(q):
+		return true
+	var words := nm.replace("-", " ").replace("(", " ").replace(")", " ").split(" ", false)
+	for qw in q.split(" ", false):
+		var ok := false
+		for w in words:
+			if w.contains(qw) or (qw.length() >= 3 and _subsequence(qw, w)) or 					(qw.length() >= 4 and _edits(qw, w) <= (1 if qw.length() < 6 else 2)):
+				ok = true
+				break
+		if not ok:
+			return false
+	return true
+
+
+static func _subsequence(a: String, b: String) -> bool:
+	var i := 0
+	for ch in b:
+		if i < a.length() and a[i] == ch:
+			i += 1
+	return i == a.length()
+
+
+## Edit distance (insert / delete / change one letter).
+static func _edits(a: String, b: String) -> int:
+	var prev: Array = range(b.length() + 1)
+	for i in a.length():
+		var cur: Array = [i + 1]
+		for j in b.length():
+			cur.append(mini(mini(prev[j + 1] + 1, cur[j] + 1), prev[j] + (0 if a[i] == b[j] else 1)))
+		prev = cur
+	return prev[b.length()]
 
 
 func _daily_banner() -> Control:
