@@ -1,5 +1,5 @@
 {
- "stage": "levels",
+ "stage": "top",
  "level_runs": [
   39857584539,
   39857589887,
@@ -75,6 +75,16 @@
  ],
  "log": [
   "2026-10-23  pipeline set up",
-  "2026-10-23 10:40  German Whispers / Lockout timed out (6 h): generator fixed; easy+beginner rebuilt, hard+medium rebuilt for those two"
+  "2026-10-23 10:40  German Whispers / Lockout timed out (6 h): generator fixed; easy+beginner rebuilt, hard+medium rebuilt for those two",
+  "2026-10-23 12:13  levels merged (picture + Mini beginner-hard, old expert/master), grades for 43 variants",
+  "2026-10-23 12:14  started expert/master for picture + Mini, beginner-hard for Ten Lines / Double Arrow: [39951670478, 39951698063, 39951724798, 39951752911, 39951782837, 39951808454]"
+ ],
+ "top_runs": [
+  39951670478,
+  39951698063,
+  39951724798,
+  39951752911,
+  39951782837,
+  39951808454
  ]
 }
