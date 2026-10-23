@@ -198,12 +198,15 @@ def step():
         merge_picture_table(["tn", "da"])
         godot("-s", "tools/build_grades.gd", "--", *pic)
         log(st, "levels merged (picture + Mini beginner-hard, old expert/master), grades for %d variants" % len(pic))
+        save(st)
+        # commit first: the new runs check out main and need these packs, grades and the picture table
+        commit("Packs: picture and Mini puzzles (beginner to hard), grades; pipeline step 1")
         st["top_runs"] = [dispatch_packs("expert", pic, "pic"), dispatch_packs("master", pic, "pic")]
         st["top_runs"] += [dispatch_packs(lv, tn, "tn") for lv in LEVELS4]
         st["stage"] = "top"
         log(st, "started expert/master for picture + Mini, beginner-hard for Ten Lines / Double Arrow: %s" % st["top_runs"])
         save(st)
-        commit("Packs: picture and Mini puzzles (beginner to hard), grades; pipeline step 1")
+        commit("Pipeline: step 2 runs started")
         return
 
     if stage == "top":
@@ -215,6 +218,9 @@ def step():
         godot("-s", "tools/build_packs.gd", "--", "merge")
         godot("-s", "tools/build_grades.gd", "--", *tn)
         log(st, "expert/master for picture + Mini merged, Ten Lines / Double Arrow beginner-hard merged")
+        save(st)
+        # commit first: expert/master need the Ten Lines / Double Arrow grade bars from main
+        commit("Packs: picture and Mini expert/master; pipeline step 2")
         # Ten Lines puzzles take ~1 min each and expert / master try several per puzzle: 20 jobs of 25
         st["final_runs"] = [dispatch_packs("expert", tn, "tn", 20), dispatch_packs("master", tn, "tn", 20)]
         sh("gh", "workflow", "run", "build_daily.yml", "--repo", REPO)
@@ -222,7 +228,7 @@ def step():
         st["stage"] = "final"
         log(st, "started expert/master for Ten Lines / Double Arrow and the daily calendar: %s" % st["final_runs"])
         save(st)
-        commit("Packs: picture and Mini expert/master; pipeline step 2")
+        commit("Pipeline: step 3 runs started")
         return
 
     if stage == "final":

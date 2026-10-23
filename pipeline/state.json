@@ -77,7 +77,8 @@
   "2026-10-23  pipeline set up",
   "2026-10-23 10:40  German Whispers / Lockout timed out (6 h): generator fixed; easy+beginner rebuilt, hard+medium rebuilt for those two",
   "2026-10-23 12:13  levels merged (picture + Mini beginner-hard, old expert/master), grades for 43 variants",
-  "2026-10-23 12:14  started expert/master for picture + Mini, beginner-hard for Ten Lines / Double Arrow: [39951670478, 39951698063, 39951724798, 39951752911, 39951782837, 39951808454]"
+  "2026-10-23 12:14  started expert/master for picture + Mini, beginner-hard for Ten Lines / Double Arrow: [39951670478, 39951698063, 39951724798, 39951752911, 39951782837, 39951808454]",
+  "2026-10-23 23:38  Ten Lines beginner-hard timed out (runs started before the tn/da picture table was committed): rerun [40040690176, 40040694212, 40040698443, 40040703443]; mini_zipper master s1 (runner lost) rerun 40040708233; pipeline now commits before it dispatches"
  ],
  "top_runs": [
   39951670478,
@@ -85,6 +86,11 @@
   39951724798,
   39951752911,
   39951782837,
-  39951808454
+  39951808454,
+  40040690176,
+  40040694212,
+  40040698443,
+  40040703443,
+  40040708233
  ]
 }
