@@ -165,6 +165,7 @@ const PICTURE := {"thermo": "th", "slow_thermo": "st", "german_whispers": "gw", 
 const PIC_MAX := {"nb": 4, "da": 6, "zp": 5, "lo": 5, "bt": 7, "th": 5, "st": 5, "rs": 6, "gw": 6, "dw": 7}
 const PIC_MIN := {"zp": 3, "bt": 3, "lo": 3, "da": 3}
 const PIC_NODES := 15000
+const PIC_NODES_GEN := 5000   # generated designs give up sooner (most misfits fail fast or never)
 ## Share of picture puzzles drawn from the hand-drawn library (the rest are generated designs).
 const PIC_HAND := {9: 0.6, 6: 0.3}
 ## Pack builds set this to the puzzle's number in its pack (tools/build_packs.gd): pictures are then
@@ -1450,28 +1451,32 @@ func _attempt_picture(pz: Puzzle, id: String, variant: String, difficulty: Strin
 	var t: String = PICTURE[variant]
 	var library := picture_library(t, _n)
 	var hand: float = PIC_HAND.get(_n, 0.6)
-	for tries in 10:
+	var plan := _planned_picture(library, id, difficulty, hand)   # pack builds: this slot's picture, or [null]
+	var want_gen := (not plan.is_empty() and plan[0] == null) if pic_plan >= 0 else rng.randf() >= hand
+	if library.is_empty():
+		want_gen = true
+	var gen_fails := 0
+	for tries in 12:
 		var title := ""
 		var paths: Array = []
-		var planned := _planned_picture(library, id, difficulty, hand) if tries < 5 else []   # 5 goes at the planned picture
-		if pic_plan >= 0 and tries >= 5:
-			hand = 0.0   # the planned picture didn't fit: a generated design, never a random repeat
-		if not planned.is_empty() and planned[0] == null:
-			planned = []
-			hand = 0.0   # this slot of the plan is a generated design
-		if not planned.is_empty():
-			title = planned[0][0]
-			paths = Shapes.transform(Shapes.parse(planned[0][1], _n), planned[1], _n)
-		elif not library.is_empty() and rng.randf() < hand:
-			var pic: Array = library[rng.randi_range(0, library.size() - 1)]
-			title = pic[0]
-			paths = Shapes.transform(Shapes.parse(pic[1], _n), 1 if rng.randf() < 0.5 else 0, _n)   # mirror only: pictures stay upright
-		else:
+		var is_gen := false
+		if not plan.is_empty() and plan[0] != null and tries < 5:   # 5 goes at the planned picture
+			title = plan[0][0]
+			paths = Shapes.transform(Shapes.parse(plan[0][1], _n), plan[1], _n)
+		elif (want_gen and gen_fails < 3) or library.is_empty():
+			# a generated design; strict rules (whispers, lockout …) rarely fit one, so after 3 misses
+			# a hand-drawn picture that is known to fit takes its place
 			var pr: Array = Shapes.procedural(rng, _n)
 			title = pr[0]
 			paths = pr[1]
+			is_gen = true
 			if Shapes.has_cross(paths, _n):   # no + or X shapes in the pictures
+				gen_fails += 1
 				continue
+		else:
+			var pic: Array = library[rng.randi_range(0, library.size() - 1)]
+			title = pic[0]
+			paths = Shapes.transform(Shapes.parse(pic[1], _n), 1 if rng.randf() < 0.5 else 0, _n)   # mirror only: pictures stay upright
 		var lines := _picture_lines(pz, paths, t)
 		if lines.size() < 3:
 			continue
@@ -1482,8 +1487,10 @@ func _attempt_picture(pz: Puzzle, id: String, variant: String, difficulty: Strin
 				pz.thermos.append(cells)
 			else:
 				pz.lines.append({"t": t, "cells": cells})
-		var sol := Solver.new(pz).solve(empty, rng, PIC_NODES)
+		var sol := Solver.new(pz).solve(empty, rng, PIC_NODES_GEN if is_gen else PIC_NODES)
 		if sol.size() != _nc:
+			if is_gen:
+				gen_fails += 1
 			continue
 		pz.solution = sol
 		pz.title = title
