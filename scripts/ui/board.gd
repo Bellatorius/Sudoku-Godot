@@ -31,7 +31,7 @@ const LINE_COLORS := {"gw": Color(0.18, 0.70, 0.42, 0.75), "rb": Color(0.76, 0.3
 const LINE_WIDTH := {"gw": 0.16, "dw": 0.16, "rb": 0.24, "pal": 0.22, "bt": 0.07, "lo": 0.09, "st": 0.26,
 	"bi": 0.14, "rf": 0.16, "zp": 0.18, "rs": 0.18, "en": 0.16, "mo": 0.16, "pa": 0.16, "nb": 0.16,
 	"tn": 0.16, "da": 0.07, "pl": 0.045, "pr": 0.18, "df": 0.16, "rt": 0.16}
-const SYMBOLS := ["★", "●", "▲", "■", "♦", "♥", "♣", "♠", "✚"]
+const SYMBOLS := ["★", "●", "▲", "■", "♦", "♥", "♣", "♠", "▼"]   # (no cross symbol: the user asked for no crosses)
 const ROMAN := ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
 
 
