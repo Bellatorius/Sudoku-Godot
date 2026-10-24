@@ -1,5 +1,5 @@
 {
- "stage": "final",
+ "stage": "done",
  "level_runs": [
   39857584539,
   39857589887,
@@ -81,7 +81,8 @@
   "2026-10-23 23:38  Ten Lines beginner-hard timed out (runs started before the tn/da picture table was committed): rerun [40040690176, 40040694212, 40040698443, 40040703443]; mini_zipper master s1 (runner lost) rerun 40040708233; pipeline now commits before it dispatches",
   "2026-10-23 23:44  Double Arrow beginner-hard rerun with the picture table (old runs had generated designs only): [40041300725, 40041305418, 40041310141, 40041314852]",
   "2026-10-24 00:54  expert/master for picture + Mini merged, Ten Lines / Double Arrow beginner-hard merged",
-  "2026-10-24 00:54  started expert/master for Ten Lines / Double Arrow and the daily calendar: [40047269370, 40047285159, 40047301926]"
+  "2026-10-24 00:54  started expert/master for Ten Lines / Double Arrow and the daily calendar: [40047269370, 40047285159, 40047301926]",
+  "2026-10-24 02:21  all done: packs, daily calendar and examples merged; see pipeline/report.txt"
  ],
  "top_runs": [
   39951670478,
