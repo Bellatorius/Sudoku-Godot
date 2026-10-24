@@ -121,6 +121,14 @@ list); "Continue" always resumes the latest. The generator is only used after th
 - **Not yet verified by the user on Windows** after the latest update (Shift/Ctrl/colour). Ask them how it went.
 
 ## Open items / suggested next steps
+0. **Running unattended (2026-10-24 evening)**: `level_order.yml` run 40094880096 (the 54 remaining variants: 45
+   picture/Mini/Ten Lines/Double Arrow + the 9 slow ones) and daily calendar run 40094883052. Pipeline stage "extra"
+   copies the level-order packs into puzzles/, replaces the daily days that were rebuilt (failed shards keep the old
+   days), rebuilds examples, writes pipeline/report_extra.txt, commits and switches off. Afterwards: `git pull`, read
+   report_extra.txt, `godot --headless -s tools/level_order.gd -- report <v>...` to confirm every variant is OK.
+0. **Classic master = 17 givens (2026-10-24)**: 500 hardest (Sudoku Explainer 7.2-9.0) of Gordon Royle's 49,158
+   17-clue puzzles (via github.com/denis-berthier/Sudoku-classif). No explicit licence; the user chose to use it.
+   Credited in Settings. Import tool: tools/import_17.gd (each puzzle re-checked unique by our solver).
 0. **Pipeline finished (2026-10-24 02:21 UTC)**, see pipeline/report.txt: all 500 except Ten Lines / Double Arrow
    expert+master (60 each, on purpose, to be pooled into 20) and a few Mini levels at 484-499 (mini_sandwich beginner
    400). The daily calendar run failed in every job (puzzles/_parts missing on CI; fixed in tools/build_daily.gd), so

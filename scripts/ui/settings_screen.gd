@@ -72,6 +72,9 @@ func setup(_params: Dictionary) -> void:
 	for k in pages:
 		col.add_child(pages[k])
 	col.add_child(UI.label("Sudoku Variants v%s" % ProjectSettings.get_setting("application/config/version"), 13, UI.INK_FAINT))
+	var credits := UI.label("Classic Master puzzles (17 givens): from Gordon Royle's collection of 17-clue Sudoku (University of Western Australia), completed by the Enjoy Sudoku Players Forum; ratings by Denis Berthier.", 12, UI.INK_FAINT)
+	credits.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	col.add_child(credits)
 	show.call(_tab if pages.has(_tab) else "gameplay")
 
 
