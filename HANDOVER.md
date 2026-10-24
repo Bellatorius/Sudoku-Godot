@@ -127,7 +127,9 @@ list); "Continue" always resumes the latest. The generator is only used after th
    of 3 orders), expert (half the removable givens out), hard; digits put back where a level isn't above the next),
    `trim <v>` (keeps all puzzles, masters made minimal), `report <v>...`. Done for the 68 non-pipeline variants: the
    51 whose order was broken were pooled to 20 per level, the 17 whose order was fine kept 500 with minimal masters.
-   The generator now makes master minimal too (`Generator._minimize`). **Still to do when the pipeline is done:**
+   The generator now makes master minimal too (`Generator._minimize`). **Not done yet (too slow locally, even with
+   `1 6000` options; packs unchanged):** ascending, battlefield, numbered_rooms, rossini, running, sandwich, skyscraper,
+   xsum (pool) and magic_square (trim): run them on GitHub or overnight. **Still to do when the pipeline is done:**
    `report` the 43 picture + Mini variants and Ten Lines / Double Arrow, then `pool <v> 20` (or `trim <v>` where the
    order is already fine) for them, commit. If the user likes it, run `pool` with a bigger count or rebuild 500.
 0. **Pipeline fix (2026-10-24)**: Ten Lines beginner-hard never finished (0 puzzles in 6 h): the pipeline started
