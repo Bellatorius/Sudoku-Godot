@@ -128,7 +128,7 @@ func _difficulty_row(d: String) -> Control:
 		meta = [GameState.unlock_hint(vid, d)]
 	v.add_child(UI.label("  ·  ".join(meta), 14, UI.INK_MUTED))
 	h.add_child(v)
-	if locked and not GameState.has_game(slot):
+	if locked:   # no Continue / New puzzle until it's open, even for a game saved before
 		h.add_child(_lock_icon())
 		return p
 

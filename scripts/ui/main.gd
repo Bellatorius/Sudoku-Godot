@@ -402,7 +402,9 @@ func _show(screen: String, params: Dictionary) -> void:
 ## Shows the most recent unfinished game in the nav bar while on any other screen.
 func _refresh_continue() -> void:
 	var slot := GameState.last_unfinished()
-	continue_btn.visible = slot != "" and _screen != "game"
+	var parts := slot.split(":")
+	var locked := parts.size() == 2 and parts[0] != "daily" and not GameState.level_unlocked(parts[0], parts[1])
+	continue_btn.visible = slot != "" and _screen != "game" and not locked
 	if not continue_btn.visible:
 		return
 	var state: Dictionary = GameState.load_game(slot)

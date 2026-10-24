@@ -241,15 +241,13 @@ func level_unlocked(variant: String, d: String) -> bool:
 	return level_unlocked(variant, prev) and level_solves(variant, prev) >= int(UNLOCK_AFTER.get(d, 0))
 
 
-## "Solve 3 more Easy puzzles to unlock" (empty when the level is open).
+## "Playable after solving at least 10 Medium puzzles" (empty when the level is open).
 func unlock_hint(variant: String, d: String) -> String:
 	if level_unlocked(variant, d):
 		return ""
 	var prev: String = DIFFICULTIES[DIFFICULTIES.find(d) - 1]
-	if not level_unlocked(variant, prev):
-		return "Unlock %s first" % prev.capitalize()
-	var left := int(UNLOCK_AFTER[d]) - level_solves(variant, prev)
-	return "Solve %d more %s puzzle%s to unlock" % [left, prev.capitalize(), "" if left == 1 else "s"]
+	var need := int(UNLOCK_AFTER[d])
+	return "Playable after solving at least %d %s puzzle%s" % [need, prev.capitalize(), "" if need == 1 else "s"]
 
 
 ## Params for a random Free Play puzzle: a random playable variant at difficulty `d` (the
