@@ -4,9 +4,11 @@ extends Control
 ## and achievements.
 
 const Home := preload("res://scripts/ui/home_screen.gd")
-const HEAT_WEEKS := 40
-const HEAT_CELL := 15
-const HEAT_GAP := 4
+const HEAT_WEEKS := 53   # a year, like GitHub
+const HEAT_CELL := 12
+const HEAT_GAP := 3
+## Puzzles solved in a day for each stronger shade: 1, 2-3, 4-6, 7+.
+const ACTIVITY_STEPS := [1, 2, 4, 7]
 const MONTHS := ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 ## Averages, perfect solves, losses, play time and recent solves only exist from this day on.
 const TRACKED_FROM := "24 Oct 2026"
@@ -35,7 +37,7 @@ func setup(_params: Dictionary) -> void:
 	col.add_child(_section("By level"))
 	col.add_child(_levels(st))
 	col.add_child(UI.spacer(10))
-	col.add_child(_section("Daily puzzles"))
+	col.add_child(_section("Activity"))
 	col.add_child(_heatmap(st))
 	col.add_child(UI.spacer(10))
 	col.add_child(_section("Recent solves"))
@@ -179,23 +181,30 @@ func _levels(st: Dictionary) -> Control:
 	return row
 
 
-# ---------------------------------------------------------------- daily calendar
+# ---------------------------------------------------------------- activity calendar
 
-## The last HEAT_WEEKS weeks, one column per week (Monday on top); a gold square = daily solved.
+## Like GitHub's contribution graph: the last HEAT_WEEKS weeks, one column per week (Monday on top). The more
+## puzzles solved that day, the stronger the colour (ACTIVITY_STEPS); a gold dot = that day's daily was solved.
 func _heatmap(st: Dictionary) -> Control:
+	var days := GameState.activity_days()
 	var done: Dictionary = st.daily.done
-	var today := GameState.today()
+	var today := GameState.local_day()
 	var t_today := Time.get_unix_time_from_datetime_string(today + "T12:00:00")
 	var wd := int(Time.get_datetime_dict_from_unix_time(t_today).weekday)   # 0 = Sunday
 	var monday := t_today - ((wd + 6) % 7) * 86400
 	var start := monday - (HEAT_WEEKS - 1) * 7 * 86400
+	var first := Time.get_date_string_from_unix_time(start)
+	var total := 0
+	for d in days:
+		if d >= first and d <= today:
+			total += int(days[d])
 	var box := PanelContainer.new()
 	box.add_theme_stylebox_override("panel", UI.box(UI.SURFACE, UI.LINE_STRONG, UI.RADIUS, 1, 18))
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
 	box.add_child(v)
-	v.add_child(UI.label("%d dailies solved · current streak %d · best streak %d" % [done.size(),
-		GameState.current_streak(), int(st.daily.best_streak)], 14, UI.INK_MUTED))
+	v.add_child(UI.label("%d puzzles solved in the last year · %d dailies · daily streak %d (best %d)" % [total,
+		done.size(), GameState.current_streak(), int(st.daily.best_streak)], 14, UI.INK_MUTED))
 	var map := Control.new()
 	var step := HEAT_CELL + HEAT_GAP
 	map.custom_minimum_size = Vector2(HEAT_WEEKS * step + 34, 7 * step + 18)
@@ -209,7 +218,7 @@ func _heatmap(st: Dictionary) -> Control:
 	map.draw.connect(func():
 		var font := UI.font_sans
 		for r in [0, 2, 4]:
-			map.draw_string(font, Vector2(0, 18 + r * step + HEAT_CELL - 3), ["Mon", "", "Wed", "", "Fri"][r], HORIZONTAL_ALIGNMENT_LEFT, -1, 11, UI.INK_FAINT)
+			map.draw_string(font, Vector2(0, 18 + r * step + HEAT_CELL - 2), ["Mon", "", "Wed", "", "Fri"][r], HORIZONTAL_ALIGNMENT_LEFT, -1, 11, UI.INK_FAINT)
 		var last_month := -1
 		var last_label := -9
 		for c in HEAT_WEEKS:
@@ -224,20 +233,68 @@ func _heatmap(st: Dictionary) -> Control:
 				if date > today:
 					continue
 				var rect := Rect2(34 + c * step, 18 + r * step, HEAT_CELL, HEAT_CELL)
-				map.draw_rect(rect, UI.GOLD if done.has(date) else Color(UI.INK, 0.08))
+				_cell(map, rect, _shade(int(days.get(date, 0))))
+				if done.has(date):
+					map.draw_circle(rect.get_center(), 2.2, UI.GOLD, true, -1.0, true)
 				if date == today:
-					map.draw_rect(rect.grow(1.5), UI.ACCENT, false, 2.0))
+					map.draw_rect(rect.grow(1.5), UI.INK_MUTED, false, 1.5))
 	map.gui_input.connect(func(e: InputEvent):
 		if e is InputEventMouseMotion:
 			var date: String = cell_date.call(e.position)
 			if date == "" or date > today:
 				map.tooltip_text = ""
-			elif done.has(date):
-				map.tooltip_text = "%s · solved in %s" % [date, UI.format_time(float(done[date].get("time", 0.0)))]
-			else:
-				map.tooltip_text = "%s · not solved" % date)
+				return
+			var n := int(days.get(date, 0))
+			var tip := "%s puzzle%s solved on %s" % ["No" if n == 0 else str(n), "" if n == 1 else "s", _long_date(date)]
+			if done.has(date):
+				tip += "
+Daily solved in %s" % UI.format_time(float(done[date].get("time", 0.0)))
+			map.tooltip_text = tip)
 	v.add_child(map)
+
+	var legend := HBoxContainer.new()
+	legend.add_theme_constant_override("separation", 4)
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	legend.add_child(sp)
+	legend.add_child(UI.label("Less", 12, UI.INK_FAINT))
+	for k in ACTIVITY_STEPS.size() + 1:
+		var sw := Control.new()
+		sw.custom_minimum_size = Vector2(HEAT_CELL, HEAT_CELL)
+		sw.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		sw.draw.connect(func(): _cell(sw, Rect2(Vector2.ZERO, sw.size), k))
+		legend.add_child(sw)
+	legend.add_child(UI.label("More", 12, UI.INK_FAINT))
+	legend.add_child(UI.spacer(0, 14))
+	var dot := Control.new()
+	dot.custom_minimum_size = Vector2(10, 10)
+	dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	dot.draw.connect(func(): dot.draw_circle(Vector2(5, 5), 3.0, UI.GOLD, true, -1.0, true))
+	legend.add_child(dot)
+	legend.add_child(UI.label("daily solved", 12, UI.INK_FAINT))
+	v.add_child(legend)
 	return box
+
+
+## 0 = nothing solved, then one step per ACTIVITY_STEPS threshold reached.
+static func _shade(n: int) -> int:
+	var k := 0
+	for t in ACTIVITY_STEPS:
+		if n >= t:
+			k += 1
+	return k
+
+
+static func _cell(ci: CanvasItem, rect: Rect2, shade: int) -> void:
+	var col := Color(UI.INK, 0.08) if shade == 0 else UI.ACCENT.lerp(UI.SURFACE, 0.75 - 0.25 * (shade - 1))
+	ci.draw_rect(rect, col)
+
+
+## "24 October 2026"
+static func _long_date(date: String) -> String:
+	var p := date.split("-")
+	return "%d %s %s" % [int(p[2]), ["January", "February", "March", "April", "May", "June", "July", "August",
+		"September", "October", "November", "December"][int(p[1]) - 1], p[0]]
 
 
 # ---------------------------------------------------------------- recent solves

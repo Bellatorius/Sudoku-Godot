@@ -394,6 +394,9 @@ func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String
 	recent.push_front({"v": puzzle.variant, "d": puzzle.difficulty, "t": seconds, "best": new_best,
 		"perfect": perfect, "daily": daily_date != "", "at": Time.get_unix_time_from_system()})
 	stats.recent = recent.slice(0, 10)
+	var day := local_day()
+	var days: Dictionary = activity_days()
+	days[day] = int(days.get(day, 0)) + 1
 	if puzzle.id.begins_with("pack-"):
 		stats.pack_done[puzzle.id] = true
 
@@ -411,6 +414,30 @@ func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String
 	SteamManager.on_solve(puzzle, seconds, hints, daily_date != "", stats, mistakes)
 	var unlocked := nxt if not was_open and level_unlocked(puzzle.variant, nxt) else ""
 	return {"new_best": new_best, "streak": streak, "unlocked": unlocked}
+
+
+## The player's own calendar day (local time), for the activity calendar on the Stats page.
+static func local_day(unix := -1.0) -> String:
+	var t := Time.get_unix_time_from_system() if unix < 0.0 else unix
+	return Time.get_date_string_from_unix_time(int(t) + int(Time.get_time_zone_from_system().get("bias", 0)) * 60)
+
+
+## Puzzles solved per local day ("YYYY-MM-DD" -> count). Counted since 2026-10-24; older days are filled
+## in once from what was already saved (solved dailies, the recent-solves list).
+func activity_days() -> Dictionary:
+	if not stats.has("days"):
+		var days := {}
+		var from_recent := {}
+		for r in stats.get("recent", []):
+			var d := local_day(float(r.get("at", 0.0)))
+			days[d] = int(days.get(d, 0)) + 1
+			if r.get("daily", false):
+				from_recent[d] = true
+		for d in stats.daily.done:
+			if not from_recent.has(d):
+				days[d] = int(days.get(d, 0)) + 1
+		stats.days = days
+	return stats.days
 
 
 func _level_entry(vs: Dictionary, level: String) -> Dictionary:
