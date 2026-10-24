@@ -1,5 +1,5 @@
 {
- "stage": "extra",
+ "stage": "done",
  "level_runs": [
   39857584539,
   39857589887,
@@ -83,7 +83,8 @@
   "2026-10-24 00:54  expert/master for picture + Mini merged, Ten Lines / Double Arrow beginner-hard merged",
   "2026-10-24 00:54  started expert/master for Ten Lines / Double Arrow and the daily calendar: [40047269370, 40047285159, 40047301926]",
   "2026-10-24 02:21  all done: packs, daily calendar and examples merged; see pipeline/report.txt",
-  "2026-10-24 12:41  stage extra: level_order run 40094880096 (54 variants), daily calendar 40094883052"
+  "2026-10-24 12:41  stage extra: level_order run 40094880096 (54 variants), daily calendar 40094883052",
+  "2026-10-24 18:48  extra merged: level order: 54 packs updated: ascending battlefield between double_arrow dutch_whispers entropic german_whispers lockout magic_square mini_arrow mini_between mini_classic mini_consecutive mini_diagonal mini_difference_dots mini_entropic mini_even_odd mini_greater_than mini_jigsaw mini_kenken mini_killer mini_king mini_knight mini_kropki mini_little_killer mini_non_consecutive mini_palindrome mini_parity_lines mini_ratio_dots mini_region_sum mini_renban mini_sandwich mini_skyscraper mini_slow_thermo mini_sum_product_dots mini_thermo mini_xsum mini_xv mini_zipper modular nabner numbered_rooms parity_lines region_sum renban rossini running sandwich skyscraper slow_thermo ten_lines thermo xsum zipper; daily: 2191 of 2191 days rebuilt"
  ],
  "top_runs": [
   39951670478,
