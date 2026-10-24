@@ -121,6 +121,15 @@ list); "Continue" always resumes the latest. The generator is only used after th
 - **Not yet verified by the user on Windows** after the latest update (Shift/Ctrl/colour). Ask them how it went.
 
 ## Open items / suggested next steps
+0. **Level order + minimal master (2026-10-24, proof of concept)**: the user wants given digits to go down from
+   beginner to master and every master puzzle minimal (no single given removable). `tools/level_order.gd`:
+   `pool <v> 20` (hard/expert/master become 20 each: 60 of each level trimmed, dealt fewest -> master (minimal, best
+   of 3 orders), expert (half the removable givens out), hard; digits put back where a level isn't above the next),
+   `trim <v>` (keeps all puzzles, masters made minimal), `report <v>...`. Done for the 68 non-pipeline variants: the
+   51 whose order was broken were pooled to 20 per level, the 17 whose order was fine kept 500 with minimal masters.
+   The generator now makes master minimal too (`Generator._minimize`). **Still to do when the pipeline is done:**
+   `report` the 43 picture + Mini variants and Ten Lines / Double Arrow, then `pool <v> 20` (or `trim <v>` where the
+   order is already fine) for them, commit. If the user likes it, run `pool` with a bigger count or rebuild 500.
 0. **Pipeline fix (2026-10-24)**: Ten Lines beginner-hard never finished (0 puzzles in 6 h): the pipeline started
    those runs before committing the tn/da picture table, so they had no hand-drawn pictures. `pipeline.py` now commits
    before it dispatches. Reruns added to the "top" stage: Ten Lines + Double Arrow beginner-hard and mini_zipper master
