@@ -112,6 +112,8 @@ list); "Continue" always resumes the latest. The generator is only used after th
 - Generator timings in GDScript: the slowest is xv hard at about 3 s. It runs in a thread with a "Generating…" overlay.
 - Non-consecutive full solutions are hard to find by random search (heavy-tailed: 0.3–15 s), so the generator gives it
   many short tries (`Generator.SOLVE_NODES` / `ATTEMPTS`); a puzzle takes ~5 s (max ~13 s).
+- Test scenes that solve / lose / race a puzzle write the REAL stats.json (save folder is pinned): back up
+  %APPDATA%\SudokuVariants\stats.json + saves.json first and restore them after.
 - New clue types go in `Puzzle` (`parity`, `lines` = [{t, cells}]) + `Solver._build_new_rules/_line_ok` +
   `Generator._make_*` + `Board._draw`. Line type codes are kept short in JSON (gw, rb, …).
 

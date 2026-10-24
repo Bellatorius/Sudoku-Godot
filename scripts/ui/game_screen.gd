@@ -43,7 +43,7 @@ var board_holder: Control
 var left_col: VBoxContainer
 var restart_btn: Button
 var rules_head: HBoxContainer
-var cheat_l: Label
+var cheat_l: Control   # dev buttons (debug builds only)
 var main_row: HBoxContainer
 
 # Multiplayer race (params.versus = Net's "start" message)
@@ -134,10 +134,18 @@ func _build() -> void:
 	diff_tag_holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	head.add_child(diff_tag_holder)
 	if OS.is_debug_build():
-		cheat_l = UI.label("← ← → ← ↑  solve      → → ←  fill all but one", 13, UI.INK_MUTED)
-		cheat_l.tooltip_text = "Dev cheats (only in test builds run from Godot)."
-		cheat_l.mouse_filter = Control.MOUSE_FILTER_PASS
-		cheat_l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		# test builds run from Godot only; the arrow-key codes still work too
+		var cheats := HBoxContainer.new()
+		cheats.add_theme_constant_override("separation", 6)
+		cheats.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		for c in [["Solve", "Fill in the whole solution (also ← ← → ← ↑)", _cheat_solve],
+				["Fill all but one", "Fill every cell but one (also → → ←)", _cheat_all_but_one]]:
+			var b := UI.button(c[0], "", c[2])
+			b.tooltip_text = "Test only: " + c[1]
+			b.add_theme_font_size_override("font_size", 13)
+			b.add_theme_color_override("font_color", UI.INK_MUTED)
+			cheats.add_child(b)
+		cheat_l = cheats
 		head.add_child(cheat_l)
 
 	board_holder = Control.new()
@@ -885,16 +893,29 @@ func _cheat(code: int) -> bool:
 		return false
 	if _cheat_keys == CHEAT:
 		_cheat_keys.clear()
-		session.autofill()
+		_cheat_solve()
 		return true
 	if _cheat_keys.slice(-CHEAT_ALL_BUT_ONE.size()) == CHEAT_ALL_BUT_ONE:
 		_cheat_keys.clear()
-		var c := session.autofill_all_but_one()
-		if c >= 0:
-			board.selected = [c]
-			board.queue_redraw()
+		_cheat_all_but_one()
 		return true
 	return false
+
+
+func _cheat_solve() -> void:
+	if session == null or paused or session.solved or _lost:
+		return
+	session.autofill()
+
+
+## Leaves one cell empty and selects it, so typing its digit solves the puzzle.
+func _cheat_all_but_one() -> void:
+	if session == null or paused or session.solved or _lost:
+		return
+	var c := session.autofill_all_but_one()
+	if c >= 0:
+		board.selected = [c]
+		board.queue_redraw()
 
 
 func _unhandled_input(event: InputEvent) -> void:
