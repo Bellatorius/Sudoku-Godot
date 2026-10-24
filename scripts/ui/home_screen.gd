@@ -303,8 +303,11 @@ func _random_card() -> Control:
 ## "press again". Clicking the ticked button starts a random puzzle at that difficulty.
 func _add_random_buttons(box: BoxContainer, min_w := 96) -> void:
 	var buttons := {}
-	var refresh := func():
+	var selected := func() -> String:   # the remembered level, or Beginner while that one is locked everywhere
 		var sel := str(GameState.settings.get("random_difficulty", "medium"))
+		return "beginner" if not buttons.has(sel) or (buttons[sel] as Button).disabled else sel
+	var refresh := func():
+		var sel: String = selected.call()
 		for d in buttons:
 			var b: Button = buttons[d]
 			var on: bool = d == sel
@@ -320,6 +323,8 @@ func _add_random_buttons(box: BoxContainer, min_w := 96) -> void:
 			for k in ["hover", "pressed", "hover_pressed"]:
 				b.add_theme_stylebox_override(k, sbh)
 			b.tooltip_text = ("%s selected. Click again to play a random %s puzzle." % [String(d).capitalize(), d]) if on else "Select %s" % d
+			if b.disabled:
+				b.tooltip_text = "Locked: open %s in any variant first (variant page)" % String(d).capitalize()
 			b.get_node("Tick").visible = on
 			b.get_node("Legend").visible = on
 	for d in GameState.DIFFICULTIES:
@@ -348,8 +353,9 @@ func _add_random_buttons(box: BoxContainer, min_w := 96) -> void:
 		legend.position = Vector2(8, -9)
 		legend.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		b.add_child(legend)
+		b.disabled = not Variants.CORE.any(func(v): return GameState.level_unlocked(v, d))
 		b.pressed.connect(func():
-			if str(GameState.settings.get("random_difficulty", "medium")) == d:
+			if selected.call() == d:
 				GameState.go("game", GameState.random_game_params(d))
 			else:
 				GameState.settings.random_difficulty = d

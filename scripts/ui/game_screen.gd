@@ -600,6 +600,10 @@ func _on_solved() -> void:
 		var l := UI.label(s, 17, UI.INK_MUTED)
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		v.add_child(l)
+	if str(res.get("unlocked", "")) != "":
+		var un := UI.tag("%s UNLOCKED" % str(res.unlocked).to_upper(), UI.GOLD_TEXT, UI.GOLD_SOFT)
+		un.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		v.add_child(un)
 	v.add_child(UI.spacer(6))
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER

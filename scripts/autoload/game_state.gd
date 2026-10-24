@@ -9,6 +9,8 @@ const SETTINGS_PATH := "user://settings.json"
 const STATS_PATH := "user://stats.json"
 const SAVES_PATH := "user://saves.json"
 const DIFFICULTIES := ["beginner", "easy", "medium", "hard", "expert", "master"]
+## Levels unlock per variant: solves needed at the level before. Beginner is always open.
+const UNLOCK_AFTER := {"easy": 5, "medium": 5, "hard": 10, "expert": 20, "master": 50}
 
 var settings := {
 	"highlight_conflicts": true,
@@ -24,9 +26,10 @@ var settings := {
 	"music_volume": 0.5,
 	"sfx_on": true,
 	"sfx_volume": 0.7,
-	"random_difficulty": "medium",   # last difficulty picked for the random puzzle
+	"random_difficulty": "beginner",   # last difficulty picked for the random puzzle
 	"fps_cap": 240,     # frames per second limit (30–240; with V-Sync on, at most the monitor's refresh rate)
 	"vsync": true,      # V-Sync also limits the game to the monitor's refresh rate
+	"unlock_all": false,   # debug builds only (Settings): every level open, for testing
 }
 var stats := {
 	"total_solved": 0,
@@ -202,15 +205,66 @@ func variant_solved_count(variant: String) -> int:
 	return n
 
 
+## Puzzles solved in a variant at one level: different pack puzzles, or every solve counted since
+## 2026-10-24 (dailies, generated puzzles, repeats), whichever is more.
+func level_solves(variant: String, d: String) -> int:
+	var e: Dictionary = variant_stats(variant).get("levels", {}).get(d, {})
+	return maxi(int(e.get("n", 0)), int(_pack_done_counts().get("%s-%s" % [variant, d], 0)))
+
+
+var _done_counts := {}
+var _done_counts_at := -1
+
+## Solved pack puzzles per "<variant>-<level>", read from their ids ("pack-<variant>-<level>-…"), so the
+## home page doesn't have to load every pack. Rebuilt when the number of solved pack puzzles changes.
+func _pack_done_counts() -> Dictionary:
+	if _done_counts_at == stats.pack_done.size():
+		return _done_counts
+	_done_counts = {}
+	for id in stats.pack_done:
+		var parts := str(id).trim_prefix("pack-").split("-")
+		if parts.size() >= 2:
+			var k := "%s-%s" % [parts[0], parts[1]]
+			_done_counts[k] = int(_done_counts.get(k, 0)) + 1
+	_done_counts_at = stats.pack_done.size()
+	return _done_counts
+
+
+## Beginner is always open; each next level opens after UNLOCK_AFTER[level] solves at the level before.
+## A level already solved once stays open (players from before the lock existed keep their levels).
+func level_unlocked(variant: String, d: String) -> bool:
+	if d == "beginner" or (OS.is_debug_build() and bool(settings.get("unlock_all", false))):
+		return true
+	if variant_stats(variant).best.has(d):
+		return true
+	var prev: String = DIFFICULTIES[DIFFICULTIES.find(d) - 1]
+	return level_unlocked(variant, prev) and level_solves(variant, prev) >= int(UNLOCK_AFTER.get(d, 0))
+
+
+## "Solve 3 more Easy puzzles to unlock" (empty when the level is open).
+func unlock_hint(variant: String, d: String) -> String:
+	if level_unlocked(variant, d):
+		return ""
+	var prev: String = DIFFICULTIES[DIFFICULTIES.find(d) - 1]
+	if not level_unlocked(variant, prev):
+		return "Unlock %s first" % prev.capitalize()
+	var left := int(UNLOCK_AFTER[d]) - level_solves(variant, prev)
+	return "Solve %d more %s puzzle%s to unlock" % [left, prev.capitalize(), "" if left == 1 else "s"]
+
+
 ## Params for a random Free Play puzzle: a random playable variant at difficulty `d` (the
 ## Easy / Medium / Hard buttons on the home page). Prefers variants without an unfinished game at
 ## that difficulty, so starting a random puzzle doesn't shelve something you're in the middle of.
 func random_game_params(d: String) -> Dictionary:
 	if not DIFFICULTIES.has(d):
 		d = "easy"
-	var pool: Array = Variants.CORE.filter(func(v): return not has_game("%s:%s" % [v, d]))
+	var open: Array = Variants.CORE.filter(func(v): return level_unlocked(v, d))
+	if open.is_empty():
+		open = Variants.CORE.filter(func(v): return level_unlocked(v, "beginner"))
+		d = "beginner"
+	var pool: Array = open.filter(func(v): return not has_game("%s:%s" % [v, d]))
 	if pool.is_empty():
-		pool = Variants.CORE.duplicate()
+		pool = open.duplicate()
 	return new_game_params(pool.pick_random(), d)
 
 
@@ -310,9 +364,12 @@ func variant_stats(id: String) -> Dictionary:
 	return stats.variants[id]
 
 
-## Records a solve and returns a summary {new_best: bool, streak: int}.
+## Records a solve and returns a summary {new_best: bool, streak: int, unlocked: level opened by it or ""}.
 func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String, mistakes := 0) -> Dictionary:
 	var vs := variant_stats(puzzle.variant)
+	var nxt_i := DIFFICULTIES.find(puzzle.difficulty) + 1
+	var nxt: String = DIFFICULTIES[nxt_i] if nxt_i > 0 and nxt_i < DIFFICULTIES.size() else ""
+	var was_open := nxt == "" or level_unlocked(puzzle.variant, nxt)
 	vs.solved = int(vs.solved) + 1
 	if hints == 0:
 		vs.no_hint = int(vs.get("no_hint", 0)) + 1
@@ -354,7 +411,8 @@ func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String
 		SteamManager.upload_daily_time(daily_date, seconds)
 	save_stats()
 	SteamManager.on_solve(puzzle, seconds, hints, daily_date != "", stats, mistakes)
-	return {"new_best": new_best, "streak": streak}
+	var unlocked := nxt if not was_open and level_unlocked(puzzle.variant, nxt) else ""
+	return {"new_best": new_best, "streak": streak, "unlocked": unlocked}
 
 
 func _level_entry(vs: Dictionary, level: String) -> Dictionary:

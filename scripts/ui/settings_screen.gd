@@ -47,6 +47,8 @@ func setup(_params: Dictionary) -> void:
 		["show_timer", "Show timer", "The timer still runs for best times when hidden."],
 	]:
 		gv.add_child(_toggle(item[0], item[1], item[2]))
+	if OS.is_debug_build():   # testing only: never shown in an exported game
+		gv.add_child(_toggle("unlock_all", "Unlock all levels (test mode)", "Editor builds only. Opens every level of every variant without the solves normally needed."))
 
 	# --- Display
 	var dv := _panel(pages.display)

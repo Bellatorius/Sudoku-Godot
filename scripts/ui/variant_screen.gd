@@ -107,22 +107,30 @@ func _difficulty_row(d: String) -> Control:
 	dot.custom_minimum_size = Vector2(12 * GameState.DIFFICULTIES.size(), 22)
 	dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var level: int = GameState.DIFFICULTIES.find(d) + 1
+	var locked := not GameState.level_unlocked(vid, d)
+	if locked:
+		p.modulate.a = 0.75
 	dot.draw.connect(func():
 		for i in GameState.DIFFICULTIES.size():
-			dot.draw_circle(Vector2(6 + i * 12, 11), 4.5, UI.ACCENT if i < level else UI.LINE_STRONG, true, -1.0, true))
+			dot.draw_circle(Vector2(6 + i * 12, 11), 4.5, (UI.INK_FAINT if locked else UI.ACCENT) if i < level else UI.LINE_STRONG, true, -1.0, true))
 	h.add_child(dot)
 	var v := VBoxContainer.new()
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_theme_constant_override("separation", 0)
-	v.add_child(UI.label(d.capitalize(), 18, UI.INK, UI.font_sans_bold))
+	v.add_child(UI.label(d.capitalize(), 18, UI.INK_MUTED if locked else UI.INK, UI.font_sans_bold))
 	var best := float(GameState.variant_stats(vid).best.get(d, 0.0))
 	var prog := GameState.pack_progress(vid, d)
 	var meta := []
 	meta.append("Best %s" % UI.format_time(best) if best > 0 else "No best time yet")
 	if prog.y > 0:
 		meta.append("%d/%d solved" % [prog.x, prog.y])
+	if locked:
+		meta = [GameState.unlock_hint(vid, d)]
 	v.add_child(UI.label("  ·  ".join(meta), 14, UI.INK_MUTED))
 	h.add_child(v)
+	if locked and not GameState.has_game(slot):
+		h.add_child(_lock_icon())
+		return p
 
 	if GameState.has_game(slot):
 		var cont := UI.button("Continue", "PrimaryButton", func(): GameState.go("game", {"slot": slot}))
@@ -133,3 +141,20 @@ func _difficulty_row(d: String) -> Control:
 	gen.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(gen)
 	return p
+
+
+## Padlock drawn in the UI's line style.
+static func _lock_icon() -> Control:
+	var c := Control.new()
+	c.custom_minimum_size = Vector2(40, 40)
+	c.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	c.tooltip_text = "Locked"
+	c.draw.connect(func():
+		var m := c.size / 2.0
+		var col := UI.INK_FAINT
+		c.draw_rect(Rect2(m + Vector2(-9, -2), Vector2(18, 13)), col, false, 2.0, true)
+		c.draw_arc(m + Vector2(0, -2), 6.0, PI, TAU, 16, col, 2.0, true)
+		c.draw_line(m + Vector2(-6, -2), m + Vector2(-6, -3), col, 2.0)
+		c.draw_line(m + Vector2(6, -2), m + Vector2(6, -3), col, 2.0)
+		c.draw_circle(m + Vector2(0, 4.5), 1.8, col))
+	return c
