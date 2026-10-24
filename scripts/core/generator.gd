@@ -219,7 +219,34 @@ static func make(variant: String, difficulty: String, seed_value: int) -> Puzzle
 			break
 	if best:
 		best.id = "%s-%s-%d" % [variant, difficulty.substr(0, 2), seed_value]
+		if difficulty == "master":
+			g._minimize(best, int(REDUCE_NODES.get(rule, NODE_LIMIT)))
 	return best
+
+
+## Master: minimal givens. The symmetric pass in _reduce leaves pairs where only one cell is needed, so
+## givens are also taken out one at a time (best of MINIMIZE_ORDERS random orders): afterwards no single
+## given can be removed without losing the unique solution.
+const MINIMIZE_ORDERS := 3
+
+func _minimize(pz: Puzzle, nodes: int) -> void:
+	var solver := Solver.new(pz)
+	var best := pz.givens
+	for k in MINIMIZE_ORDERS:
+		var g := pz.givens.duplicate()
+		var cells: Array = []
+		for c in g.size():
+			if g[c] != 0:
+				cells.append(c)
+		_shuffle(cells)
+		for c in cells:
+			var keep := g[c]
+			g[c] = 0
+			if solver.count_solutions(g, 2, nodes) != 1:
+				g[c] = keep
+		if g.count(0) > best.count(0):
+			best = g
+	pz.givens = best
 
 
 static var _grades_file = null   # extra bars measured later (res://puzzles/grades.json, variant -> [expert, master])
