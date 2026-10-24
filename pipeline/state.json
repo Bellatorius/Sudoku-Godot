@@ -1,5 +1,5 @@
 {
- "stage": "done",
+ "stage": "extra",
  "level_runs": [
   39857584539,
   39857589887,
@@ -82,7 +82,8 @@
   "2026-10-23 23:44  Double Arrow beginner-hard rerun with the picture table (old runs had generated designs only): [40041300725, 40041305418, 40041310141, 40041314852]",
   "2026-10-24 00:54  expert/master for picture + Mini merged, Ten Lines / Double Arrow beginner-hard merged",
   "2026-10-24 00:54  started expert/master for Ten Lines / Double Arrow and the daily calendar: [40047269370, 40047285159, 40047301926]",
-  "2026-10-24 02:21  all done: packs, daily calendar and examples merged; see pipeline/report.txt"
+  "2026-10-24 02:21  all done: packs, daily calendar and examples merged; see pipeline/report.txt",
+  "2026-10-24 12:41  stage extra: level_order run 40094880096 (54 variants), daily calendar 40094883052"
  ],
  "top_runs": [
   39951670478,
@@ -105,5 +106,15 @@
   40047269370,
   40047285159,
   40047301926
+ ],
+ "level_runs_extra": [
+  40094880096
+ ],
+ "daily_runs_extra": [
+  40094883052
+ ],
+ "extra_runs": [
+  40094880096,
+  40094883052
  ]
 }

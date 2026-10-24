@@ -252,6 +252,47 @@ def step():
         sh("gh", "workflow", "disable", "pipeline.yml", "--repo", REPO, check=False)
         return
 
+    if stage == "extra":   # 2026-10-24: level_order.yml run(s) + daily calendar rebuild, then done again
+        if not all_done(st["extra_runs"]):
+            return
+        changed = []
+        for r in st["level_runs_extra"]:   # each artifact is one whole pack: puzzles/<variant>.json
+            dest = os.path.join(DL, str(r))
+            shutil.rmtree(dest, ignore_errors=True)
+            sh("gh", "run", "download", str(r), "--repo", REPO, "-D", dest, check=False)
+            for f in glob.glob(os.path.join(dest, "**", "*.json"), recursive=True):
+                name = os.path.basename(f)
+                shutil.copy(f, os.path.join(ROOT, "puzzles", name))
+                changed.append(name[:-5])
+        new_days = {}
+        for r in st["daily_runs_extra"]:   # new days replace old ones; days whose shard failed stay as they were
+            dest = os.path.join(DL, str(r))
+            shutil.rmtree(dest, ignore_errors=True)
+            sh("gh", "run", "download", str(r), "--repo", REPO, "-D", dest, check=False)
+            for f in glob.glob(os.path.join(dest, "**", "daily_*.json"), recursive=True):
+                with open(f, encoding="utf-8") as fh:
+                    new_days.update(json.load(fh))
+        daily = os.path.join(ROOT, "puzzles", "daily.json")
+        with open(daily, encoding="utf-8") as fh:
+            days = json.load(fh)["days"]
+        days.update(new_days)
+        with open(daily, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write('{"version": 1, "days": {\n' + ",\n".join(
+                '"%s": %s' % (d, json.dumps(days[d], separators=(",", ":"))) for d in sorted(days)) + "\n}}\n")
+        if new_days:
+            godot("-s", "tools/build_examples.gd")
+        lines = ["level order: %d packs updated: %s" % (len(changed), " ".join(sorted(changed))),
+                 "daily: %d of %d days rebuilt" % (len(new_days), len(days))]
+        with open(os.path.join(ROOT, "pipeline", "report_extra.txt"), "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+        st["stage"] = "done"
+        log(st, "extra merged: " + "; ".join(lines))
+        save(st)
+        sh("git", "add", "-A", "puzzles", "pipeline")
+        commit("Packs: level order for the remaining variants, daily calendar rebuilt; pipeline done")
+        sh("gh", "workflow", "disable", "pipeline.yml", "--repo", REPO, check=False)
+        return
+
     print("pipeline finished; nothing to do", flush=True)
 
 
