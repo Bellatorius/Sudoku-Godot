@@ -11,8 +11,14 @@ const MONTHS := ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", 
 ## Averages, perfect solves, losses, play time and recent solves only exist from this day on.
 const TRACKED_FROM := "24 Oct 2026"
 
+const TOP_ROWS := 20   # best-times rows shown before the table is expanded
+
 var _rows := {}        # variant id -> the table cells of its row
+var _order: Array = [] # variant ids, most played first
 var _no_match: Label
+var _expander: Control
+var _expanded := false
+var _query := ""
 var _modal: Control
 
 
@@ -317,7 +323,7 @@ func _best_times() -> Control:
 	search.text_changed.connect(_filter)
 	head.add_child(search)
 	v.add_child(head)
-	v.add_child(UI.label("Click a variant for its details.", 13, UI.INK_FAINT))
+	v.add_child(UI.label("Most played first. Click a variant for its details.", 13, UI.INK_FAINT))
 
 	var table := PanelContainer.new()
 	table.add_theme_stylebox_override("panel", UI.box(UI.SURFACE, UI.LINE_STRONG, UI.RADIUS, 1, 8))
@@ -335,7 +341,16 @@ func _best_times() -> Control:
 		if h == "Variant":
 			l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		grid.add_child(l)
-	for id in Variants.CORE:
+	_order = Variants.CORE.duplicate()
+	var rank := {}
+	for i in _order.size():
+		rank[_order[i]] = i
+	# most solved first; equal counts keep the catalogue order
+	_order.sort_custom(func(a, b):
+		var na := int(GameState.variant_stats(a).solved)
+		var nb := int(GameState.variant_stats(b).solved)
+		return na > nb if na != nb else rank[a] < rank[b])
+	for id in _order:
 		var vs := GameState.variant_stats(id)
 		var name_row := HBoxContainer.new()
 		name_row.add_theme_constant_override("separation", 10)
@@ -363,19 +378,74 @@ func _best_times() -> Control:
 	_no_match = UI.label("No variants match your search.", 15, UI.INK_MUTED)
 	_no_match.visible = false
 	v.add_child(_no_match)
+	_expander = _build_expander()
+	v.add_child(_expander)
+	_refresh_rows()
 	return v
 
 
-## Shows only the rows whose variant matches the search (same forgiving match as the home page).
-func _filter(text: String) -> void:
-	var q := text.strip_edges().to_lower()
+## A line across the page with a round arrow button in the middle: shows / hides the rows after TOP_ROWS.
+func _build_expander() -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	var line_l := ColorRect.new()
+	line_l.color = UI.LINE_STRONG
+	line_l.custom_minimum_size.y = 1
+	line_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	line_l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var line_r := line_l.duplicate()
+	row.add_child(line_l)
+	var btn := Button.new()
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	btn.custom_minimum_size = Vector2(44, 44)
+	var n_ := UI.box(UI.SURFACE, UI.LINE_STRONG, 999, 1)
+	var h_ := UI.box(UI.ACCENT_SOFT, UI.ACCENT, 999, 1)
+	for st in ["normal", "focus"]:
+		btn.add_theme_stylebox_override(st, n_)
+	for st in ["hover", "pressed", "hover_pressed"]:
+		btn.add_theme_stylebox_override(st, h_)
+	btn.pressed.connect(func():
+		_expanded = not _expanded
+		_refresh_rows())
+	var arrow := Control.new()
+	arrow.set_anchors_preset(Control.PRESET_FULL_RECT)
+	arrow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	arrow.draw.connect(func():
+		var c := arrow.size / 2.0
+		var d := -1.0 if _expanded else 1.0   # down = expand, up = collapse
+		var col := UI.ACCENT if btn.is_hovered() else UI.INK_MUTED
+		arrow.draw_polyline(PackedVector2Array([c + Vector2(-7, -3.5 * d), c + Vector2(0, 3.5 * d), c + Vector2(7, -3.5 * d)]), col, 2.2, true))
+	btn.add_child(arrow)
+	btn.mouse_entered.connect(arrow.queue_redraw)
+	btn.mouse_exited.connect(arrow.queue_redraw)
+	btn.set_meta("arrow", arrow)
+	row.add_child(btn)
+	row.add_child(line_r)
+	row.set_meta("btn", btn)
+	return row
+
+
+## Search on: every matching variant. Search off: the TOP_ROWS most played, or all of them when expanded.
+func _refresh_rows() -> void:
 	var any := false
-	for id in _rows:
-		var hit := Home._matches(Variants.get_info(id), q)
+	for i in _order.size():
+		var id: String = _order[i]
+		var hit: bool = Home._matches(Variants.get_info(id), _query) if _query != "" else (_expanded or i < TOP_ROWS)
 		for c in _rows[id]:
 			c.visible = hit
 		any = any or hit
 	_no_match.visible = not any
+	_expander.visible = _query == "" and _order.size() > TOP_ROWS
+	var btn: Button = _expander.get_meta("btn")
+	btn.tooltip_text = "Show fewer" if _expanded else "Show all %d variants" % _order.size()
+	(btn.get_meta("arrow") as Control).queue_redraw()
+
+
+## The search looks through all variants (same forgiving match as the home page).
+func _filter(text: String) -> void:
+	_query = text.strip_edges().to_lower()
+	_refresh_rows()
 
 
 ## One variant in detail: per level solved, best, average, perfect, lost and pack progress.
