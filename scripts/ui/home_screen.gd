@@ -142,7 +142,7 @@ func _filter() -> void:
 ## Forgiving search: every typed word must match a word of the name (or appear in the description).
 ## A word matches when it is contained, typed with letters left out ("termo" -> thermo), or one or two
 ## letters off ("kiler", "sandwhich").
-func _matches(v: Dictionary, q: String) -> bool:
+static func _matches(v: Dictionary, q: String) -> bool:
 	if q == "":
 		return true
 	var nm: String = str(v.name).to_lower()

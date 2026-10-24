@@ -30,7 +30,8 @@ var settings := {
 }
 var stats := {
 	"total_solved": 0,
-	"variants": {},        # id -> {solved, best: {easy, medium, hard}, no_hint}
+	"variants": {},        # id -> {solved, best: {level: s}, no_hint, perfect, lost, last_played,
+	                       #        levels: {level: {n, time, perfect, lost}}} (n/time: solves tracked since 2026-10-24)
 	"pack_done": {},       # puzzle id -> true
 	"daily": {"last": "", "streak": 0, "best_streak": 0, "done": {}},
 }
@@ -324,6 +325,20 @@ func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String
 	var levels: Dictionary = stats.get("levels", {})   # solves per level (achievements)
 	levels[puzzle.difficulty] = int(levels.get(puzzle.difficulty, 0)) + 1
 	stats.levels = levels
+	var perfect := hints == 0 and mistakes == 0
+	var e := _level_entry(vs, puzzle.difficulty)
+	e.n = int(e.get("n", 0)) + 1
+	e.time = float(e.get("time", 0.0)) + seconds
+	if perfect:
+		e.perfect = int(e.get("perfect", 0)) + 1
+		vs.perfect = int(vs.get("perfect", 0)) + 1
+		stats.perfect = int(stats.get("perfect", 0)) + 1
+	vs.last_played = Time.get_unix_time_from_system()
+	stats.play_time = float(stats.get("play_time", 0.0)) + seconds
+	var recent: Array = stats.get("recent", [])
+	recent.push_front({"v": puzzle.variant, "d": puzzle.difficulty, "t": seconds, "best": new_best,
+		"perfect": perfect, "daily": daily_date != "", "at": Time.get_unix_time_from_system()})
+	stats.recent = recent.slice(0, 10)
 	if puzzle.id.begins_with("pack-"):
 		stats.pack_done[puzzle.id] = true
 
@@ -340,6 +355,41 @@ func record_solve(puzzle: Puzzle, seconds: float, hints: int, daily_date: String
 	save_stats()
 	SteamManager.on_solve(puzzle, seconds, hints, daily_date != "", stats, mistakes)
 	return {"new_best": new_best, "streak": streak}
+
+
+func _level_entry(vs: Dictionary, level: String) -> Dictionary:
+	var lv: Dictionary = vs.get("levels", {})
+	if not lv.has(level):
+		lv[level] = {}
+	vs.levels = lv
+	return lv[level]
+
+
+## A puzzle lost to the mistake limit (each loss counts, also after Try again).
+func record_loss(puzzle: Puzzle, seconds: float) -> void:
+	var vs := variant_stats(puzzle.variant)
+	vs.lost = int(vs.get("lost", 0)) + 1
+	var e := _level_entry(vs, puzzle.difficulty)
+	e.lost = int(e.get("lost", 0)) + 1
+	vs.last_played = Time.get_unix_time_from_system()
+	stats.total_lost = int(stats.get("total_lost", 0)) + 1
+	stats.play_time = float(stats.get("play_time", 0.0)) + seconds
+	save_stats()
+
+
+## A finished 1v1 race: wins / losses, win streak and the fastest winning time.
+func record_race(won: bool, seconds: float) -> Dictionary:
+	var mp: Dictionary = stats.get("multiplayer", {"wins": 0, "losses": 0})
+	var key := "wins" if won else "losses"
+	mp[key] = int(mp.get(key, 0)) + 1
+	mp.streak = int(mp.get("streak", 0)) + 1 if won else 0
+	mp.best_streak = maxi(int(mp.get("best_streak", 0)), int(mp.streak))
+	if won and seconds > 0.0 and (float(mp.get("best_time", 0.0)) <= 0.0 or seconds < float(mp.best_time)):
+		mp.best_time = seconds
+	stats.multiplayer = mp
+	stats.play_time = float(stats.get("play_time", 0.0)) + maxf(seconds, 0.0)
+	save_stats()
+	return mp
 
 
 func current_streak() -> int:

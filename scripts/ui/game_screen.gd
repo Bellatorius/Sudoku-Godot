@@ -371,7 +371,7 @@ func _start(s: Session) -> void:
 	_save()
 	_on_changed()
 	if session.is_lost():
-		_on_lost.call_deferred()
+		_on_lost.call_deferred(false)   # a saved game that was already lost: shown again, not counted again
 
 
 func _process(delta: float) -> void:
@@ -787,11 +787,13 @@ func _refresh_hint() -> void:
 	hint_btn.disabled = left <= 0
 
 ## Mistake limit reached: stop the puzzle and offer Try again / a way out.
-func _on_lost() -> void:
+func _on_lost(count := true) -> void:
 	if _lost:
 		return
 	_lost = true
 	paused = true
+	if count:
+		GameState.record_loss(session.puzzle, session.elapsed)
 	Audio.play("wrong")
 	_dirty = true
 	_save()
@@ -1229,11 +1231,7 @@ func _show_result(won: bool, my_time: float, opp_time: float, note := "") -> voi
 		after_box.visible = true
 		opp_note.visible = false   # room for the Play again buttons (the grid is revealed anyway)
 		_refresh_again()
-	var mp: Dictionary = GameState.stats.get("multiplayer", {"wins": 0, "losses": 0})
-	var key := "wins" if won else "losses"
-	mp[key] = int(mp.get(key, 0)) + 1
-	GameState.stats.multiplayer = mp
-	GameState.save_stats()
+	var mp := GameState.record_race(won, my_time)
 	SteamManager.on_versus(won, mp)
 	if not session.solved:
 		Audio.play("solved" if won else "wrong")
