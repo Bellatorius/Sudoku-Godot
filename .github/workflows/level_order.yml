@@ -1,0 +1,44 @@
+name: Level order
+# Runs tools/level_order.gd for several variants in parallel (one job each) and uploads each changed pack.
+# Input: a JSON list of argument strings, e.g. ["pool killer 20", "trim classic", "pool sandwich 20 1 6000"].
+# Collect: gh run download <id> -D <dir>, copy every <variant>.json into puzzles/.
+run-name: level order ${{ inputs.tag }}
+on:
+  workflow_dispatch:
+    inputs:
+      jobs:
+        description: 'JSON list of level_order.gd argument strings'
+        required: true
+      tag:
+        description: "Free label shown in the run name"
+        required: false
+        default: ""
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        args: ${{ fromJSON(inputs.jobs) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Godot 4.7.2
+        run: |
+          curl -sL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q godot.zip && mv Godot_v4.7.2-stable_linux.x86_64 godot && chmod +x godot
+      - name: Import project
+        run: timeout 300 ./godot --headless --path . --import || true
+      - name: Level order
+        id: lo
+        run: |
+          set -- ${{ matrix.args }}
+          echo "variant=$2" >> "$GITHUB_OUTPUT"
+          timeout 20700 ./godot --headless --path . -s tools/level_order.gd -- ${{ matrix.args }} | tee out.txt
+          grep -q "^ORDER" out.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.lo.outputs.variant }}
+          path: puzzles/${{ steps.lo.outputs.variant }}.json
+          if-no-files-found: error
