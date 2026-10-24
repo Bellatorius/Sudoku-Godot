@@ -121,6 +121,12 @@ list); "Continue" always resumes the latest. The generator is only used after th
 - **Not yet verified by the user on Windows** after the latest update (Shift/Ctrl/colour). Ask them how it went.
 
 ## Open items / suggested next steps
+0. **Pipeline finished (2026-10-24 02:21 UTC)**, see pipeline/report.txt: all 500 except Ten Lines / Double Arrow
+   expert+master (60 each, on purpose, to be pooled into 20) and a few Mini levels at 484-499 (mini_sandwich beginner
+   400). The daily calendar run failed in every job (puzzles/_parts missing on CI; fixed in tools/build_daily.gd), so
+   puzzles/daily.json is the OLD calendar (line days without pictures). To do: dispatch build_daily.yml, download its
+   artifacts into puzzles/_parts, delete puzzles/daily.json, `godot --headless -s tools/build_daily.gd -- merge`.
+   Then make the repo PRIVATE again.
 0. **Level order + minimal master (2026-10-24, proof of concept)**: the user wants given digits to go down from
    beginner to master and every master puzzle minimal (no single given removable). `tools/level_order.gd`:
    `pool <v> 20` (hard/expert/master become 20 each: 60 of each level trimmed, dealt fewest -> master (minimal, best

@@ -50,6 +50,7 @@ func _part(start: String, count: int) -> void:
 			seed_value += 1
 		p.id = "daily-" + date
 		done[date] = p.to_dict()
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PARTS))   # not in a fresh CI checkout
 		var f := FileAccess.open(path, FileAccess.WRITE)
 		f.store_string(JSON.stringify(done))
 		f = null
