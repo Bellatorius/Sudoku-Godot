@@ -112,10 +112,10 @@ def merge_picture_table(types):
         json.dump(table, f, indent=1)
 
 
-def dispatch_packs(level, variants, tag, shards=5):
-    """500 puzzles per variant, split into `shards` jobs (more shards for slow variants: jobs stop at 6 h)."""
+def dispatch_packs(level, variants, tag, shards=5, count=500):
+    """`count` puzzles per variant, split into `shards` jobs (more shards for slow variants: jobs stop at 6 h)."""
     sh("gh", "workflow", "run", "build_packs.yml", "--repo", REPO, "-f", "level=" + level,
-       "-f", "per_shard=%d" % (500 // shards), "-f", "shards=" + json.dumps(list(range(shards))),
+       "-f", "per_shard=%d" % (count // shards), "-f", "shards=" + json.dumps(list(range(shards))),
        "-f", "variants=" + json.dumps(variants, separators=(",", ":")), "-f", "tag=" + tag)
     return find_run("build_packs.yml", "packs %s %s" % (level, tag))
 
@@ -221,8 +221,8 @@ def step():
         save(st)
         # commit first: expert/master need the Ten Lines / Double Arrow grade bars from main
         commit("Packs: picture and Mini expert/master; pipeline step 2")
-        # Ten Lines puzzles take ~1 min each and expert / master try several per puzzle: 20 jobs of 25
-        st["final_runs"] = [dispatch_packs("expert", tn, "tn", 20), dispatch_packs("master", tn, "tn", 20)]
+        # proof of concept (2026-10-24): 60 each, so tools/level_order.gd can pool them into 20 per level
+        st["final_runs"] = [dispatch_packs("expert", tn, "tn", 3, 60), dispatch_packs("master", tn, "tn", 3, 60)]
         sh("gh", "workflow", "run", "build_daily.yml", "--repo", REPO)
         st["final_runs"].append(find_run("build_daily.yml", "daily calendar"))
         st["stage"] = "final"
